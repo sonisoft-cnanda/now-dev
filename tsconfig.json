@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+       "lib": ["ESNext"],
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "node", 
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "skipLibCheck": true,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "outDir": "dist",
+        "allowJs": true,
+       
+        "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64"]	,
+    },
+    "include": [
+        "src/**/*", "test/**/*"
+    ],
+    "exclude": ["node_modules", "dist", "logs", "build"],
+}
