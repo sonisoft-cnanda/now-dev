@@ -3,64 +3,19 @@ import { mock } from "ts-jest-mocker";
 import {Channel} from "../../src/amb/Channel.js";
 import {ServerConnection} from "../../src/amb/ServerConnection.js";
 import { isNull } from "../../src/amb/Helper.js";
-import  { CometD } from "cometd";
+import  { CometD, Status } from "cometd";
 import { ChannelListener } from "../../src/amb/ChannelListener.js";
 
 const cometdMock = mock(CometD); 
 const serverConnectionMock = mock(ServerConnection);
-//cometdMock.yourMethod.mockReturnValue('Test');
 
-// jest.mock("cometd");
-// const registerTransport = jest.fn();
-// const unregisterTransport = jest.fn();
-// const registerExtension = jest.fn();
-// const unregisterExtension = jest.fn();
-// const batch = jest.fn();
-// const mockCometD = jest.fn().mockImplementation(() => {
-// 	return {
-// 		batch: batch,
-// 		registerExtension: registerExtension,
-// 		unregisterExtension: unregisterExtension,
-// 		registerTransport: registerTransport,
-// 		unregisterTransport : unregisterTransport,
-// 		addListener: jest.fn(),
-// 		getClientId: jest.fn().mockImplementation(() => { return "aaaa";})
-
-// 	};
-// });
-
-// const longPollingTransport = jest.fn();
-// const webSocketTransport = jest.fn();
-//cometdLib.LongPollingTransport = longPollingTransport;
-//cometdLib.WebSocketTransport = webSocketTransport;
-//cometdLib.CometD = mockCometD;
-
-// const subscribeToEvent = jest.fn();
-// const unsubscribeFromEvent = jest.fn();
-// const getEvents = jest.fn();
-// const isLoggedIn = jest.fn();
-// const loginComplete = jest.fn();
-// const connect = jest.fn();
-// const reload = jest.fn();
-// const abort = jest.fn();
-// const disconnect = jest.fn();
-// const getConnectionState = jest.fn();
-// const getLastError = jest.fn(() => { return "aaa";});
-// const setLastError = jest.fn();
-// const getChannel = jest.fn();
-// const removeChannel = jest.fn();
-// const getChannels = jest.fn();
-// const getErrorMessages = jest.fn().mockImplementation(() => {
-// 	return {"UNKNOWN_CLIENT": "402::Unknown client"};
-// });
-
-const events = {
-	CONNECTION_INITIALIZED: "connection.initialized",
-	CONNECTION_OPENED: "connection.opened",
-	SESSION_LOGGED_IN: "session.logged.in",
-	SESSION_LOGGED_OUT: "session.logged.out",
-	SESSION_INVALIDATED: "session.invalidated"
-};
+// const events = {
+// 	CONNECTION_INITIALIZED: "connection.initialized",
+// 	CONNECTION_OPENED: "connection.opened",
+// 	SESSION_LOGGED_IN: "session.logged.in",
+// 	SESSION_LOGGED_OUT: "session.logged.out",
+// 	SESSION_INVALIDATED: "session.invalidated"
+// };
 
 
 
@@ -72,8 +27,7 @@ describe("Channel", () => {
 	let outputMessage = "";
 	
 
-	console.log = jest.fn(input => (outputMessage = input));
-
+	
 	beforeEach(() => {
 		outputMessage = "";
 		// mockCometD = {
@@ -389,19 +343,19 @@ describe("Channel", () => {
 		});
 
 		it("should unsubscribe a listener", () => {
-			const mockChannelListener1 = {
-				getCallback: jest.fn().mockImplementation(() => true),
-				getID: jest.fn().mockImplementation(() => "1"),
-				getSubscriptionCallback: jest.fn(),
-				resubscribe: jest.fn()
-			};
+			
 
-			const mockChannelListener2 = {
-				getCallback: jest.fn().mockImplementation(() => true),
-				getID: jest.fn().mockImplementation(() => "2"),
-				getSubscriptionCallback: jest.fn(),
-				resubscribe: jest.fn()
-			};
+			const mockChannelListener1 = mock(ChannelListener);
+			mockChannelListener1.getCallback.mockReturnValue(() => {
+				true;
+			});
+			mockChannelListener1.getID.mockReturnValue(1);
+
+			const mockChannelListener2 = mock(ChannelListener);
+			mockChannelListener2.getCallback.mockReturnValue(() => {
+				true;
+			});
+			mockChannelListener2.getID.mockReturnValue(2);
 
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
 			testChannel.subscribe(mockChannelListener1);
@@ -419,19 +373,19 @@ describe("Channel", () => {
 				status: "successful"
 			};
 
-			mockCometD.subscribe.mockImplementation(() => {
+			const fnCometMock = mock(CometD); 
+			fnCometMock.subscribe.mockReturnValue(() => {
 				return subObject;
 			});
-			mockCometD.getStatus.mockImplementation(() => {
-				return "connected";
-			});
-			const mockChannelListener1 = {
-				getCallback: jest.fn().mockImplementation(() => true),
-				getID: jest.fn().mockImplementation(() => "1"),
-				getSubscriptionCallback: jest.fn(),
-				resubscribe: jest.fn()
-			};
+			fnCometMock.getStatus.mockReturnValue( "connected" as Status);
 
+			const mockChannelListener1 = mock(ChannelListener);
+			mockChannelListener1.getCallback.mockReturnValue(() => {
+				true;
+			});
+			mockChannelListener1.getID.mockReturnValue(1);
+		
+			
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
 			testChannel.subscribe(mockChannelListener1);
 			expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
@@ -449,18 +403,17 @@ describe("Channel", () => {
 				status: "successful"
 			};
 
-			mockCometD.subscribe.mockImplementation(() => {
+			const fnCometMock = mock(CometD); 
+			fnCometMock.subscribe.mockReturnValue(() => {
 				return subObject;
 			});
-			mockCometD.getStatus.mockImplementation(() => {
-				return "connected";
+			fnCometMock.getStatus.mockReturnValue( "connected" as Status);
+
+			const mockChannelListener1 = mock(ChannelListener);
+			mockChannelListener1.getCallback.mockReturnValue(() => {
+				true;
 			});
-			const mockChannelListener1 = {
-				getCallback: jest.fn().mockImplementation(() => true),
-				getID: jest.fn().mockImplementation(() => "1"),
-				getSubscriptionCallback: jest.fn(),
-				resubscribe: jest.fn()
-			};
+			mockChannelListener1.getID.mockReturnValue(1);
 
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
 			testChannel.subscribe(mockChannelListener1);
@@ -478,15 +431,13 @@ describe("Channel", () => {
 
 	describe("_handleResponse", () => {
 		it("calls registered listener callbacks", () => {
-			const mockChannelListener1 = {
-				getCallback: jest.fn().mockImplementation(() => {
-					return function(m) {
-						console.log("mock1: " + m);
-					};
-				}),
-				getID: jest.fn().mockImplementation(() => "1"),
-				getSubscriptionCallback: jest.fn()
-			};
+			
+
+			const mockChannelListener1 = mock(ChannelListener);
+			mockChannelListener1.getCallback.mockReturnValue((m) => {
+				console.log("mock1: " + m);
+			});
+			mockChannelListener1.getID.mockReturnValue(1);
 
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
 			testChannel.subscribe(mockChannelListener1);
@@ -498,11 +449,11 @@ describe("Channel", () => {
 
 	describe("publish", () => {
 		it("publishes a message", () => {
-			const mockChannelListener1 = {
-				getCallback: jest.fn().mockImplementation(() => true),
-				getID: jest.fn().mockImplementation(() => "1"),
-				getSubscriptionCallback: jest.fn()
-			};
+			const mockChannelListener1 = mock(ChannelListener);
+			mockChannelListener1.getCallback.mockReturnValue(() => {
+				true;
+			});
+			mockChannelListener1.getID.mockReturnValue(1);
 
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
 			testChannel.subscribe(mockChannelListener1);

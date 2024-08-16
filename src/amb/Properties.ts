@@ -30,6 +30,6 @@ export class Properties{
 			max: 300000,
 			increaseFactor: 2
 		}
-	}
+	};
 
 }

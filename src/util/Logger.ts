@@ -21,7 +21,7 @@ export class Logger{
 
 	public constructor(labelName:string){
 		this._labelName = labelName;
-		
+		this.initLogger();
 	}
 
     public setLogger(logger:winston.Logger):void{

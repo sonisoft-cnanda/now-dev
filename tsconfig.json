@@ -18,7 +18,7 @@
         "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64"]	,
     },
     "include": [
-        "src/**/*", "test/**/*"
+        "src/**/*"
     ],
-    "exclude": ["node_modules", "dist", "logs", "build"],
+    "exclude": ["node_modules", "dist", "logs", "build", "./*.ts", "test/**/*"],
 }
