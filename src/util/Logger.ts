@@ -28,6 +28,10 @@ export class Logger{
         this._localLogger = logger;
     }
 
+    public getLabel(){
+      return this._labelName;
+    }
+
     private initLogger():void{
         this._localLogger = winston.createLogger({
             level: "debug",

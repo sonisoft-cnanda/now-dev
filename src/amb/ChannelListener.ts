@@ -44,7 +44,7 @@ export class ChannelListener{
 	 *
 	 * @return amb.ChannelListener this listener
 	 */
-	subscribe(/*Function*/ callback:any) {
+	subscribe(/*Function*/ callback:Function) {
 		this.messageCallback = callback;
 		this.id = this._channel.subscribe(this);
 		return this;
@@ -59,7 +59,7 @@ export class ChannelListener{
 	 *
 	 * @return amb.ChannelListener this listener
 	 */
-	unsubscribe(listener?:any) {
+	unsubscribe(listener?:Function) {
 		this._channel.unsubscribe(this);
 		this._logger.debug("Unsubscribed from channel: " + this._channel.getName());
 		return this;

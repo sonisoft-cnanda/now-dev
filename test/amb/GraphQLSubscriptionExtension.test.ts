@@ -1,10 +1,10 @@
-import GraphSubscriptionExtension from '../amb.GraphQLSubscriptionExtension';
+import {GraphQLSubscriptionExtension} from '../../src/amb/GraphQLSubscriptionExtension.js';
 
 describe('GraphQLSubscriptionExtension', () => {
 	let graphQLSubscriptionExtension;
 
 	beforeEach(() => {
-		graphQLSubscriptionExtension = new GraphSubscriptionExtension();
+		graphQLSubscriptionExtension = new GraphQLSubscriptionExtension();
 	});
 
 	describe('isGraphQLChannel', () => {

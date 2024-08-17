@@ -19,7 +19,7 @@ export class ChannelRedirect{
 	}
 
 
-	private  _switchToChannel(fromChannel:any, toChannel:any) {
+	private  _switchToChannel(fromChannel:Channel, toChannel:Channel) {
 
 		const listeners = fromChannel.getChannelListeners();
 		for (let i = 0; i < listeners.length; i++) {
@@ -31,8 +31,8 @@ export class ChannelRedirect{
 
 	 public _onAdvice(advice:any) {
 		this._logger.debug("_onAdvice:" + advice.data.clientId);
-		const fromChannel = this._serverConnection.getChannel(advice.data.fromChannel);
-		const toChannel = this._serverConnection.getChannel(advice.data.toChannel);
+		const fromChannel:Channel = this._serverConnection.getChannel(advice.data.fromChannel);
+		const toChannel:Channel= this._serverConnection.getChannel(advice.data.toChannel);
 
 		if (!fromChannel || !toChannel) {
 			this._logger.debug("Could not redirect from " + advice.data.fromChannel + " to " + advice.data.toChannel);

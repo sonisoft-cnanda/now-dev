@@ -1,4 +1,4 @@
-import FunctionQueue from "../amb.FunctionQueue";
+import {FunctionQueue} from "../../src/amb/FunctionQueue";
 
 describe('FunctionQueue', () => {
 	it('test initial state', () => {
@@ -74,7 +74,7 @@ describe('FunctionQueue', () => {
 			expect(funQueue.enqueue(inputItems[idx])).toBe(true);
 		expect(funQueue.enqueue(inputItems[queueCapacity])).toBe(false);
 		while (queueCapacity < inputItems.length)
-			inputItems.pop(1);
+			inputItems.pop();
 		for (idx = 0; idx < queueCapacity; ++idx)
 			expect(funQueue.dequeue()).toEqual(inputItems[idx]);
 		expect(funQueue.getSize()).toBe(0);
@@ -88,7 +88,7 @@ describe('FunctionQueue', () => {
 		let inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
 		expect(funQueue.enqueueMultiple(inputItems)).toBe(false);
 		while (queueCapacity < inputItems.length)
-			inputItems.pop(1);
+			inputItems.pop();
 		expect(funQueue.enqueueMultiple(inputItems)).toBe(true);
 		expect(funQueue.getSize()).toBe(inputItems.length);
 		expect(funQueue.getAvailableSpace()).toBe(queueCapacity - inputItems.length);

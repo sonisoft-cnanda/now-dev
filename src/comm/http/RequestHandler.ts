@@ -1,0 +1,218 @@
+
+import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders, AxiosHeaderValue } from 'axios';
+import { ExtensionConfiguration } from '../../conf/ExtensionConfiguration';
+import { HTTPRequest } from './HTTPRequest';
+import { IHttpResponse } from './IHttpResponse';
+import { IRequestHandler } from './IRequestHandler';
+import { Cookie } from 'tough-cookie';
+import { isNil } from '../../amb/Helper';
+import { ICookieStore } from './ICookieStore';
+import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
+
+
+axios.defaults.withCredentials = true;
+
+export class RequestHandler implements IRequestHandler{
+   
+    _defaultHeaders:RawAxiosRequestHeaders;
+    httpClient:AxiosInstance;
+    _cookies: Cookie[];
+
+    _cookieStore:ICookieStore;
+    _authHandler:IAuthenticationHandler;
+
+    /**
+     * The Singleton's constructor should always be private to prevent direct
+     * construction calls with the `new` operator.
+     */
+    public constructor(authHandler:IAuthenticationHandler) {
+        this._defaultHeaders = {} as RawAxiosRequestHeaders;
+       this._authHandler = authHandler;
+        
+        //Need to get the config from the extension info
+        //baseURL should be instance URL that was added to settings
+        //todo: Updated with settings config
+        this.httpClient = axios.create({
+            withCredentials: true,
+            baseURL: ExtensionConfiguration.instance.getServiceNowInstanceURL(),
+          });
+
+        this.httpClient.defaults.maxRedirects = 0;
+         
+     }
+
+    public getHttpClient():AxiosInstance{
+        return this.httpClient;
+    }
+
+    //FIXME: This should pull a more variable instance url
+    public async getCookies() : Promise<Cookie[]> {
+        return await this._authHandler.getCookies().getCookies(ExtensionConfiguration.instance.getServiceNowInstanceURL());
+    }
+
+    public async getCookieString():Promise<String>{
+        return await this._authHandler.getCookies().getCookieString(ExtensionConfiguration.instance.getServiceNowInstanceURL());
+    }
+
+    public setRequestToken(token:String){
+        this._defaultHeaders["X-Usertoken"]  = token as AxiosHeaderValue;
+    }
+
+    public async request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>{
+
+        for(var prop in this._defaultHeaders){
+            if(typeof this._defaultHeaders[prop] !='undefined' && this._defaultHeaders[prop])
+                config.headers[prop] = this._defaultHeaders[prop];
+        }
+        config.headers["Cookie"] = await this.getCookieString();
+        return this.httpClient.request(config);
+    }
+
+
+    public async post<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
+
+        let {config, url} = await this.getRequestConfig(request);
+            
+       try{
+        const response: IHttpResponse<T> = await this.httpClient.post(url, request.body , config);
+
+        try{
+            if(!((response.data) instanceof String) ){
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
+            }
+        }catch(ex){
+            //console.log(ex);
+        }
+        
+        return response;
+       }catch(ex){
+        //log error
+        //console.log(ex);
+        throw new Error(ex);
+       }
+        
+
+        return null;
+    }
+
+    public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
+
+        let {config, url} = await this.getRequestConfig(request);
+            
+       try{
+        const response: IHttpResponse<T> = await this.httpClient.put(url, request.body , config);
+
+        try{
+            if(!((response.data) instanceof String) ){
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
+            }
+        }catch(ex){
+            //console.log(ex);
+        }
+        
+        return response;
+       }catch(ex){
+        //log error
+        //console.log(ex);
+        throw new Error(ex);
+       }
+        
+
+        return null;
+    }
+
+    public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
+
+        let {config, url} =  await this.getRequestConfig(request);
+            
+       try{
+        const response: IHttpResponse<T> = await this.httpClient.get(url , config);
+
+        try{
+            if(!((response.data) instanceof String) ){
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
+            }
+        }catch(ex){
+            console.log(ex);
+        }
+
+        return response;
+       }catch(ex){
+        //log error
+        console.log(ex);
+       }
+        
+
+        return null;
+    }
+
+    public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
+
+        let {config, url} = await this.getRequestConfig(request);
+            
+       try{
+        const response: IHttpResponse<T> = await this.httpClient.delete(url , config);
+
+        try{
+            if(!((response.data) instanceof String) ){
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
+            }
+        }catch(ex){
+            console.log(ex);
+        }
+
+        return response;
+       }catch(ex){
+        //log error
+        console.log(ex);
+       }
+        
+
+        return null;
+    }
+
+    private async getRequestConfig(request: HTTPRequest):Promise<{ config: AxiosRequestConfig; url: string; }>{
+       
+        const config:AxiosRequestConfig = {
+                                                withCredentials: true, 
+                                                headers:this._defaultHeaders
+                                            };
+        let url:string = request.path;
+       
+        if(request.headers != null){
+            for(let prop in request.headers){
+                config.headers[prop] = request.headers[prop];
+            }
+        }
+        config.headers["Cookie"] = await this.getCookieString();
+        if(request.query != null){
+            let strQuery = this.getQueryString(request.query);
+            if(url.indexOf("?") == -1){
+                url += "?" + strQuery;
+            }else{
+                url += "&" + strQuery;
+            }
+        }
+
+        return {config: config, url: url};
+    }
+
+    private getQueryString(queryObj:object):string{
+        let queryStr = "";
+        for(var prop in queryObj){
+            if(queryStr != "")
+                queryStr += "&";
+            queryStr += prop + "=" + encodeURIComponent(queryObj[prop]);
+        }
+
+        return queryStr;
+    }
+
+
+  
+
+}
