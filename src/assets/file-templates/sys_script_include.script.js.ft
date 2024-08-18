@@ -1,0 +1,7 @@
+var xxx = Class.create();
+xxx.prototype = {
+    initialize: function() {
+    },
+
+    type: 'xxx'
+};

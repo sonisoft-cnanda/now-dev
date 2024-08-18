@@ -1,0 +1,9 @@
+<div>
+  <a href="?id=form&sys_id={{item.sys_id}}&table={{item.table}}" class="h4 text-primary m-b-sm block">
+    <span ng-bind-html="highlight(item.primary, data.q)"></span>
+  </a>
+  <span class="text-muted" ng-repeat="f in item.fields">
+    <span class="m-l-xs m-r-xs" ng-if="!$first"> &middot; </span>
+    {{f.label}}: <span ng-bind-html="highlight(f.display_value, data.q)"></span>
+  </span>
+</div>

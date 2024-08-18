@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Selective Sync</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{bootstrapStylesPath}}" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{jstreeStylesPath}}" />
+    <link rel="stylesheet" href="{{indexStylesPath}}" />
+    <link rel="stylesheet" href="{{codeiconStylesPath}}">
+</head>
+
+<body onload="onwindowLoad()">
+    <div class="main" id="main">
+        <!-- <nav class="navbar">
+                <div class="logo-text">Sync</div>
+            </nav>
+            <div class="alert alert-info" role="alert">All files in application are selected for sync</div> -->
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="logo-text navbar-brand">Select files for Sync</div>
+            <div class="sync-actions  ml-auto mr-0">
+                <!-- <button class="sync-action sync-cancel btn btn-secondary ml-auto mr-0">Skip</button> -->
+                <button class="sync-action sync-submit btn btn-info  mr-0 ml-1">Submit</button>
+                <!-- <div class="btn-group">
+                    <button type="button"  class="sync-action sync-submit btn btn-info  mr-0 ml-1">Submit</button>
+                    <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split command-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu" id="command-selection-dropdown">
+                      <a class="dropdown-item sync-scratch" >Only Scratch Files</a>
+                      <a class="dropdown-item sync-src" >Only Application Files</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div> -->
+            </div>
+        </nav>
+
+
+        <div id="static-content" style="display: none;">
+            <div class="app-container">
+                <div class="app-header">
+                    <div class="app-title"><i class="codicon codicon-project"></i>&nbsp;{{APP_NAME}} (src)</div>
+                </div>
+                <div class="alert alert-primary" role="alert" style="display: block;">
+                    <i class="codicon codicon-info codicon-spacing"></i>
+                    All files in application are selected for sync.
+                </div>
+            </div>
+
+            <hr style="border-top: 1.5px solid rgba(0,0,0,.1);" />
+
+            <div class="app-container">
+                <div class="app-header">
+                    <div class="app-title"><i class="codicon codicon-files"></i>&nbsp;Scratch Files</div>
+                    <!-- <div class="sync-actions  ml-auto mr-0">
+                        <button class="sync-action sync-cancel btn btn-secondary ml-auto mr-0 skip-button">Skip</button>
+                    </div> -->
+                    <div class="select-all-container">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" checked="true" class="custom-control-input" id="selectAllSwitch">
+                            <label class="custom-control-label" for="selectAllSwitch">Select All</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="alert alert-primary" role="alert" style="display: block;">
+                    <i class="codicon codicon-settings-gear codicon-spacing"></i>
+                    Click <a class="alert-link" href="" onclick="openSettings()">here</a> to disable <i>Scratch Folder:
+                        Enable Sync</i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="goto-top-btn" id="goto-top-btn" title="Go to Top">
+        <i class="icon"></i>
+    </div>
+
+    <script src="{{jqueryPath}}"></script>
+    <script src="{{updateSetPickerPath}}"></script>
+    <script src="{{jstreePath}}"></script>
+    <script src="{{indexJsPath}}"></script>
+    <script>
+        function openSettings() {
+            vscode.postMessage(MessageCommands.OPEN_SETTINGS, 'OPEN_SETTINGS');
+        }
+    </script>
+
+    <script id="app-template" type="text/template">
+        <div class="app-header">
+                <div class="app-title">{{scopeName}}</div>
+                <div class="controls">
+                    <div class="dropdown updateset-picker" data-id="{{scopeId}}"></div>
+                    <button class="toggle-view" title="Toggle View"></button>
+                </div>
+            </div>
+            <div class="alert alert-danger" role="alert"></div>
+            <div class="app-files">
+                <div class="files-tree" id="files-tree-{{scopeId}}"></div>
+            </div>
+        </script>
+    <script id="modal-template" type="text/template">
+        <div class="modal" id="modal">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{modalTitle}}</h5>
+                            <button type="button" id="closeIcon" class="close">×</button>
+                        </div>
+                        <div class="modal-body">{{modalBody}}</div>
+                        <div class="modal-footer">
+                            <button type="button" id="cancelBtn" class="btn btn-sm btn-secondary" data-dismiss="modal">{{modalCancelBtnText}}</button>
+                            <button type="button" id="okBtn" class="btn btn-sm btn-info">{{modalOkBtnText}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+</body>
+
+</html>

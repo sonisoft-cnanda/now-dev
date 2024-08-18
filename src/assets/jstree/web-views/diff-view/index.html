@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Directory Diff</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{bootstrapStylesPath}}" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{jstreeStylesPath}}" />
+        <link rel="stylesheet" href="{{indexStylesPath}}" />
+        <link rel="stylesheet" href="{{codeiconStylesPath}}">
+    </head>
+    <body onload="onwindowLoad()">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Conflicting Files</a>
+            <button class="btn btn-info ml-auto mr-0" style="font-size: .9em;" id="openDiff" onclick="openDiffClicked()">Open Diff</button>
+            <button class=" btn btn-info mr-0 ml-1" style="font-size: .9em;" id="markAsResolved" onclick="markAsResolved()">Mark as Resolved</button>
+        </nav>
+
+
+        <div class="card">
+            <div class="card-header">
+                <div class="half card-title">Server</div>
+                <div class="half card-title">Client</div>
+            </div>
+    
+            <div class="card-body">
+                <div id="container1" class="half"></div>
+                <div id="container2" class="half"></div>
+            </div>
+        </div>
+
+
+
+        <script src="{{jqueryPath}}"></script>
+        <script src="{{jstreePath}}"></script>
+        <script src="{{indexJsPath}}"></script>
+    </body>
+</html>

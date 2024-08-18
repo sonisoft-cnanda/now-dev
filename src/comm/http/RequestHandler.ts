@@ -8,12 +8,14 @@ import { Cookie } from 'tough-cookie';
 import { isNil } from '../../amb/Helper';
 import { ICookieStore } from './ICookieStore';
 import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
+import { Logger } from '../../util/Logger';
 
 
 axios.defaults.withCredentials = true;
 
 export class RequestHandler implements IRequestHandler{
    
+    _logger:Logger = new Logger("RequestHandler");
     _defaultHeaders:RawAxiosRequestHeaders;
     httpClient:AxiosInstance;
     _cookies: Cookie[];
@@ -101,18 +103,18 @@ export class RequestHandler implements IRequestHandler{
         let {config, url} = await this.getRequestConfig(request);
             
        try{
-        const response: IHttpResponse<T> = await this.httpClient.put(url, request.body , config);
+            const response: IHttpResponse<T> = await this.httpClient.put(url, request.body , config);
 
-        try{
-            if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
-                response.bodyObject = response.data;
+            try{
+                if(!((response.data) instanceof String) ){
+                    let rpObj: T | null = response.data as T;
+                    response.bodyObject = response.data;
+                }
+            }catch(ex){
+                //console.log(ex);
             }
-        }catch(ex){
-            //console.log(ex);
-        }
-        
-        return response;
+            
+            return response;
        }catch(ex){
         //log error
         //console.log(ex);
@@ -124,11 +126,15 @@ export class RequestHandler implements IRequestHandler{
     }
 
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
+        this._logger.debug("get", request);
 
         let {config, url} =  await this.getRequestConfig(request);
-            
+
+        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        let response:IHttpResponse<T> = null;
        try{
-        const response: IHttpResponse<T> = await this.httpClient.get(url , config);
+        response = await this.httpClient.get(url , config);
+        this._logger.debug("Http Response Received", response);
 
         try{
             if(!((response.data) instanceof String) ){
@@ -136,16 +142,14 @@ export class RequestHandler implements IRequestHandler{
                 response.bodyObject = response.data;
             }
         }catch(ex){
-            console.log(ex);
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
         }
 
         return response;
        }catch(ex){
-        //log error
-        console.log(ex);
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
        }
         
-
         return null;
     }
 
@@ -202,14 +206,15 @@ export class RequestHandler implements IRequestHandler{
     }
 
     private getQueryString(queryObj:object):string{
-        let queryStr = "";
+
+        const params = new URLSearchParams();
+      
+      
         for(var prop in queryObj){
-            if(queryStr != "")
-                queryStr += "&";
-            queryStr += prop + "=" + encodeURIComponent(queryObj[prop]);
+            params.set(prop, queryObj[prop]);
         }
 
-        return queryStr;
+        return params.toString();;
     }
 
 

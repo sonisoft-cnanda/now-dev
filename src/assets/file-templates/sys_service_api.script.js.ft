@@ -1,0 +1,13 @@
+// Service APIs must be defined in the "Services" namespace - leave the "Services." prefix on the class name and prototype
+
+Services.sys_service_api_name = Class.create();
+Services.sys_service_api_name.prototype = {
+    initialize: function() {
+        // Place any Service API initialization code here - runs each time an API is called on this Service
+
+    },
+
+    // Add Service APIs here as methods for this class
+
+    type: 'sys_service_api_name'
+}
