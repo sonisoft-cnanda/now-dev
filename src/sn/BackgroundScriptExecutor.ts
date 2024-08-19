@@ -1,8 +1,10 @@
 import { ServiceNowInstance } from "./ServiceNowInstance";
 import { HTTPRequest, HttpResponse } from "../comm/http/HTTPRequestHandler";
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
-import { XMLParser } from "../utils";
+//import { XMLParser } from "../utils";
 import { BG_SCRIPT_ENDPOINT } from "../constants";
+import { Logger } from "../util/Logger";
+import { isNil } from "../amb/Helper";
 
 
 export class BackgroundScriptExecutor {
@@ -10,7 +12,9 @@ export class BackgroundScriptExecutor {
     instance: ServiceNowInstance;
     scope: string;
 
-    constructor({ instance, scope }: BackgroundScriptExecutorOptions = {}) {
+    _logger:Logger = new Logger("BackgroundScriptExecutor");
+
+    public constructor({ instance, scope }: BackgroundScriptExecutorOptions = {}) {
         if (instance && instance instanceof ServiceNowInstance) {
             this.instance = instance;
         }
@@ -19,7 +23,7 @@ export class BackgroundScriptExecutor {
         }
     }
 
-    async executeScript({
+    public async executeScript({
         script,
         scope = this.scope,
         instance = this.instance
@@ -59,21 +63,54 @@ export class BackgroundScriptExecutor {
         }
     }
 
-    async parseScriptResult(responseXML: string) {
-        const parser = new XMLParser({
-            explicitArray: false,
-            ignoreAttrs: true,
-        });
-        const strippedResponseXML = responseXML.replace(/^\[[0-9:.]+\]/g, "");
-        return await parser.parseStringPromise(strippedResponseXML)
-            .then((result) => {
-                return {
-                    raw: responseXML,
-                    result: this._parseBGScriptResult(result),
-                    affectedRecords: this._parseAffectedRecords(result)
-                }
-            })
+    public async parseScriptResult(responseXML: string) {
+        // const parser = new XMLParser({
+        //     explicitArray: false,
+        //     ignoreAttrs: true,
+        // });
+        // const strippedResponseXML = responseXML.replace(/^\[[0-9:.]+\]/g, "");
+        // return await parser.parseStringPromise(strippedResponseXML)
+        //     .then((result) => {
+        //         return {
+        //             raw: responseXML,
+        //             result: this._parseBGScriptResult(result),
+        //             affectedRecords: this._parseAffectedRecords(result)
+        //         }
+        //     })
+
+        return {
+                        raw: null,
+                        result: null,
+                        affectedRecords: null
+                    }
     }
+
+    public async getBackgroundScriptCSRFToken() : Promise<string> {
+        let csrfToken:string = null;
+
+        const request: HTTPRequest = {
+            path: BG_SCRIPT_ENDPOINT,
+            headers: null,
+            query: null,
+            body: null
+        };
+        const response: HttpResponse<string> = await this.snRequest.get<string>(request);
+        let isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
+        if(response.status == 200 && isLoggedIn && !isNil(response.data)){
+            
+            const e =  response.data as String;
+            let t = "<input name=\"sysparm_ck\" type=\"hidden\" value=\"";
+           
+            let n = e.substring(e.indexOf(t));
+            csrfToken =  n.substring(0, n.indexOf("\">")).replace(t, "");
+            this._logger.debug("CSRF Token Received: " + csrfToken, {csrfToken:csrfToken});
+        }else{
+            this._logger.error("getBackgroundScriptCSRFToken: Invalid response. Status not 200, not logged in, or response data is empty.", {response:response});
+        }
+          
+
+        return csrfToken;
+      }
 
     private _parseBGScriptResult(parsedXMLObj: any) {
         const result = parsedXMLObj?.HTML.BODY?.PRE?._?.replace("<BR/>", "\n")

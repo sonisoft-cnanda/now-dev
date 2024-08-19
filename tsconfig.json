@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "es6"],
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -20,5 +20,13 @@
     "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "logs", "build", "./*.ts", "test/**/*"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "logs",
+    "build",
+    "./*.ts",
+    "test/**/*",
+    "scratch_code"
+  ]
 }

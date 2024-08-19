@@ -13,7 +13,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["dist/*", "coverage/*", "**/*.d.ts", "src/public/", "src/types/"],
+    ignores: ["dist/*", "coverage/*", "**/*.d.ts", "src/public/", "src/types/", "scratch_code"],
 }, {
     languageOptions: {
         parser: tsParser,

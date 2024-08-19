@@ -26,6 +26,16 @@ describe('BackgroundScriptExecutor', () => {
         instance = new ServiceNowInstance();
         executor = new BackgroundScriptExecutor({ instance, scope: TEST_SCOPE });
     });
+
+    describe('getBackgroundScriptCSRFToken', () => {
+
+        it('should return csrf token', async () => {
+           let result:string = await executor.getBackgroundScriptCSRFToken();
+            expect(result).not.toBeNull();
+            
+        }, 100000);
+
+    });
     
     describe('executeScript', () => {
 
