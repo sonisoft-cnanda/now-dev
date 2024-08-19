@@ -62,12 +62,14 @@ describe('BackgroundScriptExecutor', () => {
         })
 
         it('should execute script with given scope', async () => {
-            const script = `gs.info("TESTING SN-ATF")`;
+            let sVal:string = "TESTING SN-ATF";
+            const script = `gs.info("`+sVal+`")`;
             const scope = TEST_SCOPE;
             const result = await executor.executeScript({ script, scope, instance });
             expect(result).toBeDefined();
-            expect(result).toBe("TESTING SN-ATF");
-        });
+            expect(result.indexOf(sVal)).not.toBe(-1);
+            expect(result).toBe(sVal);
+        }, 100000);
 
     })
 

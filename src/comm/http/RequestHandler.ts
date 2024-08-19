@@ -74,23 +74,24 @@ export class RequestHandler implements IRequestHandler{
     public async post<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
 
         let {config, url} = await this.getRequestConfig(request);
-            
+        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        let response:IHttpResponse<T> = null;
        try{
-        const response: IHttpResponse<T> = await this.httpClient.post(url, request.body , config);
-
+         response = await this.httpClient.post(url, request.body , config);
+         this._logger.debug("Http  POST Response Received", response);
         try{
             if(!((response.data) instanceof String) ){
                 let rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
-            //console.log(ex);
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
         }
         
         return response;
        }catch(ex){
-        //log error
-        //console.log(ex);
+       
+        this._logger.error("Error during POST request.", {error:ex, response: response, request: request});
         throw new Error(ex);
        }
         
@@ -101,10 +102,11 @@ export class RequestHandler implements IRequestHandler{
     public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
 
         let {config, url} = await this.getRequestConfig(request);
-            
+        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        let response:IHttpResponse<T> = null;
        try{
-            const response: IHttpResponse<T> = await this.httpClient.put(url, request.body , config);
-
+            response = await this.httpClient.put(url, request.body , config);
+            this._logger.debug("Http PUT Response Received", response);
             try{
                 if(!((response.data) instanceof String) ){
                     let rpObj: T | null = response.data as T;

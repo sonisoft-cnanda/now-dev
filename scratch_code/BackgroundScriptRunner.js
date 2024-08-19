@@ -44,8 +44,8 @@ t.BackgroundScriptRunner = new class {
               sysparm_ck: t,
               runscript: "Run script",
               sys_scope: i,
-              record_for_rollback: s,
-              quota_managed_transaction: o
+              record_for_rollback: "on",
+              quota_managed_transaction: "on"
             }
           };
           let c = yield a.GatewayHelper.executeBackgroundScript(null, r);
