@@ -28,7 +28,7 @@ describe('ServiceNowRequest', () => {
              expect(resp).not.toBeNull();
              expect(resp.status).toBe(200);
              
-         })
+         }, 10000)
 
          xit('should execute get with bad/no token', async () => {
             let req:ServiceNowRequest = new ServiceNowRequest();
@@ -40,7 +40,7 @@ describe('ServiceNowRequest', () => {
             
              expect(resp).not.toBeNull();
              expect(resp.status).toBe(200);
-         })
+         }, 10000)
 
     });
 
