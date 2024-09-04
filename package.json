@@ -24,6 +24,10 @@
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\""
   },
   "dependencies": {
+    "@servicenow/sdk-core": "^2.0.0",
+    "@servicenow/sdk-project": "^2.0.0",
+    "zod": "^3.23.8",
+    "@servicenow/sdk-build": "^2.0.0",
     "@servicenow/sdk-cli": "^2.0.0",
     "@servicenow/sdk-cli-core": "^2.0.0",
     "@types/mock-fs": "^4.13.4",
