@@ -100,6 +100,10 @@ export class Logger{
 		this._localLogger.warn(message, metadata);
 	}
 
+  public successful(message:string, metadata?:any){
+    this._localLogger.info(message, metadata);
+  }
+
 }
 
 
