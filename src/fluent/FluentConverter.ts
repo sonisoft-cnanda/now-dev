@@ -11,12 +11,11 @@ import * as fs from 'fs';
 import {  BUILT_INS, PLUGINS }  from '@servicenow/sdk-build/dist/build/index.js';
 import { Logger } from '../util/Logger.js';
 import { Context } from '@servicenow/sdk-build/dist/build-core/plugins/Context.js';
-import { Logger as SDKLogger } from '@servicenow/sdk-project/dist/logger.js'
 import { AstData, XmlData } from '@servicenow/sdk-build/dist/build-core/index.js';
 
 export class FluentConverter{
 
-    private _debugSdk:boolean = false;
+    private _debugSdk:boolean = true;
 
     private _logger = new Logger("FluentConverter");
 
@@ -25,6 +24,8 @@ export class FluentConverter{
     private _xmlImportDirectory:string;
 
     private _fluentDirectory:string;
+
+    private _context:Context;
 
     /***
      * Scope of application to import from.
@@ -35,65 +36,41 @@ export class FluentConverter{
     public constructor(appRootDirectory:string, xmlImportDirectory:string){
         this._applicationRootDirectory = appRootDirectory;
         this._xmlImportDirectory = xmlImportDirectory;
+
+        this._context = this.createFluentContext();
+        this._fluentDirectory = path.resolve( this._applicationRootDirectory, this._context.app.config.fluentDir);
     }
 
-    public async convertMetadataFileToFluent(metadataFileName:string){
-        const context = this.createFluentContext();
+    public getContext() : Context{
+        return this._context;
+    }
+
+    public async convertMetadataFileToFluent(metadataFileName:string, saveGenerated:boolean=true) : Promise<Context> {
+        const context = this.getContext();
+        const options = this.getOptions();
+        const entities = this.getEntities(context);
         const filePath = path.resolve(this._xmlImportDirectory, metadataFileName);
         let xmlFile = extractXmlFile(filePath, context, this._debugSdk);
-        const entities = this.getEntities(context);
-        const options = this.getOptions();
         await this.executeTransform(entities, xmlFile, context, options);
-        this.saveGeneratedFiles(context, options as BuildOptions);
+        if(saveGenerated)
+            this.saveGeneratedFiles(context, options as BuildOptions);
+
+        return context;
     }
 
     public async convertApplicationMetadata(){
-        let xmlFileDirectory = "./download";
-        let logger = this._logger;
-        let appDirectory = "./";
-        // let convertForIDEOptions = {directory: "", projectType: "fluent"};
-
-
        
+   
         const options:BuildOptions = this.getOptions();
-        const context = this.createFluentContext(); //createContext(appDirectory, PLUGINS, BUILT_INS, parsedOptions.debug, parsedOptions.mode as ("transform" | "serialize"), fs, logger);
-        
+        const context = this.getContext();
         const entities = this.getEntities(context);
-        // const fluentDir = path.resolve(appDirectory, context.app.config.fluentDir); // "fluentDir":"src/fluent",
-        // const extractionResult = extractSourceFiles(fluentDir, context, options.debug)
-        // const { data: entities, diagnostics } = extractionResult.handled ? extractionResult : { data: [], diagnostics: [] }
-
-
-        //comment out to test for single file
+    
         const xmlArr = extractXmlFiles(this._xmlImportDirectory, context, this._debugSdk);
-        // const filePath = path.resolve(xmlFileDirectory, "sys_atf_test_suite_test_d6cfa6e62fc981101ba85d492799b674.xml");
-        //console.log(filePath);
-        //const xmlData = [];
-        //let xmlFile = extractXmlFile(filePath, context, options.debug);
-        //xmlData.push();
-        await this.executeTransform(entities, xmlFile, context, options);
-        // for(var i=0; i < xmlArr.length; i++){
-        //     try{
-        //        //const localContext = createContext(appDirectory, PLUGINS, BUILT_INS, parsedOptions.debug, parsedOptions.mode, fs, logger);
-              
-        //         var xmlFile = xmlArr.slice(i, i+1);
-        //         console.log(xmlFile[0].filePath);
-        //         //console.log(JSON.stringify(xmlFile));
-        //          let result = await transform(entities, xmlFile, context, options as BuildOptions);
-        //          //console.log(JSON.stringify(result));
-        //         // if (result) {
-        //         //     console.log('here');
-        //         //     await saveChanges(localContext, parsedOptions)
-        //         //     await localContext.keys.save(localContext, formatSourceFile) // TODO: Can probably remove this since keys.ts should get saved in `saveChanges`
-        //         // }
-        //     }catch(ex){
-        //         console.log(ex);
-        //     }
-            
-        // }
+    
+        await this.executeTransform(entities, xmlArr, context, options);
+   
         
-        
-        console.log('Saving files');
+       this._logger.debug('Saving files');
         this.saveGeneratedFiles(context, options as BuildOptions);
       
     }
@@ -111,31 +88,23 @@ export class FluentConverter{
                   
                     var xmlFile = xmlMetadataFiles.slice(i, i+1);
                     this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
-                    //console.log(JSON.stringify(xmlFile));
+
                     result = await transform(entities, xmlMetadataFiles, context, options as BuildOptions);
-                     //console.log(JSON.stringify(result));
-                    // if (result) {
-                    //     console.log('here');
-                    //     await saveChanges(localContext, parsedOptions)
-                    //     await localContext.keys.save(localContext, formatSourceFile) // TODO: Can probably remove this since keys.ts should get saved in `saveChanges`
-                    // }
+                    
                 }catch(ex){
                     this._logger.error(ex.message, {error:ex, xmlMetadataFiles: xmlMetadataFiles, entities:entities, context:context, options: options});
                 }
                 
             }
-        }else{
+        }else if(xmlMetadataFiles.length == 1){
             try{
            
-                 this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
+                 this._logger.debug("Attempting transform of " + xmlMetadataFiles[0].filePath);
                  result = await transform(entities, xmlMetadataFiles, context, options as BuildOptions);
              }catch(ex){
-                 this._logger.error(ex.message, {error:ex, xmlMetadataFiles: xmlMetadataFiles, entities:entities, context:context, options: options});
+                 this._logger.error("Error transforming file: " + xmlMetadataFiles[0].filePath + ". \n" + ex.message, {error:ex,   options: options});
              }
         }
-
-        
-        
     }
 
     private getOptions() : BuildOptions{
@@ -154,7 +123,7 @@ export class FluentConverter{
         
     }
 
-    private async saveChanges(context, options) {
+    private async saveChanges(context:Context, options:BuildOptions) {
         if (options.dontSaveFiles) {
             return;
         }
@@ -165,31 +134,29 @@ export class FluentConverter{
                 !context.compiler.isDerivedSourceFile(s.getFilePath())
             )
         });
-        //console.log(JSON.stringify(changedFiles));
+        this._logger.debug("Changed FIles: ", {changedFiles:changedFiles, context:context, options:options});
         await Promise.all(
             changedFiles.map(async (sourceFile) => {
-                context.logger.info(`Saving changes: ${sourceFile.getFilePath()}`)
-                await sourceFile.save()
+                context.logger.debug(`Saving changes: ${sourceFile.getFilePath()}`, sourceFile);
+                await sourceFile.save();
             })
         );
     }
 
     private getEntities(context:Context) : AstData[]{
-        const extractionResult = extractSourceFiles(this._fluentDirectory, context, this._debugSdk)
-        const { data: entities } = extractionResult.handled ? extractionResult : { data: [] }
+        const extractionResult = extractSourceFiles(this._fluentDirectory, context, this._debugSdk);
+        this._logger.debug("Extraction Result: ", extractionResult);
+        const { data: entities } = extractionResult.handled ? extractionResult : { data: [] };
+        this._logger.debug("Entities: ", entities);
+        
         return entities;
     }
 
     private createFluentContext() : Context{
 
-        let options = {
-            debug: true,
-            mode: 'transform',
-            clean: true,
-            transformDirectory:  this._xmlImportDirectory,
-        };
+        let options = this.getOptions();
         const parsedOptions = options;
-        const context = createContext(this._applicationRootDirectory, PLUGINS, BUILT_INS, parsedOptions.debug, parsedOptions.mode as ("transform" | "serialize"), fs, this._logger);
+        const context = createContext(this._applicationRootDirectory, PLUGINS, BUILT_INS, this._debugSdk, "transform", fs, this._logger);
         return context;
     }
 
