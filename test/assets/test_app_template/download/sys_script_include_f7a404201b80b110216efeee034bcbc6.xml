@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.InvestigateUtilAjax</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>InvestigateUtilAjax</name>
+        <script><![CDATA[var InvestigateUtilAjax = Class.create();
+InvestigateUtilAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	
+	getInvestigateURL: function() {
+		var incSysID = this.getParameter('sysparm_inc_id');
+		var ciSysID = this.getParameter('sysparm_ci_id');
+		
+		return this._getInvestigateLink(incSysID, ciSysID);
+	},
+	
+	_getInvestigateLink: function(incSysID, ciSysID) {
+		var iParamName, investigateURL;
+		var paramsArray = [];
+		var grIncident = new GlideRecord('incident');
+		var grCI = new GlideRecord('cmdb_ci');
+		var taniumAPIURL = gs.getProperty('x_taniu_tan_core.tanium_api_endpoint');
+		var uriParams = {
+			'inc_number': '',
+			'inc_sys_id': '',
+			'ci_sys_id': '',
+			'ci_name': '',
+			'ci_fqdn': '',
+			'ci_ip': '',
+			'ci_serial': ''
+		};
+		
+		if (incSysID) {
+			uriParams['inc_sys_id'] = incSysID;
+			if (grIncident.get(incSysID)) {
+				uriParams['inc_number'] = grIncident.getValue('number');
+			} else {
+				gs.warn(
+					'Incident sys_id ' + incSysID + ' not found in Incident [incident] ' +
+					'table when attempting to generate Tanium Investigate link.\n' +
+					'Investigate link will still be generated, but Investigate will not be able to ' +
+					'find the Incident automatically.'
+				);
+			}
+		}
+		
+		if (ciSysID) {
+			uriParams['ci_sys_id'] = ciSysID;
+			if (grCI.get(ciSysID)) {
+				uriParams['ci_name'] = grCI.getValue('name') || '';
+				uriParams['ci_fqdn'] = grCI.getValue('fqdn') || '';
+				uriParams['ci_ip'] = grCI.getValue('ip_address') || '';
+				uriParams['ci_serial'] = grCI.getValue('serial_number') || '';
+			} else {
+				gs.warn(
+					'CI sys_id ' + ciSysID + ' not found in Configuration Item [cmdb_ci] ' +
+					'table when attempting to generate Tanium Investigate link.\n' +
+					'Investigate link will still be generated, but Investigate will not be able to ' +
+					'find the CI. User will have to manually search for the CI within Tanium ' +
+					'Investigate.'
+				);
+			}
+		}
+		
+		//Get rid of api/v2 in the URL to get the base Tanium instance URL.
+		investigateURL = taniumAPIURL.replace('api/v2', '');
+		
+		//Get rid of -api in the URL if using Tanium Cloud.
+		investigateURL = investigateURL.split('.');
+		if (investigateURL[0].indexOf('-api') >= 0) {
+			investigateURL[0] = investigateURL[0].replace('-api', '');
+		}
+		investigateURL = investigateURL.join('.');
+		gs.debug(
+			'InvestigateUtilAjax found Tanium instance base URL ' + investigateURL +
+			' from Tanium API URL: ' + taniumAPIURL
+		);
+		
+		investigateURL += 'ui/investigate/endpoint-resolution?';
+		
+		for (iParamName in uriParams) {
+			if (iParamName && uriParams.hasOwnProperty(iParamName)) {
+				//Add each param to the array. If the param is empty, add it as an empty string.
+				paramsArray.push(
+					iParamName + '=' + (
+						encodeURIComponent(uriParams[iParamName]) || ''
+					)
+				);
+			}
+		}
+		
+		investigateURL += paramsArray.join('&');
+		gs.debug('Investigate deep-link generated: ' + investigateURL);
+		
+		return investigateURL;
+	},
+	
+	type: 'InvestigateUtilAjax'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2023-07-11 21:54:37</sys_created_on>
+        <sys_id>f7a404201b80b110216efeee034bcbc6</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>InvestigateUtilAjax</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_f7a404201b80b110216efeee034bcbc6</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-12-12 00:28:15</sys_updated_on>
+    </sys_script_include>
+</record_update>

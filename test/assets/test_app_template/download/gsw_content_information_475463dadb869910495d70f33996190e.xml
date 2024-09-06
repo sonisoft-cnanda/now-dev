@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="gsw_content_information">
+    <gsw_content_information action="INSERT_OR_UPDATE">
+        <active>false</active>
+        <article><![CDATA[<p>If you have the Tanium <a title="Threat Response" href="https://docs.tanium.com/threat_response/threat_response/index.html" target="_blank" rel="noopener noreferrer nofollow">Threat Response</a> module licensed, imported, and configured in your Tanium environment, then you&#39;ll want to configure these settings to enable quarantining of endpoints via API.<br />If you <em>don&#39;t </em>have Tanium Threat Response installed then you can skip this step, as you won&#39;t be able to quarantine endpoints in your environment. </p>
+<p>As per the <a href="https://docs.tanium.com/threat_response/threat_response/isolating_endpoints.html?#testquarantine" target="_blank" rel="noopener noreferrer nofollow">Tanium documentation</a> around quarantining/isolating endpoints in your network: in order to quarantine an endpoint, you should create custom Action packages from the existing out-of-box quarantine packages, and configure the &#34;<em>taniumquarantine.dat</em>&#34; file that&#39;s associated with <em>each quarantine package</em> (for Windows, Linux, and Mac) in your Tanium environment. <br />If you haven&#39;t done that, please follow along with the documentation (or contact your Tanium account manager) and then come back here to complete this step. </p>]]></article>
+        <best_practice_acceptable>false</best_practice_acceptable>
+        <dependent_on_contents/>
+        <dependent_on_plugins/>
+        <dependent_on_plugins_ids/>
+        <description/>
+        <embedded_help_qualifier/>
+        <end_point>system_properties_ui.do?sysparm_category=Integration%20Core:%20Quarantine%20Settings&amp;sysparm_title=Tanium%20Quarantine%20Packages</end_point>
+        <end_point_open_mode>1</end_point_open_mode>
+        <end_point_type>1</end_point_type>
+        <field/>
+        <filter/>
+        <filter_result/>
+        <implicit_dependent_on/>
+        <implicit_plugin_dependencies/>
+        <is_dynamic>false</is_dynamic>
+        <more_info_available>false</more_info_available>
+        <more_info_html/>
+        <order>99999</order>
+        <parent display_value="Set System Properties">d54eaec92f80f8101ba85d492799b687</parent>
+        <parents>d54eaec92f80f8101ba85d492799b687,d9ad26c92f80f8101ba85d492799b696</parents>
+        <plugin_id/>
+        <property_name/>
+        <property_value/>
+        <quick_startable>false</quick_startable>
+        <root_parent display_value="Tanium Integration Core Setup">d9ad26c92f80f8101ba85d492799b696</root_parent>
+        <skippable>true</skippable>
+        <supports_child_content>false</supports_child_content>
+        <sys_class_name>gsw_content_information</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-22 18:23:51</sys_created_on>
+        <sys_id>475463dadb869910495d70f33996190e</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Deprecated: Configure Quarantine Packages (replaced with another step)</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>gsw_content_information_475463dadb869910495d70f33996190e</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-22 18:42:28</sys_updated_on>
+        <table/>
+        <title>Deprecated: Configure Quarantine Packages (replaced with another step)</title>
+        <weight>2</weight>
+    </gsw_content_information>
+    <sys_translated_text action="delete_multiple" query="documentkey=475463dadb869910495d70f33996190e"/>
+</record_update>

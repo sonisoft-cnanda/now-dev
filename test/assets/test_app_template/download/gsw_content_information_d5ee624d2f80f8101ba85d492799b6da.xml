@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="gsw_content_information">
+    <gsw_content_information action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <article><![CDATA[<p>Click <strong>Configure</strong> to open the <strong>Tanium Integration Core</strong> <a title="test suite" href="sys_atf_test_suite.do?sys_id&#61;bcec16262f8981101ba85d492799b673" target="_blank" rel="noopener noreferrer nofollow">test suite</a>. On that page, click the blue <strong>Run Test Suite</strong> button to initiate the automated tests. <br />Any errors will be reported in the test results, and should give you an idea of how to resolve any detected configuration issues. </p>]]></article>
+        <best_practice_acceptable>false</best_practice_acceptable>
+        <dependent_on_contents/>
+        <dependent_on_plugins/>
+        <dependent_on_plugins_ids/>
+        <description/>
+        <embedded_help_qualifier/>
+        <end_point>sys_atf_test_suite.do?sys_id=bcec16262f8981101ba85d492799b673</end_point>
+        <end_point_open_mode>2</end_point_open_mode>
+        <end_point_type>1</end_point_type>
+        <field/>
+        <filter/>
+        <filter_result/>
+        <implicit_dependent_on/>
+        <implicit_plugin_dependencies/>
+        <is_dynamic>false</is_dynamic>
+        <more_info_available>false</more_info_available>
+        <more_info_html/>
+        <order>100</order>
+        <parent display_value="Run Automated Tests">a68ee20d2f80f8101ba85d492799b61d</parent>
+        <parents>a68ee20d2f80f8101ba85d492799b61d,d9ad26c92f80f8101ba85d492799b696</parents>
+        <plugin_id/>
+        <property_name/>
+        <property_value/>
+        <quick_startable>false</quick_startable>
+        <root_parent display_value="Tanium Integration Core Setup">d9ad26c92f80f8101ba85d492799b696</root_parent>
+        <skippable>true</skippable>
+        <supports_child_content>false</supports_child_content>
+        <sys_class_name>gsw_content_information</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 14:55:54</sys_created_on>
+        <sys_id>d5ee624d2f80f8101ba85d492799b6da</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>Run ATF Tests to Validate Configuration</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>gsw_content_information_d5ee624d2f80f8101ba85d492799b6da</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-04-04 22:46:29</sys_updated_on>
+        <table/>
+        <title>Run ATF Tests to Validate Configuration</title>
+        <weight>3</weight>
+    </gsw_content_information>
+    <sys_translated_text action="delete_multiple" query="documentkey=d5ee624d2f80f8101ba85d492799b6da"/>
+</record_update>

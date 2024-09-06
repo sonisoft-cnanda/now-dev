@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>false</action_insert>
+        <action_query>true</action_query>
+        <action_update>false</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_taniu_tan_core_configured_sensor</collection>
+        <condition>current.isValidField('jit_discovery') &amp;&amp; !gs.hasRole('x_taniu_jit_discov.admin') &amp;&amp; !gs.hasRole('x_taniu_jit_discov.map_manager')</condition>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Hide JIT Discovery records</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	//Condition: 
+	// current.isValidField('jit_discovery') && 
+	// !gs.hasRole('x_taniu_jit_discov.admin') && 
+	// !gs.hasRole('x_taniu_jit_discov.map_manager')
+	
+	/*
+		If the JIT Disco app is installed, but the user is not a JIT Discovery admin or
+		 map manager, then they should not be able to see JIT Discovery records.
+	*/
+	current.addQuery('jit_discovery', false);
+	
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-01-26 23:22:00</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>2d2c85e81b000e50132a55392a4bcb6a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Hide JIT Discovery records</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_2d2c85e81b000e50132a55392a4bcb6a</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-01-26 23:22:00</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=2d2c85e81b000e50132a55392a4bcb6a"/>
+</record_update>

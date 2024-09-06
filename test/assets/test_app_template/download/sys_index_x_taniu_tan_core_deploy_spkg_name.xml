@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_index">
+    <sys_index action="INSERT_OR_UPDATE">
+        <col_name_string>name</col_name_string>
+        <index_col_name element="name" name="x_taniu_tan_core_deploy_spkg">af10abc9db999510495d70f3399619b4</index_col_name>
+        <logical_table_name>x_taniu_tan_core_deploy_spkg</logical_table_name>
+        <sys_class_name>sys_index</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2022-08-12 14:10:37</sys_created_on>
+        <sys_id>3d316b05db159510acc1ef92ca96195e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core_deploy_spkg</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_index_x_taniu_tan_core_deploy_spkg_name</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2022-08-12 14:10:37</sys_updated_on>
+        <table display_value="Deploy Software Package" name="x_taniu_tan_core_deploy_spkg">54ee9bc9db999510495d70f3399619ba</table>
+        <unique_index>false</unique_index>
+    </sys_index>
+</record_update>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_taniu_tan_core_configured_action_package</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition table="x_taniu_tan_core_configured_action_package">action_packageVALCHANGES^action_packageISNOTEMPTY^EQ<item endquery="false" field="action_package" goto="false" newquery="false" operator="VALCHANGES" or="false" value=""/>
+            <item endquery="false" field="action_package" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter_condition>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Populate Configured Package Parameters</name>
+        <order>1000</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	/*
+		When (after) a Configured Action is created, find all Action Package Parameters
+		 associated with the selected Action Package, and create records in the
+		 "Configured Action Parameter" table for each.
+	*/
+	
+	var packageParamKey;
+	var currentConfiguredActionID = current.getUniqueValue(); //The current "Configured Action" record.
+	var selectedPackageID = current.getValue('action_package'); //Selected action package
+	var grConfiguredPackageParam = new GlideRecord('x_taniu_tan_core_configured_action_parameter');
+	var grPackageParam = new GlideRecord('x_taniu_tan_core_tanium_package_parameter');
+	
+	//If a package has somehow not been selected (which should be impossible, but you never
+	// know), then warn.
+	if (!selectedPackageID) {
+		gs.warn('The record in table ' + current.getTableName() + ' has been created or updated without any Tanium Action Package selected. This should not be possible. You may want to investigate.');
+		return;
+		//We could abort the update here, but since this should be impossible, we don't want to
+		// risk breaking something.
+	}
+	
+	grPackageParam.addQuery('package', selectedPackageID);
+	grPackageParam.addNotNullQuery('key');
+	grPackageParam.query();
+	
+	while (grPackageParam.next()) {
+		packageParamKey = grPackageParam.getValue('key');
+		grConfiguredPackageParam.initialize();
+		
+		grConfiguredPackageParam.setValue(
+			'package_parameter',
+			grPackageParam.getUniqueValue()
+		);
+		grConfiguredPackageParam.setValue(
+			'configured_action',
+			currentConfiguredActionID
+		);
+		grConfiguredPackageParam.setValue(
+			'key',
+			packageParamKey
+		);
+		
+		grConfiguredPackageParam.insert();
+	}
+	
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-13 19:23:08</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>7c5b916bdbf99110acc1ef92ca961931</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>Populate Configured Package Parameters</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_7c5b916bdbf99110acc1ef92ca961931</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-30 19:29:47</sys_updated_on>
+        <template/>
+        <when>after</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=7c5b916bdbf99110acc1ef92ca961931"/>
+</record_update>

@@ -1,0 +1,1995 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.TaniumActionUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>TaniumActionUtil</name>
+        <script><![CDATA[var TaniumActionUtil = Class.create();
+TaniumActionUtil.prototype = Object.extendsObject(x_taniu_tan_core.TaniumIntegrationCore, {
+	
+	/**
+	 * Creates a single Tanium Action, targeted to a single endpoint's serial number.
+	 * @param {String|Number} packageID - The Package ID of the Tanium Package to deploy to the
+	 *  endpoint with this Action. As demonstrated in the example code below, the Package ID
+	 *  can be found in the x_taniu_tan_core_tanium_package table.
+	 * In the related list below the form on the Tanium Package table, you can also find a
+	 *  list of valid parameters for each package, which you can use to construct the
+	 *  optional parametersObj argument.
+	 * @param {String} endpointSerial - The serial number of the endpoint to which you'd like
+	 *  to target this action.
+	 * Note that this assumes that, as they should be, endpoint serial numbers are unique
+	 *  within your environment. If this is not the case, that could result in multiple
+	 *  endpoints being targeted. If you need to use alternate targeting, some custom
+	 *  development may be required depending on which specific property you'd like to use
+	 *  to target your action.
+	 * @param {Object} [parametersObj={}] - An object containing the parameters to be passed
+	 *  into the Tanium Package specified for your Action in the packageID argument. This
+	 *  should take the form of a JSON object where each key (property name) is set to the
+	 *  value of the key field on the Tanium Package Parameter associated to the Tanium
+	 *  Package with the ID specified in the packageID argument.
+	 * Example, using the $1 parameter key from the "Custom Tagging - Add Tags"
+	 *  Package:
+	 * {
+	 *    '$1' : 'tag_name_here'
+	 * }
+	 * Some Tanium Packages may require one or more parameters, and some may require none.
+	 *  If there are required parameters that are not specified, an error may occur. Be sure
+	 *  to test which parameters you're passing to each package before promoting your code
+	 *  to production.
+	 * Any parameters passed into the createActionOnEndpointBySerial() method using this
+	 *  argument that are not valid parameters according to the Tanium Package Parameter
+	 *  table will result in an error, and the code will halt.
+	 * You can learn about packages and parameters in the Tables section of the documentation.
+	 * @param {Number} [expireSeconds=86400] - The number of seconds after which the Action
+	 *  will expire. If the endpoint is offline when this Action is issued, and remains
+	 *  offline for the duration in expireSeconds, the Action will not be deployed on that
+	 *  endpoint.
+	 * Default value: 86,400 (24 hours)
+	 * @param {Boolean} [ignoreInvalidParams=false] - Optionally specify whether to ignore
+	 *  invalid parameters. If set to true, this will prevent any form of parameter validation
+	 *  on the ServiceNow side.
+	 * This can be useful for when you're interacting with certain sensor-sourced packages,
+	 *  such as the "Custom Tagging - Remove Tags" package, which requires a non-declared
+	 *  parameter "||Custom Tags||".
+	 * @return {Object|Boolean} - The response body when the REST call to create the
+	 *  Tanium Action is called, including the Action ID from Action History in Tanium
+	 *  in the .data.id node.
+	 * If there is an error, then the boolean false will be returned or an error will be
+	 *  thrown depending on severity.
+	 *  @example
+	 *  deployTagToEndpoint();
+	 *
+	 * function deployTagToEndpoint() {
+	 *    var errMsg, tic, params, computerSerialNumber, grPackage, packageName, actionResponse;
+	 *    tic = new x_taniu_tan_core.TaniumActionUtil();
+	 *    params = { //Key is parameter key, value is parameter value.
+	 *       '$1' : 'integration_core_is_cool' //Tag name
+	 *    }; //Parameter keys (and descriptions) can be found in related list under Tanium Packages
+	 *     var computerSerialNumber = 'some_serial_number';
+	 *     packageName = 'Custom Tagging - Add Tags';
+	 *
+	 *    grPackage = new GlideRecord('x_taniu_tan_core_tanium_package');
+	 *    grPackage.addQuery('name', packageName);
+	 *    grPackage.setLimit(1);
+	 *    grPackage.query();
+	 *
+	 *    if (!grPackage.next()) {
+	 *       errMsg = 'Package with name ' + packageName + ' not found in Tanium Package table.';
+	 *       gs.error(errMsg);
+	 *       throw new Error(errMsg);
+	 *    }
+	 *
+	 *    actionResponse = tic.createActionOnEndpointBySerial( //Create action in Tanium
+	 *       grPackage.getValue('package_id'), //ID for "Custom Tagging - Add Tags" package
+	 *       computerSerialNumber,
+	 *       params
+	 *    );
+	 *
+	 *    gs.info(
+	 *       'Tanium Action created with ID ' + actionResponse.data.id.toString()
+	 *    );
+	 * }
+	 *
+	 * @version 1.4.3 - Updated to use new system property (x_taniu_tan_core.all_computers_action_group_id) to determine the "Default - All Computers" action group ID.
+	 */
+	createActionOnEndpointBySerial : function (
+		packageID,
+		endpointSerial,
+		parametersObj,
+		expireSeconds,
+		ignoreInvalidParams
+	) {
+		//init: hoist
+		var logMsg,
+			errMsg,
+			grPackage,
+			actionGroupID,
+			packageName,
+			rCreateAction,
+			responseObj,
+			specifiedParameterKeys,
+			parametersArr,
+			paramValidationResponse;
+		
+		//Set default arg values if unspecified
+		parametersObj = (typeof parametersObj == 'undefined') ? {} : parametersObj;
+		expireSeconds = (typeof expireSeconds == 'undefined') ? 86400 : expireSeconds;
+		ignoreInvalidParams = (typeof ignoreInvalidParams == 'undefined') ? false : ignoreInvalidParams;
+		
+		actionGroupID = parseInt(
+			gs.getProperty(
+				'x_taniu_tan_core.all_computers_action_group_id',
+				'4'
+			)
+		) || 4;
+		
+		specifiedParameterKeys = Object.keys(parametersObj);
+		parametersArr = this._transformParametersObjToArray(parametersObj);
+		
+		if (!ignoreInvalidParams) {
+			//Check that all specified parameters are valid for this package.
+			paramValidationResponse = this._checkAllParametersAreValidForPackage(
+				packageID,
+				specifiedParameterKeys
+			);
+			if (paramValidationResponse.has_error) {
+				errMsg = 'Parameters specified when calling function to create Tanium Action ' +
+					'are invalid. Error info:\n' +
+					JSON.stringify(paramValidationResponse, null, 2);
+				gs.error(errMsg);
+				throw new Error(errMsg);
+			}
+		}
+		
+		grPackage = this._getPackageGRByID(packageID);
+		if (!grPackage.next()) {
+			errMsg = 'Unable to find Tanium Package in Tanium Package table with package ID ' +
+				packageID;
+			gs.error(errMsg);
+			throw new Error(errMsg);
+		}
+		
+		packageName = grPackage.getValue('name');
+		
+		rCreateAction = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Create Action on CI'
+		);
+		
+		rCreateAction.setStringParameterNoEscape(
+			'tanium_api_endpoint',
+			this.TANIUM_API_ENDPOINT
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'computer_serial_number',
+			endpointSerial
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'all_computers_action_group_id',
+			actionGroupID
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'package_id',
+			grPackage.getValue('package_id')
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'package_name',
+			packageName
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'action_name',
+			grPackage.getValue('name')
+		);
+		rCreateAction.setStringParameterNoEscape(
+			'parameters_array',
+			JSON.stringify(parametersArr)
+		);
+		rCreateAction.setStringParameterNoEscape('expire_seconds', expireSeconds.toString());
+		
+		responseObj = this._executeRESTCall(rCreateAction);
+		
+		logMsg = 'Execute package ' + packageName + ' with package ID ' + packageID + ' on endpoint with serial number ' + endpointSerial + '.';
+		if (parametersArr && parametersArr.length > 0) {
+			logMsg += '\nAction Parameters:\n' + JSON.stringify(parametersObj, null, 2);
+		}
+		this._logAction(
+			endpointSerial,
+			this.getEndpointIDBySerial(endpointSerial),
+			packageName,
+			logMsg,
+			((responseObj.hasOwnProperty('data') && responseObj.data.hasOwnProperty('id')) ? responseObj.data.id : '')
+		);
+		
+		return responseObj;
+	},
+	
+	/**
+	 * Execute a pre-configured Action from the Configured Action [x_taniu_tan_core_configured_action_package] table.
+	 * The selected Configured Action must be active, and have its parameters (if it has any)
+	 *  configured within the Configured Action Parameter table (the related list at the bottom
+	 *  of the Configured Action form).
+	 *
+	 * @param {GlideRecord} grConfiguredAction - A GlideRecord positioned to the Configured
+	 *  Action record for the specific Configured Action you'd like to execute against the
+	 *  target endpoint.
+	 * @param {GlideRecord} grEndpoint - A GlideRecord positioned to the endpoint on which
+	 *  you'd like to execute the specified Configured Action.
+	 * @param {Number} [expireSeconds=86400] - The number of seconds after which the Action
+	 *  will expire. If the endpoint is offline when this Action is issued, and remains
+	 *  offline for the duration in expireSeconds, the Action will not be deployed on that
+	 *  endpoint.
+	 * Default value: 86,400 (24 hours).
+	 * @param {Object} [parameterArgsObj={}] - An optional object to pass into any Configured
+	 *  Action Parameters that use an "advanced" scripted parameter value.
+	 * This is not required, and in the vast majority of cases, will not be used.
+	 * Default value: {}
+	 *
+	 * @returns {Object|Boolean} - The response body when the REST call to create the
+	 *  Tanium Action is called, including the Action ID from Action History in Tanium
+	 *  in the .data.id node.
+	 * If there is an error, then the boolean false will be returned or an error will be
+	 *  thrown depending on severity.
+	 *
+	 * @example
+	 * var createActionResponse;
+	 * var tau = new x_taniu_tan_core.TaniumActionUtil();
+	 * var grEndpoint = new GlideRecord('cmdb_ci_win_server');
+	 * var grConfiguredAction = new GlideRecord('x_taniu_tan_core_configured_action_package');
+	 *
+	 * grEndpoint.get('[endpoint_sys_id_here]');
+	 *
+	 * //Pre-configured action to apply specific tag
+	 * grConfiguredAction.get('[configured_action_sys_id]');
+	 *
+	 * createActionResponse = tau.executeConfiguredAction(
+	 * 	grConfiguredAction,
+	 * 	grEndpoint
+	 * );
+	 *
+	 * gs.info(JSON.stringify(
+	 * 	createActionResponse,
+	 * 	null,
+	 * 	2
+	 * ));
+	 * @since 1.2.0
+	 */
+	executeConfiguredActionOnEndpoint: function(
+		grConfiguredAction,
+		grEndpoint,
+		expireSeconds,
+		parameterArgsObj
+	) {
+		//upcoming_feature: Break this method into chunks
+		var paramKey, paramValue, packageID, grConfiguredActionParam;
+		var endpointSerial = grEndpoint.getValue('serial_number');
+		
+		parameterArgsObj = (gs.nil(parameterArgsObj)) ? {} : parameterArgsObj;
+		expireSeconds = (gs.nil(expireSeconds)) ? 86400 : expireSeconds;
+		
+		//BEGIN Check for errors in passed arguments
+		//Configured action and endpoint must be valid records.
+		if (!grConfiguredAction.isValidRecord() || !grEndpoint.isValidRecord()) {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'Either the "Configured Action" record or the endpoint record passed into ' +
+				'this function were not valid records in the database. Halting execution.'
+			);
+		}
+		//Serial number must be specified
+		if (!endpointSerial) {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'The specified endpoint with sys_id ' + grEndpoint.getUniqueValue() +
+				' has no serial number. Cannot execute Action without a valid serial number.'
+			);
+		}
+		//Configured action must be a record in the correct table.
+		if (grConfiguredAction.getTableName() !== 'x_taniu_tan_core_configured_action_package') {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'grConfiguredAction argument does not correspond to a valid Configured Action ' +
+				'in the x_taniu_tan_core_configured_action_package table. Instead, the passed ' +
+				'GlideRecord corresponds to a record with sys_id ' +
+				grConfiguredAction.getUniqueValue() + ' on table ' +
+				grConfiguredAction.getTableName() + '. Unable to continue with deploying ' +
+				'Configured Action on endpoint with sys_id ' + grEndpoint.getUniqueValue() +
+				'. Halting execution.'
+			);
+		}
+		//Prevent executing deactivated Configured Actions
+		if (grConfiguredAction.getValue('active') !== '1') {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'The "Configured Action" record is deactivated and cannot be executed.'
+			);
+		}
+		//Prevent executing configured actions without selected action packages.
+		if (grConfiguredAction.action_package.nil()) {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'The "Configured Action" record\'s "Action package" field is empty. Cannot ' +
+				'execute an action without a valid package. Halting execution.'
+			);
+		}
+		//END argument error checking
+		
+		packageID = grConfiguredAction.action_package.package_id.toString();
+		//Okay, I lied; one more error-check.
+		if (!packageID) {
+			throw new Error(
+				'Error while executing TaniumActionUtil.executeConfiguredActionOnEndpoint(): ' +
+				'The selected Configured Action points to a Tanium Action Package (sys_id: ' +
+				grConfiguredAction.getValue('action_package') + ') with no package ID. ' +
+				'Cannot continue without a valid package ID.'
+			);
+		}
+		
+		grConfiguredActionParam = new GlideRecord(
+			'x_taniu_tan_core_configured_action_parameter'
+		);
+		grConfiguredActionParam.addQuery(
+			'configured_action',
+			grConfiguredAction.getUniqueValue()
+		);
+		grConfiguredActionParam.addNotNullQuery('key');
+		grConfiguredActionParam.query();
+		
+		//Get all parameter values to use with this package.
+		while(grConfiguredActionParam.next()) {
+			paramKey = grConfiguredActionParam.getValue('key');
+			paramValue = this._getConfiguredActionParamValue(
+				grConfiguredActionParam,
+				grEndpoint,
+				parameterArgsObj
+			);
+			
+			if (paramValue && (typeof paramValue !== 'string')) {
+				paramValue = paramValue.toString();
+			}
+			
+			if (paramKey && paramValue) {
+				parameterArgsObj[paramKey] = paramValue;
+			}
+		}
+		
+		//Finally, we execute the action!
+		return this.createActionOnEndpointBySerial(
+			packageID,
+			endpointSerial,
+			parameterArgsObj,
+			expireSeconds,
+			true
+		);
+	},
+	
+	/**
+	 * Stop the specified action (by actionID) after the specified number of endpoints
+	 *  (numEndpoints) or more have completed the action.
+	 * @param {String|Number} actionID - The action ID to stop after the specified number of
+	 *  endpoints have completed it.
+	 * @param {Number} numEndpoints -The number of endpoints to have completed the specified
+	 *  action, after which the action should be stopped.
+	 */
+	stopActionAfterCompletedOn : function (actionID, numEndpoints) {
+		var inputs = {
+			'tan_action_id' : actionID.toString(),
+			'min_completion_count' : numEndpoints
+		};
+		
+		// Start Asynchronously: Uncomment to run in background. Code snippet will not have access
+		// to outputs.
+		// sn_fd.FlowAPI.getRunner().subflow('x_taniu_tan_core.taniumstop_action_after_n_endpoints').inBackground().withInputs(inputs).run();
+		
+		// Execute Synchronously: Run in foreground. Code snippet has access to outputs.
+		var result = sn_fd.FlowAPI.getRunner()
+			.subflow('x_taniu_tan_core.taniumstop_action_after_n_endpoints')
+			.withInputs(inputs)
+			.run();
+		
+		return result;
+	},
+	
+	/**
+	 * Immediately stop the specified action (by actionID).
+	 * @param {String|Number} actionID - The "action ID" of the Tanium Action to stop.
+	 * @returns {boolean}
+	 */
+	stopActionByID : function (actionID) {
+		var responseBody;
+		var rStopActionByID = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Stop Action'
+		);
+		
+		rStopActionByID.setStringParameterNoEscape(
+			'action_id', actionID
+		);
+		rStopActionByID.setStringParameterNoEscape(
+			'tanium_api_endpoint', this.TANIUM_API_ENDPOINT
+		);
+		
+		
+		/*
+		   This API call is intermittently returning status 0 on on-prem instances.
+		   Unable to identify the cause. Further investigation required.
+		   Probably not an issue on the SN side.
+		   For now, setting ignoreHTTPErrors and returnFalseOnFailure to true to prevent halting.
+		 */
+		responseBody = this._executeRESTCall(
+			rStopActionByID, true, true, true
+		);
+		
+		return !!responseBody;
+	},
+	
+	/**
+	 * Get details about the specified package, by package name.
+	 * @param {String} packageName - The name of the package you want details about.
+	 * @param {String} [contentSetName=] - If specified, only Tanium Packages which are part of
+	 *     this Content Set will be included in the returned array. If unspecified, Tanium Packages
+	 *     in all Content Sets will be included.
+	 * @param getParameters
+	 * @returns {[{}]}
+	 */
+	getPackageDetailsByName : function (packageName, contentSetName, getParameters) {
+		//Verify that the caller has specified the package name. Otherwise, throw.
+		if (!packageName) {
+			throw new Error(
+				'getPackageDetailsByName called without specifying packageName parameter. ' +
+				'Package name is required to get package details by name.'
+			);
+		}
+		getParameters = (typeof getParameters == 'undefined') ? true : getParameters;
+		
+		//init variables
+		var packageDetails = [];
+		var grPackage = new GlideRecord('x_taniu_tan_core_tanium_package');
+		//Add query param for name. If contentSetName is specified, specify that as well.
+		grPackage.addQuery('name', packageName);
+		if (contentSetName) {
+			grPackage.addQuery('content_set_name', contentSetName);
+		}
+		grPackage.query();
+		
+		//For each returned package, construct an object with all relevant details about
+		// that package, and push it into the array to be returned.
+		while (grPackage.next()) {
+			packageDetails.push({
+				'name' : grPackage.getValue('name'),
+				'id' : grPackage.getValue('package_id'),
+				'command' : grPackage.getValue('command'),
+				'content_set_name' : grPackage.getValue('content_set_name'),
+				'content_set_id' : grPackage.getValue('content_set_id'),
+				'parameters' : (getParameters) ?
+					this.getParameterDetailsByPackageSysID(
+						grPackage.getUniqueValue()
+					) : []
+			});
+		}
+		
+		return packageDetails;
+	},
+	
+	/**
+	 * Get parameter details by package sys_id. Gets all important details about all parameters
+	 *  associated with the specified Tanium Package as an array of objects. If package has no
+	 *  parameters, a blank array (with 0 elements) is returned instead.
+	 * @param {String} packageSysID - The sys_id of the Tanium Package to get all parameter
+	 *  details for. This should be the sys_id of a record in the x_taniu_tan_core_tanium_package
+	 *  table.
+	 * @returns {[{}]} An array of objects with details about all parameters associated with
+	 *  the specified package. If no parameters are accepted for the specified package, an empty
+	 *  array will be returned instead.
+	 */
+	getParameterDetailsByPackageSysID : function (packageSysID) {
+		if (!packageSysID) {
+			throw new Error(
+				'getParameterDetailsByPackageSysID() called without specifying packageSysID ' +
+				'argument. Package sys_id is required to get a package\'s parameters.'
+			);
+		}
+		var paramDetails = [];
+		var grPackageParam = new GlideRecord('x_taniu_tan_core_tanium_package_parameter');
+		
+		grPackageParam.addQuery('package', packageSysID);
+		grPackageParam.query();
+		
+		while (grPackageParam.next()) {
+			paramDetails.push({
+				'label' : grPackageParam.getValue('label'),
+				'param_key' : grPackageParam.getValue('key'),
+				'description' : grPackageParam.getValue('description'),
+				'default_value' : grPackageParam.getValue('default_value'),
+				'max_characters' : parseInt(grPackageParam.getValue('max_characters')) || 0
+			});
+		}
+		
+		return paramDetails;
+	},
+	
+	
+	/**
+	 * Get the details of a specific action which has previously been triggered against one
+	 *  or more endpoints.
+	 * @param {String} actionID - The ID of the action (not to be confused with the ID of
+	 *  the package) that was previously deployed. You can get this from the .data.id node
+	 *  of the object returned from the .createActionOnEndpointBySerial() method.
+	 * @return {Object|Boolean} - The response body from the API call to Tanium.
+	 */
+	getActionDetailsByID : function (actionID) {
+		var responseBody;
+		var rGetActionDetailsByID = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Get Action Details by ID'
+		);
+		
+		rGetActionDetailsByID.setStringParameterNoEscape(
+			'action_id', actionID
+		);
+		rGetActionDetailsByID.setStringParameterNoEscape(
+			'tanium_api_endpoint', this.TANIUM_API_ENDPOINT
+		);
+		
+		/*
+		   This API call is intermittently returning status 0 on on-prem instances.
+		   Unable to identify the cause. Further investigation required.
+		   Probably not an issue on the SN side.
+		   For now, setting ignoreHTTPErrors and returnFalseOnFailure to true to prevent halting.
+		 */
+		responseBody = this._executeRESTCall(
+			rGetActionDetailsByID, true, true, true
+		);
+		
+		return responseBody;
+	},
+	
+	/**
+	 * Get the results (so far) of a specific action which has previously been issued.
+	 * @param {String|Number} sourceID - The ID of the action (not to be confused with the ID of
+	 *  the package) that was previously deployed. You can get this from the .data.id node of the
+	 *  object returned from the .createActionOnEndpointBySerial() method.
+	 * @returns {Object|Boolean} - The response body from the API call to Tanium.
+	 * Returns false if the API call fails.
+	 */
+	getActionResultsBySourceID: function (sourceID) {
+		var responseBody;
+		var rGetActionResultsByID = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Get Action Results by Source ID'
+		);
+		
+		rGetActionResultsByID.setStringParameterNoEscape(
+			'tanium_module_api_url', this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rGetActionResultsByID.setStringParameterNoEscape(
+			'source_id', sourceID
+		);
+		
+		responseBody = this._executeRESTCall(
+			rGetActionResultsByID, true, true, true
+		);
+		
+		gs.info(
+			'TaniumActionUtil.getActionResultsBySourceID() response body: \n' +
+			JSON.stringify(responseBody, null, 2)
+		);
+		
+		return responseBody;
+	},
+	
+	getActionResultsByID : function (actionID) {
+		var responseBody;
+		var rGetActionResultsByID = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Get Action Results by ID'
+		);
+		
+		rGetActionResultsByID.setStringParameterNoEscape(
+			'tanium_api_endpoint', this.TANIUM_API_ENDPOINT
+		);
+		rGetActionResultsByID.setStringParameterNoEscape(
+			'action_id', actionID
+		);
+		
+		
+		/*
+		   This API call is intermittently returning status 0 on on-prem instances.
+		   Unable to identify the cause. Further investigation required.
+		   Probably not an issue on the SN side.
+		   For now, setting ignoreHTTPErrors and returnFalseOnFailure to true to prevent halting.
+		 */
+		responseBody = this._executeRESTCall(
+			rGetActionResultsByID, true, true, true
+		);
+		
+		return responseBody;
+	},
+	
+	/**
+	 * Update the Tanium Package and Tanium Package Parameter tables
+	 *  (x_taniu_tan_core_tanium_package and x_taniu_tan_core_tanium_package_parameter
+	 *  respectively).
+	 * This method is called by the Scheduled Script Execution "Sync Tanium Packages and Package
+	 *  Parameters for Actions", which should have the sys_id "00d7b0dc2f2f70501ba85d492799b6b1".
+	 * @param {Boolean} [skipHiddenPackages=true] Optionally specify whether to skip (not import)
+	 * packages which are marked in Tanium as "hidden".
+	 * @param {Boolean} [skipDeletedPackages=true] Optionally specify whether to skip (not import)
+	 *  packages which are marked in Tanium as "deleted".
+	 * @return {boolean} Returns boolean true if successful. Throws an error and logs to the system
+	 *  error logs, if this process fails.
+	 */
+	updatePackagesTable : function (skipHiddenPackages, skipDeletedPackages) {
+		var allPackages;
+		
+		skipHiddenPackages = (typeof skipHiddenPackages == 'undefined') ? true : skipHiddenPackages;
+		skipDeletedPackages = (typeof skipDeletedPackages == 'undefined') ? true : skipDeletedPackages;
+		
+		//Get all packages from Tanium
+		allPackages = this._getAllPackageDetails();
+		
+		//Update any packages in the Tanium Packages table that need updating.
+		//Delete any packages in the table that weren't in this latest export.
+		//NOTE: This method modifies allPackages in-place, removing any that were
+		// updated or deleted, so all package objects remaining in it should be created.
+		this._updateAndDeleteExistingPackages(
+			allPackages,
+			skipHiddenPackages,
+			skipDeletedPackages
+		);
+		
+		this._createAllMissingPackages(
+			allPackages,
+			skipHiddenPackages,
+			skipDeletedPackages
+		);
+		
+		return true;
+	},
+	
+	/**
+	 * Kill the specified process with the specified process name and ID, on the specified
+	 * endpoint.
+	 * All arguments are mandatory. A hard error will be thrown if all arguments are not specified.
+	 *
+	 * @param {String} endpointSerialNumber - The serial number of the endpoint (must be unique
+	 *  in your environment).
+	 * @param {String} processName - The process name. For example: "notepad.exe".
+	 * @param {Number|String} processID - The process ID as either an integer or a string.
+	 * For example, 8141 or "8141".
+	 * @param {Number|String} [endpointID=this.getEndpointIDBySerial(endpointSerialNumber)] -
+	 *  Optionally specify the endpoint ID. If this is not specified, endpointSerialNumber
+	 *  must be. If it IS specified, endpointSerialNumber is not used.
+	 * @return {boolean} - True if the process was successfully killed, or false if not (in which
+	 *  case, a WARNING will likely be logged to your system logs - such as if the process cannot
+	 *  be found).
+	 * @example
+	 * var i, notepadPID;
+	 * var computerSerialNumber = 'some_serial_number';
+	 * var tanActionUtil = new x_taniu_tan_core.TaniumActionUtil();
+	 * var endpointID = tanActionUtil.getEndpointIDBySerial(computerSerialNumber);
+	 * notepadPID = tanActionUtil.getProcessIDsByName(null, 'notepad.exe', endpointID)[0];
+	 * //Optionally, use endpoint serial instead:
+	 * //notepadPID = tanActionUtil.getProcessIDsByName(computerSerialNumber, 'notepad.exe')[0];
+	 * tanActionUtil.killProcessOnEndpoint(
+	 *    null, //Optionally, specify the computer serial number and skip endpointID
+	 *    'notepad.exe',
+	 *    notepadPID,
+	 *    endpointID
+	 * );
+	 */
+	killProcessOnEndpoint : function (
+		endpointSerialNumber,
+		processName,
+		processID,
+		endpointID
+	) {
+		var responseBody,
+			rKillProcess,
+			responseIsValid;
+		
+		//Validate inputs
+		if ((!endpointSerialNumber && !endpointID) || !processName || !processID) {
+			throw new Error(
+				'TaniumIntegrationCore.killProcessOnEndpoint() called with invalid arguments.'
+			);
+		}
+		
+		//Get endpoint ID using the provided serial number.
+		if (!endpointID) {
+			endpointID = this.getEndpointIDBySerial(endpointSerialNumber);
+		}
+		//Initialize "kill process" REST Message object; automatically handle auth session.
+		rKillProcess = this._getRESTObject('Tanium Integration Core', 'Gateway-Kill Process');
+		
+		rKillProcess.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rKillProcess.setStringParameterNoEscape('endpoint_id', endpointID);
+		rKillProcess.setStringParameterNoEscape('process_id', processID);
+		rKillProcess.setStringParameterNoEscape('process_name', processName);
+		
+		//Execute REST call to Tanium (may do a hard throw if response body invalid or server
+		// unavailable)
+		responseBody = this._executeRESTCall(rKillProcess);
+		responseIsValid = (
+			( //Response has non-null data node
+				responseBody.hasOwnProperty('data') &&
+				responseBody.data
+			) &&
+			( //Response has non-null data.killProcess node
+				responseBody.data.hasOwnProperty('killProcess') &&
+				responseBody.data.killProcess
+			) &&
+			( //Response has non-null data.killProcess.result node
+				responseBody.data.killProcess.hasOwnProperty('result') &&
+				responseBody.data.killProcess.result
+			)
+		);
+		//If result node (or any parent nodes) not found, return false.
+		if (!responseIsValid) {
+			gs.error(
+				'Attempting to kill process ' + processName + ' with process ID ' +
+				processID + ' on endpoint with serial number ' + endpointSerialNumber + ' failed. ' +
+				'This could be due to the specified process not running on the target system. \n' +
+				'Response body: \n' +
+				((responseBody && typeof responseBody === 'object') ? JSON.stringify(responseBody, null, 2) : '')
+			);
+			this._logAction(
+				endpointSerialNumber,
+				endpointID,
+				'Kill Process',
+				(
+					'Kill process ' + processName + ' with process ID ' + processID +
+					' on endpoint with serial number ' + endpointSerialNumber + '.\n' +
+					'ERROR: Response body did not contain expected data.killProcess.result node.\n' +
+					'Response body: \n' +
+					(
+						(responseBody && typeof responseBody === 'object') ?
+							JSON.stringify(responseBody, null, 2) :
+							'{}'
+					)
+				),
+				'',
+				false
+			);
+			
+			return false;
+		}
+		
+		this._logAction(
+			endpointSerialNumber,
+			endpointID,
+			'Kill Process',
+			'Kill process ' + processName + ' with process ID ' + processID + ' on endpoint with serial number ' + endpointSerialNumber + '.',
+			'',
+			!!responseBody.data.killProcess.result
+		);
+		
+		//Return result node value cast to boolean
+		return !!responseBody.data.killProcess.result;
+	},
+	
+	/**
+	 * Reboot a specific endpoint by Endpoint ID.
+	 * @param {String|Number} endpointID - The endpoint ID, which can be found by calling
+	 *  TaniumIntegrationCore.getEndpointIDBySerial() if not known.
+	 * NOTE: Since the TaniumActionUtil Script Include extends TaniumIntegrationCore, you can call
+	 *  the .getEndpointIDBySerial() method of this SI as well.
+	 * @param {("Windows"|"Linux"|"Mac"|"Solaris"|"AIX")} endpointOS - The operating system of the
+	 *  specified endpoint. Must be one of the enumerated values:
+	 *  Windows, Linux, Mac, Solaris, AIX
+	 * @return {Number|string} The Action ID for the action that was created to reboot the
+	 *  endpoint. This can be passed into TaniumActionUtils.getActionDetailsByID() to get the
+	 *  action status.
+	 * @example
+	 * var actionUtil = new x_taniu_tan_core.TaniumActionUtil();
+	 * var endpointID = actionUtil.getEndpointIDBySerial('some_serial_number'); //1 var
+	 *     actionHistoryID = actionUtil.rebootEndpoint(endpointID,
+	 *     'Windows'); gs.info('Action history ID: ' + actionHistoryID);
+	 * //...
+	 * //This may result in HTTP status 0 (which may cause the code to throw an error) if called
+	 *     *immediately* after creating the action. var actionResult =
+	 *     actionUtil.getActionDetailsByID(actionHistoryID); gs.info(actionResult);
+	 */
+	rebootEndpoint : function (endpointID, endpointOS) {
+		var rRebootEndpoint, rebootResponse;
+		var validOperatingSystems = [
+			'Windows',
+			'Linux',
+			'Mac',
+			'Solaris',
+			'AIX'
+		];
+		
+		//If OS is not specified or is not a valid Operating System Tanium supports, throw.
+		if ((!endpointOS) || (validOperatingSystems.indexOf(endpointOS) < 0)) {
+			throw new Error(
+				'Error attempting to reboot endpoint with ID ' + endpointID +
+				'. Specified operating system (' + endpointOS + ') not found in list of valid ' +
+				'operating systems (' + JSON.stringify(validOperatingSystems) + ').'
+			);
+		}
+		
+		rRebootEndpoint = this._getRESTObject(
+			'Tanium Integration Core',
+			'Gateway-Reboot Endpoint'
+		);
+		
+		rRebootEndpoint.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rRebootEndpoint.setStringParameterNoEscape(
+			'endpoint_id',
+			endpointID
+		);
+		rRebootEndpoint.setStringParameterNoEscape(
+			'operating_system',
+			endpointOS
+		);
+		
+		rebootResponse = this._executeRESTCall(
+			rRebootEndpoint
+		); //throws if call fails
+		
+		//If response doesn't contain necessary data, throw. If so, return action history ID.
+		if (
+			!rebootResponse.hasOwnProperty('data') ||
+			!rebootResponse.data.hasOwnProperty('createAction') ||
+			!rebootResponse.data.createAction.hasOwnProperty('id')
+		) {
+			throw new Error(
+				'Error attempting to reboot endpoint with ID ' + endpointID +
+				'. Could not get action history ID. Got response: \n' +
+				JSON.stringify(rebootResponse)
+			);
+		}
+		
+		this._logAction(
+			this.endpoint_serial_number || '',
+			endpointID,
+			'Reboot Endpoint',
+			'Reboot ' + endpointOS + ' machine with Tanium endpoint ID ' + endpointID + '.',
+			rebootResponse.data.createAction.id
+		);
+		
+		return rebootResponse.data.createAction.id.toString();
+	},
+	
+	/**
+	 * Restart a specified service on a specified endpoint.
+	 * NOTE: This requires the "Distribute Application Management Tools" package be distributed to
+	 *  the target endpoints. This means setting the target group for the "Distribute Application
+	 *  Management Tools" action to something other than "Default" in Tanium, which contains no
+	 *  computers.
+	 * @param {String} serviceName The <i>exact</i> technical service name of the service to
+	 *     restart. This must be the exact SERVICE NAME, not the "Display name". For example, if
+	 *     you wanted to restart the Telephony service, you would not input "Telephony" here, but
+	 *     would instead write
+	 *  "TapiSrv" (the "Service name" of the Windows Telephony service).
+	 * @param {String|Number} endpointID The Tanium endpoint ID, which can be found by calling
+	 *  TaniumIntegrationCore.getEndpointIDBySerial() if not known.
+	 * NOTE: Since the TaniumActionUtil Script Include extends TaniumIntegrationCore, you can call
+	 *  the .getEndpointIDBySerial() method of this SI as well.
+	 * @param {"Windows"|"Linux"|"Mac"|"Solaris"|"AIX"|"Unknown"} [platform="Windows"] The platform
+	 *  of the target machine on which to perform this action. Must be one of the enumerated
+	 *  values. For this method, it is recommended to leave this argument blank, so it only runs
+	 *  on Windows machines.
+	 * If not specified, this argument defaults to "Windows".
+	 * @return {String} The "Action ID" of the Tanium Action that was created for this task.
+	 */
+	restartService : function (serviceName, endpointID, platform) {
+		//Set default param value
+		platform = (typeof platform == 'undefined') ? 'Windows' : platform;
+		
+		var enumPlatforms = ['Windows', 'Linux', 'Mac', 'Solaris', 'AIX', 'Unknown'];
+		var actionID, restartServiceResponse;
+		var rRestartService = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Restart Service'
+		);
+		endpointID = endpointID.toString();
+		
+		//Check for errors
+		if (enumPlatforms.indexOf(platform) < 0) {
+			throw new Error(
+				'Error restarting service. Invalid platform "' + platform + '" specified in ' +
+				'argument. Valid platforms:\n' +
+				' -' + enumPlatforms.join('\n -')
+			);
+		}
+		if (serviceName.indexOf(' ') >= 0) {
+			throw new Error(
+				'Error restarting service. Invalid service name "' + serviceName + '" specified ' +
+				'in argument. Spaces are not allowed in the service name. Please be sure to ' +
+				'specify the technical "Service Name" and not the "Service display name"'
+			);
+		}
+		
+		rRestartService.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rRestartService.setStringParameterNoEscape(
+			'service_name',
+			serviceName
+		);
+		rRestartService.setStringParameterNoEscape(
+			'endpoint_id',
+			endpointID
+		);
+		rRestartService.setStringParameterNoEscape(
+			'platform',
+			platform
+		);
+		
+		//throws if call fails
+		restartServiceResponse = this._executeRESTCall(rRestartService);
+		
+		//Validate response - throw error if not.
+		if (
+			!restartServiceResponse.hasOwnProperty('data') ||
+			!restartServiceResponse.data.hasOwnProperty('createAction') ||
+			!restartServiceResponse.data.createAction.hasOwnProperty('id')
+		) {
+			throw new Error(
+				'Error attempting to restart service ' + serviceName + ' on endpoint with ID ' +
+				endpointID + '. Could not get action history ID. Got response: \n' +
+				JSON.stringify(restartServiceResponse)
+			);
+		}
+		
+		actionID = restartServiceResponse.data.createAction.id.toString();
+		
+		this._logAction(
+			this.endpoint_serial_number || '',
+			endpointID,
+			'Restart Service',
+			'Restart service ' + serviceName + ' on ' + platform + ' machine with Tanium endpoint ID ' + endpointID + '.',
+			actionID
+		);
+		
+		return actionID;
+	},
+	
+	/**
+	 * Start a specified service on a specified endpoint.
+	 * NOTE: This requires the "Distribute Application Management Tools" package be distributed to
+	 *  the target endpoints. This means setting the target group for the "Distribute Application
+	 *  Management Tools" action to something other than "Default" in Tanium, which contains no
+	 *  computers.
+	 * @param {String} serviceName The <i>exact</i> technical service name of the service to start.
+	 * This must be the exact SERVICE NAME, not the "Display name". For example, if you wanted to
+	 *  start the Telephony service, you would not input "Telephony" here, but would instead write
+	 *  "TapiSrv" (the "Service name" of the Windows Telephony service).
+	 * @param {String|Number} endpointID The Tanium endpoint ID, which can be found by calling
+	 *  TaniumIntegrationCore.getEndpointIDBySerial() if not known.
+	 * NOTE: Since the TaniumActionUtil Script Include extends TaniumIntegrationCore, you can call
+	 *  the .getEndpointIDBySerial() method of this SI as well.
+	 * @param {"Windows"|"Linux"|"Mac"|"Solaris"|"AIX"|"Unknown"} [platform="Windows"] The platform
+	 *  of the target machine on which to perform this action. Must be one of the enumerated
+	 *  values. For this method, it is recommended to leave this argument blank, so it only runs
+	 *  on Windows machines.
+	 * If not specified, this argument defaults to "Windows".
+	 * @return {String} The "Action ID" of the Tanium Action that was created for this task.
+	 */
+	startService : function (serviceName, endpointID, platform) {
+		//Set default param value
+		platform = (typeof platform == 'undefined') ? 'Windows' : platform;
+		endpointID = endpointID.toString();
+		
+		//Hoist ye v'arrrrz
+		var enumPlatforms = ['Windows', 'Linux', 'Mac', 'Solaris', 'AIX', 'Unknown'];
+		var actionID, startServiceResponse;
+		var rStartService = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Start Service'
+		);
+		
+		//Check for errors
+		if (enumPlatforms.indexOf(platform) < 0) {
+			throw new Error(
+				'Error starting service. Invalid platform "' + platform + '" specified in ' +
+				'argument. Valid platforms:\n' +
+				' -' + enumPlatforms.join('\n -')
+			);
+		}
+		if (serviceName.indexOf(' ') >= 0) {
+			throw new Error(
+				'Error starting service. Invalid service name "' + serviceName + '" specified ' +
+				'in argument. Spaces are not allowed in the service name. Please be sure to ' +
+				'specify the technical "Service Name" and not the "Service display name"'
+			);
+		}
+		
+		rStartService.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rStartService.setStringParameterNoEscape(
+			'service_name',
+			serviceName
+		);
+		rStartService.setStringParameterNoEscape(
+			'endpoint_id',
+			endpointID
+		);
+		rStartService.setStringParameterNoEscape(
+			'platform',
+			platform
+		);
+		
+		//throws if call fails
+		startServiceResponse = this._executeRESTCall(rStartService);
+		
+		//Validate response - throw error if not.
+		if (
+			!startServiceResponse.hasOwnProperty('data') ||
+			!startServiceResponse.data.hasOwnProperty('createAction') ||
+			!startServiceResponse.data.createAction.hasOwnProperty('id')
+		) {
+			throw new Error(
+				'Error attempting to start service ' + serviceName + ' on endpoint with ID ' +
+				endpointID + '. Could not get action history ID. Got response: \n' +
+				JSON.stringify(startServiceResponse)
+			);
+		}
+		
+		actionID = startServiceResponse.data.createAction.id.toString();
+		
+		this._logAction(
+			this.endpoint_serial_number || '',
+			endpointID,
+			'Start Service',
+			'Start service ' + serviceName + ' on ' + platform + ' machine with Tanium endpoint ID ' + endpointID + '.',
+			actionID
+		);
+		
+		return actionID;
+	},
+	
+	/**
+	 * Stop a specified service on a specified endpoint.
+	 * NOTE: This requires the "Distribute Application Management Tools" package be distributed to
+	 *  the target endpoints. This means setting the target group for the "Distribute Application
+	 *  Management Tools" action to something other than "Default" in Tanium, which contains no
+	 *  computers.
+	 * @param {String} serviceName The <i>exact</i> technical service name of the service to stop.
+	 * This must be the exact SERVICE NAME, not the "Display name". For example, if you wanted to
+	 *  stop the Telephony service, you would not input "Telephony" here, but would instead write
+	 *  "TapiSrv" (the "Service name" of the Windows Telephony service).
+	 * @param {String|Number} endpointID The Tanium endpoint ID, which can be found by calling
+	 *  TaniumIntegrationCore.getEndpointIDBySerial() if not known.
+	 * NOTE: Since the TaniumActionUtil Script Include extends TaniumIntegrationCore, you can call
+	 *  the .getEndpointIDBySerial() method of this SI as well.
+	 * @param {"Windows"|"Linux"|"Mac"|"Solaris"|"AIX"|"Unknown"} [platform="Windows"] The platform
+	 *  of the target machine on which to perform this action. Must be one of the enumerated
+	 *  values. For this method, it is recommended to leave this argument blank, so it only runs
+	 *  on Windows machines.
+	 * If not specified, this argument defaults to "Windows".
+	 * @return {String} The "Action ID" of the Tanium Action that was created for this task.
+	 */
+	stopService : function (serviceName, endpointID, platform) {
+		//Set default param value
+		platform = (typeof platform == 'undefined') ? 'Windows' : platform;
+		endpointID = endpointID.toString();
+		
+		//Hoist ye v'arrrrz
+		var enumPlatforms = ['Windows', 'Linux', 'Mac', 'Solaris', 'AIX', 'Unknown'];
+		var actionID, stopServiceResponse;
+		var rStopService = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Stop Service'
+		);
+		
+		//Check for errors
+		if (enumPlatforms.indexOf(platform) < 0) {
+			throw new Error(
+				'Error stopping service. Invalid platform "' + platform + '" specified in ' +
+				'argument. Valid platforms:\n' +
+				' -' + enumPlatforms.join('\n -')
+			);
+		}
+		if (serviceName.indexOf(' ') >= 0) {
+			throw new Error(
+				'Error stopping service. Invalid service name "' + serviceName + '" specified ' +
+				'in argument. Spaces are not allowed in the service name. Please be sure to ' +
+				'specify the technical "Service Name" and not the "Service display name"'
+			);
+		}
+		
+		rStopService.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rStopService.setStringParameterNoEscape(
+			'service_name',
+			serviceName
+		);
+		rStopService.setStringParameterNoEscape(
+			'endpoint_id',
+			endpointID
+		);
+		rStopService.setStringParameterNoEscape(
+			'platform',
+			platform
+		);
+		
+		//throws if call fails
+		stopServiceResponse = this._executeRESTCall(rStopService);
+		
+		//Validate response - throw error if not.
+		if (
+			!stopServiceResponse.hasOwnProperty('data') ||
+			!stopServiceResponse.data.hasOwnProperty('createAction') ||
+			!stopServiceResponse.data.createAction.hasOwnProperty('id')
+		) {
+			throw new Error(
+				'Error attempting to stop service ' + serviceName + ' on endpoint with ID ' +
+				endpointID + '. Could not get action history ID. Got response: \n' +
+				JSON.stringify(stopServiceResponse)
+			);
+		}
+		
+		actionID = stopServiceResponse.data.createAction.id.toString();
+		
+		this._logAction(
+			this.endpoint_serial_number || '',
+			endpointID,
+			'Stop Service',
+			'Stop service ' + serviceName + ' on ' + platform + ' machine with Tanium endpoint ID ' + endpointID + '.',
+			actionID
+		);
+		
+		return actionID;
+	},
+	
+	/**
+	 * Quarantining endpoints requires that the Tanium Threat Response module be licensed,
+	 *  imported, and configured.
+	 * For help with the Tanium Threat Response module configuration or troubleshooting, please
+	 *  contact your TAM.
+	 *
+	 * NOTE:
+	 * As per the Tanium documentation, in order for this to work, you must have configured the
+	 *  "taniumquarantine.dat" file that's associated with each quarantine package (for Windows,
+	 *  Linux, and Mac) in your Tanium environment.
+	 * Note also that your quarantine packages may be custom, as recommended by the
+	 *  documentation, and may have been copied from the following packages in your Tanium
+	 *  environment:
+	 * 1.	Apply Windows IPsec Quarantine
+	 * 2.	Apply Linux IPTables Quarantine
+	 * 3.	Apply Mac PF Quarantine
+	 * If you've set up custom quarantine packages (which is recommended!) then you'll need to
+	 *  update the values of the quarantine package names in the Tanium Integration Core settings.
+	 * https://docs.tanium.com/threat_response/threat_response/isolating_endpoints.html
+	 *
+	 * @param {String} endpointSerial - The serial number of the endpoint to be quarantined.
+	 * @param {"Windows"|"Linux"|"Mac"} operatingSystem - The operating system of the endpoint to
+	 *  be quarantined.
+	 * Must be one of the enumerated and supported operating systems as a string
+	 *  (Windows, Linux, or Mac).
+	 * (Not case-sensitive).
+	 * @param {boolean} [removeQuarantine=false] - If this argument is not specified (or
+	 *  if it is set to false), then the target endpoint will be QUARANTINED based on the
+	 *  settings configured in the taniumquarantine.dat file associated with the quarantine
+	 *  package in your instance, as specified in the quarantine system properties.
+	 * If this argument is instead set to true, then - if the endpoint is already quarantined
+	 *  - that quarantine will be REMOVED.
+	 * Default value: false
+	 * @param {Number} [expireSeconds=86400] - The number of seconds after which the Action
+	 *  will expire.
+	 * If the endpoint is offline when this Action is issued, and remains offline for the
+	 *  duration in expireSeconds, the Action will not be deployed on that endpoint.
+	 * Default value: 86,400 (24 hours)
+	 */
+	quarantineEndpointBySerial : function (
+		endpointSerial,
+		operatingSystem,
+		removeQuarantine,
+		expireSeconds
+	) {
+		var quarantinePackageInfo,
+			quarantinePackageName,
+			quarantinePackageID,
+			quarantineResponse;
+		var arrValidOperatingSystemsLC = ['windows', 'linux', 'mac', 'macos'];
+		
+		expireSeconds = (typeof expireSeconds == 'undefined') ? 86400 : expireSeconds;
+		removeQuarantine = (typeof removeQuarantine == 'undefined') ? false : removeQuarantine;
+		
+		if (
+			!endpointSerial ||
+			!operatingSystem ||
+			(arrValidOperatingSystemsLC.indexOf(operatingSystem.toLowerCase()) < 0) ||
+			!this._isThreatResponseInstalled(true)
+		) {
+			throw new Error(
+				'Error while attempting to quarantine endpoint with serial "' + endpointSerial +
+				'", with operating system "' + operatingSystem + '". This could be because ' +
+				'Tanium Threat Response is not installed, or because the Endpoint ID or ' +
+				'Operating System were not specified when calling the TaniumActionUtil' +
+				'.quarantineEndpointByID() method, or because the specified operating ' +
+				'system was not one of the supported operating systems (' +
+				JSON.stringify(arrValidOperatingSystemsLC) + ').'
+			);
+		}
+		
+		quarantinePackageName = this._getQuarantinePackageNameFromOperatingSystem(
+			operatingSystem,
+			removeQuarantine
+		);
+		quarantinePackageInfo = this.getPackageDetailsByName(
+			quarantinePackageName,
+			null, //Ignore content set name
+			false //Improve performance by skipping parameter query
+		);
+		
+		if (quarantinePackageInfo.length < 1 || !quarantinePackageInfo[0].id) {
+			throw new Error(
+				'Error while attempting to quarantine endpoint with serial "' + endpointSerial + '", ' +
+				'with operating system "' + operatingSystem + '" by calling the ' +
+				'TaniumActionUtil.quarantineEndpointByID() method.\n' +
+				'Unable to find package with name "' + quarantinePackageName + '" in the ' +
+				'Tanium Package [x_taniu_tan_core_tanium_package] table.\n' +
+				'This package name was determined by one of the following system properties, ' +
+				'depending on the operating system: \n' +
+				'-Windows: x_taniu_tan_core.windows_quarantine_package_name\n' +
+				'-Linux: x_taniu_tan_core.linux_quarantine_package_name\n' +
+				'-Mac: x_taniu_tan_core.mac_quarantine_package_name\n' +
+				'If this package was created in Tanium recently, you may need to execute the ' +
+				'"Sync Tanium Packages and Package Parameters for Actions" Scheduled Script ' +
+				'from the sysauto_script table.'
+			);
+		}
+		quarantinePackageID = quarantinePackageInfo[0].id;
+		
+		if (quarantinePackageInfo.length > 1) {
+			gs.debug(
+				'Got multiple packages from Tanium Package [x_taniu_tan_core_tanium_package] ' +
+				'table with name "' + quarantinePackageName + '":\n' +
+				JSON.stringify(quarantinePackageInfo, null, 2) + '\n' +
+				'Using the first package returned, with ID ' + quarantinePackageID + '.'
+			);
+		}
+		
+		//CREATE QUARANTINE ACTION ON TARGET ENDPOINT:
+		quarantineResponse = this.createActionOnEndpointBySerial(
+			quarantinePackageID,
+			endpointSerial,
+			{}, //No parameters necessary; using taniumquarantine.dat file
+			expireSeconds,
+			true
+		);
+		
+		return quarantineResponse;
+	},
+	
+	//NOTE: This method and the "Update Tanium Action History Statuses" Scheduled Job which
+	// calls it, are disabled and returns false immediately, as this functionality is now
+	// controlled by a Flow called "Tanium-Update Action Status".
+	/* updateAllActionHistoryStatuses: function() {
+		var grActionHistory = new GlideRecord('x_taniu_tan_core_tan_action_history');
+		grActionHistory.addEncodedQuery(
+			'action_id!=NULL^' +
+			'sys_created_onRELATIVEGT@hour@ago@24^' +
+			'action_statusNOT INcompleted,expired,failed,failedVerification^' +
+			'action_name!=Direct Connect - Open Session^' +
+			'ORaction_name=NULL'
+		);
+		grActionHistory.query();
+		
+		while (grActionHistory.next()) {
+			this._updateActionHistoryStatus(grActionHistory);
+		}
+	}, */
+	
+	/** @private */
+	
+	//NOTE: This method and the "Update Tanium Action History Statuses" Scheduled Job which
+	// calls it, are disabled and returns false immediately, as this functionality is now
+	// controlled by a Flow called "Tanium-Update Action Status".
+	/* _updateActionHistoryStatus: function(grActionHistory) {
+		//upcoming_feature: implement this method, using this.getActionResultsBySourceID().
+	}, */
+	
+	/**
+	 * Retrieve the value from the Configured Action Parameter in the
+	 *  x_taniu_tan_core_configured_action_parameter table.
+	 * If the parameter has a static string value, then that will be returned. If the "Advanced"
+	 *  checkbox on the Configured Action Parameter record is checked, then the associated script
+	 *  will be evaluated and the result will be returned instead.
+	 * @param {GlideRecord} grConfiguredActionParam - A GlideRecord on the
+	 *  x_taniu_tan_core_configured_action_parameter table, positioned to the specific parameter
+	 *  to get the value from.
+	 * @param {GlideRecord} [grCurrentCI={}] - A CI to use in the evaluation of an advanced
+	 *  configured parameter value script. This can be omitted if none of the parameters use this
+	 *  value in their scripts.
+	 * @param {Object} [argsObj={}] - Optionally specify an additional object to be passed in
+	 *  to the value script, with some additional values in it that can be used when the script
+	 *  is evaluated.
+	 * @returns {String} - The value from either the "value" field of the Configured Action
+	 *  Parameter record, OR the (stringified) result of the evaluation of the script from
+	 *  the value_script field (if the Advanced field is set to true).
+	 * @private
+	 */
+	_getConfiguredActionParamValue: function(grConfiguredActionParam, grCurrentCI, argsObj) {
+		var gsEval, evalResult;
+		grCurrentCI = (typeof grCurrentCI === 'undefined') ? {} : grCurrentCI;
+		argsObj = (typeof argsObj != 'object') ? {} : argsObj;
+		
+		//If advanced is true, evaluate the script and return the result.
+		if (grConfiguredActionParam.getValue('advanced') === '1') {
+			gsEval = new GlideScopedEvaluator();
+			
+			gsEval.putVariable('currentCI', grCurrentCI);
+			gsEval.putVariable('argsObj', argsObj);
+			
+			//Considered wrapping this in a 'try/catch' block, but we actually want it to
+			// hard-error if this fails, as we don't want the action to continue until the error
+			// is resolved.
+			evalResult = gsEval.evaluateScript(
+				grConfiguredActionParam,
+				'value_script'
+			);
+			
+			//If evalResult is undefined, return blank string. Otherwise, return result.
+			try {
+				return ((typeof evalResult === 'undefined') || (evalResult === null)) ? '' : evalResult.toString();
+			} catch(ex) {
+				//If the above fails somehow, just return a blank string.
+				//No need to throw or log that error.
+				return '';
+			}
+		}
+		
+		//If advanced is not true, return the string value from the 'value' field.
+		return grConfiguredActionParam.getValue('value') || '';
+	},
+	
+	/**
+	 * Attempts to determine if Tanium Threat Response solution is installed, and returns
+	 *  a boolean with the answer.
+	 *
+	 * @param {boolean} [returnTrueOnFailure=true] - If unable to determine whether Threat Response
+	 *  is enabled, such as if we have insufficient permissions to access installed solutions
+	 *  via API, setting this to true (or not specifying it and using the default value) will
+	 *  cause this method to assume that Threat Response is installed and return true by default.
+	 * If set to false, then the boolean false will be returned if we're unable to access
+	 *  installed solutions or if we otherwise can't determine whether Threat Response is
+	 *  installed in the Tanium environment.
+	 * @private
+	 */
+	_isThreatResponseInstalled: function(returnTrueOnFailure) {
+		var installedSolutions, threatResponseInstalled;
+		returnTrueOnFailure = (typeof returnTrueOnFailure == 'undefined') ? true : returnTrueOnFailure;
+		
+		try {
+			installedSolutions = this.getInstalledSolutions();
+			threatResponseInstalled = installedSolutions.Tanium_Threat_Response.installed;
+			return !!threatResponseInstalled; //Cast to boolean
+		} catch(ex) {
+			gs.debug(
+				'Unable to determine if Threat Response is installed, probably because the ' +
+				'API service account being used does not have sufficient permissions to ' +
+				'read the installed solutions from the Tanium instance\n' +
+				'Error:\n' +
+				ex.message
+			);
+			return returnTrueOnFailure;
+		}
+	},
+	
+	/**
+	 * Based on the indicated Operating System, identify the correct package to use to quarantine
+	 *  (or, if the second argument is set to true, UN-quarantine) an endpoint using Tanium.
+	 * @param {"Windows"|"Linux"|"Mac"} operatingSystem - (not case sensitive.)
+	 * @param {boolean} [getRemoveQuarantinePackageName=false] - Set this argument to TRUE in order
+	 *  to retrieve the name of the package for UN-QUARANTINING an endpoint.
+	 * Set it to false (or don't specify it at all) to retrieve the name of the package for
+	 *  quarantining the endpoint rather than un-quarantining.
+	 * @returns {"Apply Windows IPsec Quarantine"|"Apply Linux IPTables Quarantine"|"Apply Mac PF
+	 * Quarantine"} - The name of the package to use for quarantining an endpoint with the
+	 *     specified operating system.
+	 * @private
+	 */
+	_getQuarantinePackageNameFromOperatingSystem : function (
+		operatingSystem,
+		getRemoveQuarantinePackageName
+	) {
+		getRemoveQuarantinePackageName = (
+			typeof getRemoveQuarantinePackageName == 'undefined'
+		) ? false : getRemoveQuarantinePackageName;
+		
+		switch (operatingSystem.toLowerCase()) {
+			case 'windows':
+				if (getRemoveQuarantinePackageName) {
+					return gs.getProperty(
+						'x_taniu_tan_core.windows_remove_quarantine_package_name',
+						'Remove Windows IPsec Quarantine'
+					);
+				} else {
+					return gs.getProperty(
+						'x_taniu_tan_core.windows_quarantine_package_name',
+						'Apply Windows IPsec Quarantine'
+					);
+				}
+			case 'linux':
+				if (getRemoveQuarantinePackageName) {
+					return gs.getProperty(
+						'x_taniu_tan_core.linux_remove_quarantine_package_name',
+						'Remove Linux IPTables Quarantine'
+					);
+				} else {
+					return gs.getProperty(
+						'x_taniu_tan_core.linux_quarantine_package_name',
+						'Apply Linux IPTables Quarantine'
+					);
+				}
+			case 'mac':
+			case 'macos':
+				if (getRemoveQuarantinePackageName) {
+					return gs.getProperty(
+						'x_taniu_tan_core.mac_remove_quarantine_package_name',
+						'Remove Mac PF Quarantine'
+					);
+				} else {
+					return gs.getProperty(
+						'x_taniu_tan_core.mac_quarantine_package_name',
+						'Apply Mac PF Quarantine'
+					);
+				}
+			default:
+				throw new Error(
+					'Invalid operating system ("' + operatingSystem + '") specified when ' +
+					'attempting to retrieve quarantine package name. This endpoint may ' +
+					'not be able to be quarantined, or may have an unsupported operating ' +
+					'system for this action.'
+				);
+		}
+	},
+	
+	/**
+	 *
+	 * @param packageID
+	 * @return {GlideRecord}
+	 * @private
+	 */
+	_getPackageGRByID : function (packageID) {
+		var grPackage;
+		
+		grPackage = new GlideRecord('x_taniu_tan_core_tanium_package');
+		grPackage.addQuery('package_id', packageID);
+		grPackage.setLimit(1);
+		grPackage.query();
+		
+		return grPackage;
+	},
+	
+	/**
+	 * @param {String|Number} packageID
+	 * @param {String} [encodedQuery=] - Optionally specify an additional encoded query string to
+	 *     be applied to the query.
+	 * @return {GlideRecord} - A GlideRecord with a query to show only those parameters that are
+	 *     children of the package with the specified ID, not yet positioned (thus, .next() must be
+	 *     called to iterate into the first record). If encodedQuery is specified, then the results
+	 *     will be further filtered by that query.
+	 * @private
+	 */
+	_getParametersGRByPackageID : function (packageID, encodedQuery) {
+		var grParameter;
+		
+		grParameter = new GlideRecord('x_taniu_tan_core_tanium_package_parameter');
+		grParameter.addEncodedQuery('package.package_id=' + packageID);
+		if (encodedQuery) {
+			grParameter.addEncodedQuery(encodedQuery);
+		}
+		grParameter.query();
+		
+		return grParameter;
+	},
+	
+	/**
+	 *
+	 * @param packageID
+	 * @param parameterKeysArr
+	 * @return {{invalid_parameter_keys: any, err_msg: string, specified_parameter_keys, has_error:
+	 *     boolean}}
+	 * @private
+	 */
+	_checkAllParametersAreValidForPackage : function (packageID, parameterKeysArr) {
+		var parameterKey, grParameter, keyIndex;
+		var paramValidationResponse = {
+			'has_error' : false,
+			'err_msg' : '',
+			'specified_parameter_keys' : parameterKeysArr,
+			'invalid_parameter_keys' : JSON.parse(JSON.stringify(parameterKeysArr))
+		};
+		
+		grParameter = this._getParametersGRByPackageID(
+			packageID,
+			'keyIN' + parameterKeysArr.join(',')
+		);
+		
+		while (grParameter.next()) {
+			parameterKey = grParameter.getValue('key');
+			keyIndex = paramValidationResponse.invalid_parameter_keys.indexOf(parameterKey);
+			
+			if (keyIndex >= 0) {
+				//Remove the found (valid) parameter from the invalid parameter keys array
+				paramValidationResponse.invalid_parameter_keys.splice(keyIndex, 1);
+			}
+		}
+		
+		if (paramValidationResponse.invalid_parameter_keys.length > 0) {
+			paramValidationResponse.has_error = true;
+			paramValidationResponse.err_msg = 'Could not find the following parameters which ' +
+				'were specified, in the list of valid parameters for the Tanium package with ID ' +
+				packageID + ':\n' +
+				paramValidationResponse.invalid_parameter_keys.join(', ');
+		}
+		
+		return paramValidationResponse;
+	},
+	
+	/**
+	 *
+	 * @param parametersObj
+	 * @return {*[]}
+	 * @private
+	 */
+	_transformParametersObjToArray : function (parametersObj) {
+		var paramKey, paramValue;
+		var parametersArray = [];
+		
+		for (paramKey in parametersObj) {
+			//Prevent iteration into non-own properties
+			if (!parametersObj.hasOwnProperty(paramKey)) {
+				continue;
+			}
+			paramValue = parametersObj[paramKey];
+			
+			parametersArray.push({
+				'key' : paramKey,
+				'value' : paramValue
+			});
+		}
+		
+		return parametersArray;
+	},
+	
+	/**
+	 *
+	 * @param allPackages
+	 * @param removeHiddenPackages
+	 * @param removeDeletedPackages
+	 * @return {*}
+	 * @private
+	 */
+	_updateAndDeleteExistingPackages : function (allPackages, removeHiddenPackages, removeDeletedPackages) {
+		var grPackage, packageID;
+		
+		removeHiddenPackages = (typeof removeHiddenPackages == 'undefined') ? true : removeHiddenPackages;
+		removeDeletedPackages = (typeof removeDeletedPackages == 'undefined') ? true : removeDeletedPackages;
+		
+		grPackage = new GlideRecord('x_taniu_tan_core_tanium_package');
+		grPackage.query();
+		
+		while (grPackage.next()) {
+			try {
+				packageID = grPackage.getValue('package_id');
+				
+				//If latest package import does not contain the record's package ID, delete
+				// the Package record in the Tanium Package table and continue to next loop.
+				if (!allPackages.hasOwnProperty(packageID)) {
+					grPackage.deleteRecord();
+					continue;
+				}
+				
+				//If package has been hidden and removeHiddenPackages is true, delete record.
+				if (
+					allPackages[packageID].hasOwnProperty('hidden_flag') &&
+					allPackages[packageID].hidden_flag &&
+					removeHiddenPackages
+				) {
+					//Delete package record. The "Cascade Delete Params when Pkg Deleted" BR
+					// deletes Parameters when Packages are deleted, so it's not necessary to
+					// do that manually here.
+					grPackage.deleteRecord();
+					//Remove the package we just deleted from the packages list
+					delete allPackages[packageID];
+					continue;
+				}
+				
+				//If package has been deleted and removeDeletedPackages is true, delete record.
+				if (
+					allPackages[packageID].hasOwnProperty('deleted_flag') &&
+					allPackages[packageID].deleted_flag &&
+					removeDeletedPackages
+				) {
+					//Delete package record. The "Cascade Delete Params when Pkg Deleted" BR
+					// deletes Parameters when Packages are deleted, so it's not necessary to
+					// do that manually here.
+					grPackage.deleteRecord();
+					//Remove the package we just deleted from the packages list
+					delete allPackages[packageID];
+					continue;
+				}
+				
+				//If package IS found in the latest import, populate the package record with the
+				// latest data.
+				grPackage = this._populatePackageRecord(grPackage, allPackages[packageID]);
+				
+				//Update the package record.
+				//NOTE: If the info in the record hasn't changed since the last update, this will
+				// do nothing and not impact performance.
+				grPackage.update();
+				//Add, update, or delete package parameter records associated with this package
+				this._addUpdateDeletePackageParameters(
+					grPackage.getValue('sys_id'),
+					allPackages[packageID]
+				);
+				
+				//Remove the package we just updated from the packages list
+				delete allPackages[packageID];
+			} catch (ex) {
+				gs.error(
+					'Error updating Tanium Software Package with sys_id ' +
+					grPackage.getUniqueValue() + ' or one of its parameters.\n' +
+					'Error: ' + ex.message + '\nContinuing to next package.'
+				);
+			}
+		}
+		
+		//NOTE: This method modifies allPackages in-place, so this return is just for consistency.
+		return allPackages;
+	},
+	
+	/**
+	 *
+	 * @param packagesToCreate
+	 * @param skipHiddenPackages
+	 * @param skipDeletedPackages
+	 * @private
+	 */
+	_createAllMissingPackages : function (packagesToCreate, skipHiddenPackages, skipDeletedPackages) {
+		var grPackage, packageID;
+		
+		skipHiddenPackages = (typeof skipHiddenPackages == 'undefined') ? true : skipHiddenPackages;
+		skipDeletedPackages = (typeof skipDeletedPackages == 'undefined') ? true : skipDeletedPackages;
+		
+		grPackage = new GlideRecord('x_taniu_tan_core_tanium_package');
+		
+		for (packageID in packagesToCreate) {
+			try {
+				//Prevent iteration into non-own properties
+				if (!packagesToCreate.hasOwnProperty(packageID)) {
+					continue;
+				}
+				
+				//Initialize, populate, and insert the new record.
+				grPackage.initialize();
+				this._populatePackageRecord(grPackage, packagesToCreate[packageID]);
+				grPackage.insert();
+				
+				//Add, update, or delete package parameter records associated with this package
+				this._addUpdateDeletePackageParameters(
+					grPackage.getValue('sys_id'),
+					packagesToCreate[packageID]
+				);
+			} catch (ex) {
+				gs.debug(
+					'Error creating Tanium Software Package with id ' + packageID + ' or one ' +
+					'of its parameters.\n' +
+					'Error: ' + ex.message + '\n' +
+					'Continuing to next package.'
+				);
+			}
+		}
+	},
+	
+	/**
+	 *
+	 * @param grPackage
+	 * @param packageObj
+	 * @return {*}
+	 * @private
+	 */
+	_populatePackageRecord : function (grPackage, packageObj) {
+		//This method is reused by both the "update package record" method and the "create package
+		// record" method.
+		var snFieldName, snFieldVal;
+		var packageFields = {
+			'name' : packageObj.name.toString(), //mandatory
+			'package_id' : packageObj.id.toString() //mandatory
+		};
+		if (packageObj.hasOwnProperty('command')) {
+			packageFields['command'] = packageObj.command.toString();
+		}
+		if (packageObj.hasOwnProperty('content_set')) {
+			if (packageObj.content_set.hasOwnProperty('id')) {
+				packageFields['content_set_id'] = packageObj.content_set.id.toString();
+			}
+			if (packageObj.content_set.hasOwnProperty('name')) {
+				packageFields['content_set_name'] = packageObj.content_set.name.toString();
+			}
+		}
+		
+		for (snFieldName in packageFields) {
+			//Prevent iteration into non-own properties
+			if (!packageFields.hasOwnProperty(snFieldName)) {
+				continue;
+			}
+			
+			snFieldVal = packageFields[snFieldName];
+			grPackage.setValue(snFieldName, snFieldVal);
+		}
+		
+		//NOTE: Returns grPackage WITHOUT updating. That must be done by the calling code.
+		//Also modifies grPackage in-place so this return is mostly just for consistency.
+		return grPackage;
+	},
+	
+	/**
+	 *
+	 * @param packageSysID
+	 * @param packageObj
+	 * @private
+	 */
+	_addUpdateDeletePackageParameters : function (packageSysID, packageObj) {
+		var parametersObj;
+		
+		parametersObj = this._getAllParametersFromPackage(packageObj);
+		
+		//Mutates (deletes processed parameters) the parametersObj object in-place.
+		if (parametersObj) {
+			this._updateAndDeleteExistingParameters(packageSysID, parametersObj);
+			this._createAllMissingParameters(packageSysID, parametersObj);
+		}
+		
+	},
+	
+	/**
+	 *
+	 * @param packageSysID
+	 * @param parametersObj
+	 * @return {*}
+	 * @private
+	 */
+	_updateAndDeleteExistingParameters : function (packageSysID, parametersObj) {
+		var parameterKey;
+		var grPackageParameter = new GlideRecord('x_taniu_tan_core_tanium_package_parameter');
+		
+		grPackageParameter.addQuery('package', packageSysID);
+		grPackageParameter.query();
+		
+		while (grPackageParameter.next()) {
+			parameterKey = grPackageParameter.getValue('key');
+			//If the most recent package export doesn't contain a parameter for this package
+			// with the key indicated in this record, delete the parameter record and continue
+			// to the next loop.
+			if (!parametersObj.hasOwnProperty(parameterKey)) {
+				grPackageParameter.deleteRecord();
+				continue;
+			}
+			
+			//If parameter IS found in the latest import, populate the param record with the latest
+			// data.
+			grPackageParameter = this._populateParameterRecord(
+				grPackageParameter,
+				packageSysID,
+				parametersObj[parameterKey]
+			);
+			
+			//Update the parameter record.
+			//NOTE: If the info in the record hasn't changed since the last update, this will
+			// do nothing and not impact performance.
+			grPackageParameter.update();
+			
+			//Remove the parameter we just updated from the packages list
+			delete parametersObj[parameterKey];
+		}
+		
+		//NOTE: This method modifies allPackages in-place, so this return is just for consistency.
+		return parametersObj;
+	},
+	
+	/**
+	 *
+	 * @param packageSysID
+	 * @param parametersToCreate
+	 * @private
+	 */
+	_createAllMissingParameters : function (packageSysID, parametersToCreate) {
+		var parameterKey;
+		var grPackageParameter = new GlideRecord('x_taniu_tan_core_tanium_package_parameter');
+		
+		for (parameterKey in parametersToCreate) {
+			//Prevent iteration into non-own properties
+			if (!parametersToCreate.hasOwnProperty(parameterKey)) {
+				continue;
+			}
+			
+			//Initialize, populate, and insert the new record.
+			grPackageParameter.initialize();
+			this._populateParameterRecord(
+				grPackageParameter,
+				packageSysID,
+				parametersToCreate[parameterKey]
+			);
+			grPackageParameter.insert();
+		}
+	},
+	
+	/**
+	 *
+	 * @param grParameter
+	 * @param packageSysID
+	 * @param parametersObj
+	 * @return {*}
+	 * @private
+	 */
+	_populateParameterRecord : function (grParameter, packageSysID, parametersObj) {
+		//This method is reused by both the "update/delete parameter record" method
+		// and the "create parameter record" method.
+		var snFieldName, snFieldVal;
+		var paramDescription = '';
+		var parameterFields = {
+			//Mandatory key
+			'key' : parametersObj.key.toString(),
+			//Mandatory - default to key if label not present.
+			'label' : (parametersObj.label.toString() || parametersObj.key.toString()),
+			'package' : packageSysID //mandatory
+		};
+		
+		if (parametersObj.hasOwnProperty('maxChars')) {
+			parameterFields['max_characters'] = parametersObj.maxChars.toString();
+		}
+		
+		if (parametersObj.hasOwnProperty('helpString') && parametersObj.helpString) {
+			paramDescription += parametersObj.helpString.toString();
+		}
+		
+		if (parametersObj.hasOwnProperty('promptText') && parametersObj.promptText) {
+			if (paramDescription) {
+				paramDescription += '\n\n';
+			}
+			paramDescription += parametersObj.promptText.toString();
+		}
+		
+		parameterFields['description'] = paramDescription;
+		
+		for (snFieldName in parameterFields) {
+			//Prevent iteration into non-own properties
+			if (!parameterFields.hasOwnProperty(snFieldName)) {
+				continue;
+			}
+			
+			snFieldVal = parameterFields[snFieldName];
+			grParameter.setValue(snFieldName, snFieldVal);
+		}
+		
+		//NOTE: Returns grParameter WITHOUT updating. That must be done by the calling code.
+		//Also modifies grParameter in-place so this return is mostly just for consistency.
+		return grParameter;
+	},
+	
+	/**
+	 *
+	 * @param packageObj
+	 * @return {{}|boolean}
+	 * @private
+	 */
+	_getAllParametersFromPackage : function (packageObj) {
+		var i, parametersArr;
+		var parametersObj = {};
+		
+		if (
+			!packageObj.hasOwnProperty('parameter_definition') ||
+			!packageObj.parameter_definition
+		) {
+			return false;
+		}
+		
+		try {
+			parametersArr = JSON.parse(packageObj.parameter_definition);
+			parametersArr = parametersArr.parameters; //Get array of parameters
+		} catch (ex) {
+			gs.warn(
+				'Unparseable parameter_definition node for Tanium Package with ID ' +
+				packageObj.id + '. This is occasionally expected on a FEW parameters, but if ' +
+				'this happens for all/most of them, there may be a problem.'
+			);
+			return false;
+		}
+		
+		for (i = 0; i < parametersArr.length; i++) {
+			if (
+				!parametersArr[i].hasOwnProperty('key') || //Key property doesn't exist
+				!parametersArr[i].key //Key property is falsy (null/undefined/blank/etc.)
+			) {
+				gs.debug(
+					'Parameter found without key value. Skipping parameter on import: \n' +
+					JSON.stringify(parametersArr[i], null, 2) + '\n' +
+					'Note: This is not an error. This is expected to happen in some cases. ' +
+					'This log is just for auditing/troubleshooting purposes, in case ' +
+					'something has gone wrong.'
+				);
+				continue;
+			}
+			
+			parametersObj[parametersArr[i].key.toString()] = parametersArr[i];
+		}
+		
+		return parametersObj;
+	},
+	
+	/**
+	 *
+	 * @return {{}}
+	 * @private
+	 */
+	_getAllPackageDetails : function () {
+		var i, responseBody, packageID;
+		var packageDetails = {};
+		var rGetPackages = this._getRESTObject(
+			'Tanium Integration Core',
+			'Action-Get All Packages'
+		);
+		
+		rGetPackages.setStringParameterNoEscape('tanium_api_endpoint', this.TANIUM_API_ENDPOINT);
+		responseBody = this._executeRESTCall(rGetPackages);
+		
+		//If package details response is invalid, throw an error.
+		if (!responseBody.hasOwnProperty('data')) {
+			throw new Error(
+				'Data node missing from package details from Tanium. Something has gone wrong. ' +
+				'Response payload: \n' + responseBody
+			);
+		}
+		
+		responseBody = responseBody.data;
+		
+		for (i = 0; i < responseBody.length; i++) {
+			//Prevent iteration into weird element that isn't related to a package.
+			if (!responseBody[i].hasOwnProperty('id')) {
+				continue;
+			}
+			
+			packageID = responseBody[i].id.toString();
+			
+			//If node already exists with this package ID, log an error and continue to next loop.
+			if (packageDetails.hasOwnProperty(packageID)) {
+				gs.warn(
+					'Package with ID ' + packageID + ' is a duplicate. Already found ' +
+					'package with this ID.'
+				);
+				continue;
+			}
+			
+			packageDetails[packageID] = responseBody[i];
+		}
+		
+		return packageDetails;
+	},
+	
+	type : 'TaniumActionUtil'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-11-01 18:17:56</sys_created_on>
+        <sys_id>1ff5bdf12f2330101ba85d492799b6f6</sys_id>
+        <sys_mod_count>84</sys_mod_count>
+        <sys_name>TaniumActionUtil</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_1ff5bdf12f2330101ba85d492799b6f6</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-07 00:05:06</sys_updated_on>
+    </sys_script_include>
+</record_update>

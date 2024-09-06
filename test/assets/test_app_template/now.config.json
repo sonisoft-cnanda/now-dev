@@ -1,0 +1,11 @@
+{
+    "scope": "x_taniu_tan_core",
+    "scopeId": "ca7d0aa5a76a4c368f382f16177c2743",
+   
+    "serverModulesDir": "",
+  "transpiledSourceDir": "dist/modules",
+    "appOutputDir":"dist/app"
+   
+    
+
+}

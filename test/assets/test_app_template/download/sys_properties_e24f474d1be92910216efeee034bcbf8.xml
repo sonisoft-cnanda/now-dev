@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>&lt;hr /&gt;&#13;
+&lt;h3&gt;Update Action History Status Max Retries&lt;/h3&gt;&#13;
+&lt;p&gt;The maximum number of times to retry getting the status of an action from the Tanium Action History table. &lt;br /&gt;&#13;
+The "Tanium-Update Action Status" Flow will execute a loop every 5 minutes until this number of retries has been reached. For example, setting this to 96 loops will result in the Flow continuing to retry getting the Action status until a "final" status is detected, or until 8 hours (96 * 5 / 60) have elapsed. &lt;/p&gt;&#13;
+&lt;strong&gt;Default&lt;/strong&gt;: &lt;i&gt;144&lt;/i&gt; (~12 hours)</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_taniu_tan_core.update_action_history_status.max_retries</name>
+        <read_roles/>
+        <suffix>update_action_history_status.max_retries</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2023-03-11 19:22:57</sys_created_on>
+        <sys_id>e24f474d1be92910216efeee034bcbf8</sys_id>
+        <sys_mod_count>45</sys_mod_count>
+        <sys_name>x_taniu_tan_core.update_action_history_status.max_retries</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_e24f474d1be92910216efeee034bcbf8</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-08-10 01:57:42</sys_updated_on>
+        <type>integer</type>
+        <value>144</value>
+        <write_roles>x_taniu_tan_core.core_admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=e24f474d1be92910216efeee034bcbf8"/>
+</record_update>

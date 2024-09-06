@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_data_policy_rule">
+    <sys_data_policy_rule action="INSERT_OR_UPDATE">
+        <disabled>true</disabled>
+        <field>package_parameter</field>
+        <mandatory>ignore</mandatory>
+        <sys_class_name>sys_data_policy_rule</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-13 20:01:21</sys_created_on>
+        <sys_data_policy display_value="Prevent changing Package parameter after set">b8f3e123db3d9110acc1ef92ca961920</sys_data_policy>
+        <sys_id>7844ad23db3d9110acc1ef92ca96196d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>package_parameter</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_data_policy_rule_7844ad23db3d9110acc1ef92ca96196d</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-13 20:01:21</sys_updated_on>
+        <table>x_taniu_tan_core_configured_action_parameter</table>
+    </sys_data_policy_rule>
+</record_update>

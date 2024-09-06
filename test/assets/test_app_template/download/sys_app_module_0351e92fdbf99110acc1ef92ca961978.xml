@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="Tanium Integration Core">2e322ac92f40f8101ba85d492799b6c1</application>
+        <assessment/>
+        <device_type/>
+        <filter table="x_taniu_tan_core_configured_action_package">sys_class_name=x_taniu_tan_core_configured_action_package^EQ<item display_value="Configured Action" endquery="false" field="sys_class_name" goto="false" newquery="false" operator="=" or="false" value="x_taniu_tan_core_configured_action_package"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>LIST</link_type>
+        <map_page/>
+        <mobile_title>Tanium Packages</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>x_taniu_tan_core_configured_action_package</name>
+        <order>200</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <require_confirmation>true</require_confirmation>
+        <roles>x_taniu_tan_core.core_admin,x_taniu_tan_core.configured_action_manager,x_taniu_tan_core.configured_action_read</roles>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-13 19:48:12</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>0351e92fdbf99110acc1ef92ca961978</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Configured Actions</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_app_module_0351e92fdbf99110acc1ef92ca961978</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-02-06 22:02:50</sys_updated_on>
+        <timeline_page/>
+        <title>Configured Actions</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+</record_update>

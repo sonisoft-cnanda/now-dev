@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category">
+    <sys_properties_category action="INSERT_OR_UPDATE">
+        <name>Tanium Patch Settings</name>
+        <sys_class_name>sys_properties_category</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-03-15 18:40:25</sys_created_on>
+        <sys_id>0d8264541b490610132a55392a4bcb1f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Tanium Patch Settings</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_category_0d8264541b490610132a55392a4bcb1f</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-15 18:40:25</sys_updated_on>
+        <title><![CDATA[<p><strong>Tanium Integration Core</strong> configuration options for Patch-related functionality.</p>]]></title>
+    </sys_properties_category>
+    <sys_translated_text action="delete_multiple" query="documentkey=0d8264541b490610132a55392a4bcb1f"/>
+</record_update>
