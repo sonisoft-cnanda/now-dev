@@ -43,12 +43,12 @@ lint-test-job:   # This job also runs in the test stage.
   script:
     - npm run lint
 
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  environment: dev
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+# deploy-job:      # This job runs in the deploy stage.
+#   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+#   environment: dev
+#   script:
+#     - echo "Deploying application..."
+#     - echo "Application successfully deployed."
 
 publish:
   stage: release
