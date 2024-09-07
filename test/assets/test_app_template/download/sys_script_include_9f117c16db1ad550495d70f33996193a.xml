@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.ConfiguredSensorAJAX</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>ConfiguredSensorAJAX</name>
+        <script><![CDATA[var ConfiguredSensorAJAX = Class.create();
+ConfiguredSensorAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	
+	/**
+	 * Retrieve the value returned from querying a specified Configured Sensor on a specified
+	 *  endpoint, by Configured Sensor name.
+	 * @returns {string}
+	 * @since 1.2.0
+	 */
+	getConfiguredSensorValueByName: function() {
+		var grEndpoint, grConfiguredSensor;
+		var ciTable = this.getParameter('ci_table');
+		var ciSysID = this.getParameter('ci_sys_id');
+		var configuredSensorName = this.getParameter('sensor_name');
+		var sensorUtil = new x_taniu_tan_core.TaniumConfiguredSensorUtil();
+		
+		//If table is not set, use base cmdb_ci table.
+		ciTable = ciTable || 'cmdb_ci';
+		
+		grEndpoint = new GlideRecord(ciTable);
+		if (!grEndpoint.get(ciSysID)) {
+			throw new Error(
+				'ConfiguredSensorAJAX.getConfiguredSensorValueByName() unable to find endpoint ' +
+				'in table "' + ciTable + '" with sys_id "' + ciSysID + '". \n' +
+				'Unable to get Configured Sensor value without a valid Tanium-managed endpoint.'
+			);
+		}
+		
+		grConfiguredSensor = new GlideRecord('x_taniu_tan_core_configured_sensor');
+		if (!grConfiguredSensor.get('name', configuredSensorName)) {
+			throw new Error(
+				'ConfiguredSensorAJAX.getConfiguredSensorValueByName() unable to find Configured ' +
+				'Sensor with name "' + configuredSensorName + '". \n' +
+				'Unable to get Configured Sensor value without a valid Configured Sensor name.'
+			);
+		}
+		
+		return JSON.stringify(
+			sensorUtil.getConfiguredSensorResults(
+				grConfiguredSensor,
+				grEndpoint
+			)
+		);
+	},
+	
+	/**
+	 * Check that a specified Configured Sensor Parameter's value is valid, based on the
+	 *  validation logic in the Parameter definition.
+	 * @returns {string} - A stringified JSON object containing two nodes: "valid" and
+	 *  "help_string". If valid is false, then a help string will usually be provided to
+	 *  inform the user as to why validation failed.
+	 *  @since 1.2.0
+	 */
+	checkConfiguredSensorParamValue : function () {
+		var responseObj;
+		var sensorUtil = new x_taniu_tan_core.TaniumConfiguredSensorUtil();
+		var sensorParamSysID = this.getParameter('sensor_param_sys_id');
+		var configuredParamValue = this.getParameter('configured_param_value');
+		var grSensorParam = new GlideRecord('x_taniu_tan_core_sensor_parameter');
+		
+		if (!grSensorParam.get(sensorParamSysID)) {
+			return JSON.stringify({
+				'valid' : false,
+				'help_string' : 'Sensor Parameter not found. Unable to validate value.'
+			});
+		}
+		
+		//If we got here, then the Sensor Parameter was found, and we can continue to validate.
+		responseObj = JSON.stringify(
+			sensorUtil._doesSensorParamValuePassValidation(
+				configuredParamValue,
+				grSensorParam.getValue('validation_expressions')
+			)
+		);
+		return responseObj;
+	},
+	
+	/**
+	 * Check all Configured Sensor Parameters that are associated with the specified
+	 *  Configured Sensor record, and ensure that they are all valid according to their
+	 *  own validation logic.
+	 * @returns {{valid: boolean, help_strings: *[], invalid_param_keys: *[]}|string}
+	 * @since 1.2.0
+	 */
+	checkAllConfiguredSensorParamValues: function() {
+		var validationResults, validationExpressions, configuredParamValue;
+		var sensorUtil = new x_taniu_tan_core.TaniumConfiguredSensorUtil();
+		var configuredSensorSysID = this.getParameter('configured_sensor_sys_id');
+		var grConfiguredSensorParam = new GlideRecord(
+			'x_taniu_tan_core_configured_sensor_parameter'
+		);
+		var responseObj = {
+			"valid": true,
+			"invalid_param_keys": [],
+			"help_strings": []
+		};
+		
+		grConfiguredSensorParam.addQuery('configured_sensor', configuredSensorSysID);
+		grConfiguredSensorParam.addNotNullQuery('configured_sensor');
+		grConfiguredSensorParam.query();
+		
+		while (grConfiguredSensorParam.next()) {
+			configuredParamValue = grConfiguredSensorParam.getValue('value');
+			validationExpressions = grConfiguredSensorParam.sensor_parameter.validation_expressions.toString();
+			
+			validationResults = sensorUtil._doesSensorParamValuePassValidation(
+				configuredParamValue,
+				validationExpressions
+			);
+			
+			//If configured param value is invalid, update responseObj
+			if (!validationResults.valid) {
+				responseObj.valid = false;
+				responseObj.invalid_param_keys.push(grConfiguredSensorParam.getValue('key'));
+				responseObj.help_strings.push(validationResults.help_string);
+			}
+		}
+		
+		return JSON.stringify(responseObj);
+	},
+	
+	/**
+	 *
+	 * @returns {string|{prompt_text: string, help_text: string}}
+	 * @since 1.2.0
+	 */
+	getPromptAndHelpText : function () {
+		var sensorParamSysID = this.getParameter('sensor_param_sys_id');
+		var grSensorParam = new GlideRecord('x_taniu_tan_core_sensor_parameter');
+		var responseObj = {
+			"prompt_text": "",
+			"help_text": ""
+		};
+		
+		if (!grSensorParam.get(sensorParamSysID)) {
+			return responseObj;
+		}
+		
+		if (!grSensorParam.prompt_text.nil()) {
+			responseObj.prompt_text = grSensorParam.getValue('prompt_text');
+		}
+		if (!grSensorParam.help_text.nil()) {
+			responseObj.help_text = grSensorParam.getValue('help_text');
+		}
+		
+		responseObj = JSON.stringify(responseObj);
+		return responseObj;
+	},
+	
+	type : 'ConfiguredSensorAJAX'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-10-04 15:39:57</sys_created_on>
+        <sys_id>9f117c16db1ad550495d70f33996193a</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>ConfiguredSensorAJAX</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_9f117c16db1ad550495d70f33996193a</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-11-03 14:04:28</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role">
+    <sys_user_role action="INSERT_OR_UPDATE">
+        <assignable_by display_value="x_taniu_tan_core.core_admin" name="x_taniu_tan_core.core_admin">d35a4aaddbfa4910495d70f339961912</assignable_by>
+        <can_delegate>true</can_delegate>
+        <description>Allows read access to the "Deploy Software Package" table.</description>
+        <elevated_privilege>false</elevated_privilege>
+        <encryption_context/>
+        <grantable>true</grantable>
+        <includes_roles/>
+        <name>x_taniu_tan_core.deploy_spkg_read</name>
+        <scoped_admin>false</scoped_admin>
+        <suffix>deploy_spkg_read</suffix>
+        <sys_class_name>sys_user_role</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-10-06 16:39:05</sys_created_on>
+        <sys_id>31725fb2db9e5950495d70f3399619a8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core.deploy_spkg_read</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_user_role_31725fb2db9e5950495d70f3399619a8</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-10-06 16:39:05</sys_updated_on>
+    </sys_user_role>
+</record_update>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>true</action_delete>
+        <action_insert>false</action_insert>
+        <action_query>false</action_query>
+        <action_update>false</action_update>
+        <active>false</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_taniu_tan_core_tanium_package_parameter</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>(OFF) Delete Config'd Params on Delete</name>
+        <order>10000</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	//THIS BR HAS BEEN DEACTIVATED TO PREVENT LOSS OF DATA ON PARAMETER DELETION.
+	
+	var paramValue, debugLogMsg;
+	var currentActionParamID = current.getUniqueValue(); //The current "Configured Action Parameter"
+	var grConfiguredParam = new GlideRecord('x_taniu_tan_core_configured_action_parameter');
+	
+	grConfiguredParam.addQuery('package_parameter', currentActionParamID);
+	grConfiguredParam.query();
+	
+	while (grConfiguredParam.next()) {
+		paramValue = grConfiguredParam.getValue('value');
+		
+		debugLogMsg = 'The Configured Action Parameter with sys_id ' +
+			grConfiguredParam.getUniqueValue();
+		if (paramValue) {
+			debugLogMsg += ' and configured value ' + paramValue;
+		}
+		debugLogMsg += ' has been automatically deleted, as the associated Tanium Action ' +
+			'Package Parameter has also been deleted.';
+		
+		grConfiguredParam.deleteRecord();
+		gs.debug(debugLogMsg);
+	}
+	
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-13 23:31:21</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>480412e7dbbd9110acc1ef92ca9619cd</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>(OFF) Delete Config'd Params on Delete</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_480412e7dbbd9110acc1ef92ca9619cd</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-30 21:11:51</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=480412e7dbbd9110acc1ef92ca9619cd"/>
+</record_update>

@@ -1,0 +1,2848 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_hub_action_type_definition">
+    <sys_hub_action_type_definition action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <acls/>
+        <action_status/>
+        <action_template/>
+        <active>true</active>
+        <annotation>Get the status of a specified Action in Tanium.</annotation>
+        <attributes/>
+        <authored_on_release_version/>
+        <callable_by_client_api>false</callable_by_client_api>
+        <category display_value="Tanium Actions">9200c9081b3cce50216efeee034bcbc9</category>
+        <copied_from/>
+        <copied_from_name/>
+        <description>Get the status of a specified Action in Tanium, by Action ID. </description>
+        <flow_priority/>
+        <ih_action>false</ih_action>
+        <internal_name>taniumget_action_status</internal_name>
+        <label_cache>[{"name":"{{action.tanium_action_id}}","label":"action➛Tanium Action ID","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.tan_action_id}}","label":"action➛Tanium Action ID","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].variable}}","label":"step➛Script step➛variable","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tanium_action_status}}","label":"step➛Script step➛Tanium Action Status","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_status}}","label":"step➛Script step➛Tanium Action Status","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","uiUniqueId":"01fb47e9-8967-4bf5-89a2-a78594d03349"}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].endpoints_completed}}","label":"step➛Script step➛Endpoints Completed","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_endpoints_completed}}","label":"step➛Script step➛Endpoints Completed","type":"step","ref":"","reference_display":"","base_type":"integer","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tanium_action_details}}","label":"step➛Script step➛Tanium Action Details","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_details}}","label":"step➛Script step➛Tanium Action Details","type":"step","ref":"","reference_display":"","base_type":"json","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}}]</label_cache>
+        <master_snapshot>da55bea1db230d10495d70f339961954</master_snapshot>
+        <name>Tanium-Get Action Status by ID</name>
+        <natlang/>
+        <outputs/>
+        <outputs/>
+        <pre_compiled>false</pre_compiled>
+        <state>published</state>
+        <sys_class_name>sys_hub_action_type_definition</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:50:04</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>b5a11265dbafc910495d70f33996191e</sys_id>
+        <sys_mod_count>30</sys_mod_count>
+        <sys_name>Tanium-Get Action Status by ID</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_hub_action_type_definition_b5a11265dbafc910495d70f33996191e</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:28:01</sys_updated_on>
+        <system_level>false</system_level>
+        <type/>
+    </sys_hub_action_type_definition>
+    <sys_translated_text action="delete_multiple" query="documentkey=b5a11265dbafc910495d70f33996191e"/>
+    <sys_variable_value action="delete_multiple" query="document_key=b5a11265dbafc910495d70f33996191e"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_definition</document>
+        <document_key>b5a11265dbafc910495d70f33996191e</document_key>
+        <order>5</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>2dc212a5dbafc910495d70f33996195c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <value>0</value>
+        <variable display_value="Don't Treat as Error">6dc212a5dbafc910495d70f33996194f</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_definition</document>
+        <document_key>b5a11265dbafc910495d70f33996191e</document_key>
+        <order>4</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a1c212a5dbafc910495d70f33996195d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:58</sys_updated_on>
+        <value>{"version":"1.0","complexObject":{"code":{"$cv":{"$c":"java.lang.String","$v":""}},"message":{"$cv":{"$c":"java.lang.String","$v":""}}},"complexObjectSchema":{"FlowDesigner:FD51c212a53aafc910da496a3e3a4b6d32":{"code":"Integer","code.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"Integer\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"integer\",\"default_value\":\"\",\"label\":\"Code\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"40\"}"},"message":"String","message.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Message\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"4000\"}"}},"FlowDesigner:FD51c212a53aafc910da496a3e3a4b6d32.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"default_value\":\"\",\"label\":\"Action Status\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"uiUniqueId\":\"fbf75e2d-b139-41a9-b3ee-8b5f5554910c\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FD51c212a53aafc910da496a3e3a4b6d32\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":\"\",\"uiType\":\"object\",\"order\":\"4\",\"max_length\":\"65000\"}"}},"serializationFormat":"JSON"}</value>
+        <variable display_value="Action Status">a5c212a5dbafc910495d70f339961949</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_definition</document>
+        <document_key>b5a11265dbafc910495d70f33996191e</document_key>
+        <order>3</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>edc212a5dbafc910495d70f33996195c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <value/>
+        <variable display_value="Endpoints Completed">61c212a5dbafc910495d70f339961943</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="id=b5a11265dbafc910495d70f33996191e"/>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_details</field>
+        <id>b5a11265dbafc910495d70f33996191e</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 22:06:10</sys_created_on>
+        <sys_id>a555d229dbafc910495d70f3399619cd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_details}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_status</field>
+        <id>b5a11265dbafc910495d70f33996191e</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 22:06:10</sys_created_on>
+        <sys_id>e155d229dbafc910495d70f3399619cd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_status}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_endpoints_completed</field>
+        <id>b5a11265dbafc910495d70f33996191e</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>25c212a5dbafc910495d70f33996195c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_endpoints_completed}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>__action_status__</field>
+        <id>b5a11265dbafc910495d70f33996191e</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a9c212a5dbafc910495d70f33996195c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <table>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>__dont_treat_as_error__</field>
+        <id>b5a11265dbafc910495d70f33996191e</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>e5c212a5dbafc910495d70f33996195c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <table>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_hub_step_instance action="delete_multiple" query="action=b5a11265dbafc910495d70f33996191e^sys_idNOT INc0129665dbafc910495d70f339961923"/>
+    <sys_hub_step_instance action="INSERT_OR_UPDATE">
+        <action display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</action>
+        <cid>f6e2e540-5574-441c-ad60-019aa51c4792</cid>
+        <error_handling_type>1</error_handling_type>
+        <extended_inputs/>
+        <extended_inputs/>
+        <extended_outputs/>
+        <icon/>
+        <inputs/>
+        <label>Script step</label>
+        <order>1</order>
+        <outputs/>
+        <section/>
+        <step_type display_value="Script">106afb6647032200b4fad7527c9a71e7</step_type>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:52</sys_created_on>
+        <sys_id>c0129665dbafc910495d70f339961923</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:58:59</sys_updated_on>
+    </sys_hub_step_instance>
+    <sys_variable_value action="delete_multiple" query="document_key=c0129665dbafc910495d70f339961923"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>c0129665dbafc910495d70f339961923</document_key>
+        <order>400</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:53</sys_created_on>
+        <sys_id>50129665dbafc910495d70f33996192f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:53</sys_updated_on>
+        <value>35aa573fd7802200bdbaee5b5e610375</value>
+        <variable display_value="MID Application">f5e56d79b3101300176b051a16a8dce4</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>c0129665dbafc910495d70f339961923</document_key>
+        <order>600</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:53</sys_created_on>
+        <sys_id>d8129665dbafc910495d70f33996192f</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:58:59</sys_updated_on>
+        <value>(function execute(inputs, outputs) {
+	
+	var actionDetails, actionResults, actionStatus;
+	var actionUtil = new x_taniu_tan_core.TaniumActionUtil();
+	var actionID = inputs['tan_action_id'];
+	var completedCount = 0;
+	
+	if (!actionID) {
+		throw new Error(
+			'Attempted to get status of Tanium Action but a valid action ID was not specified.'
+		);
+	}
+	
+	actionDetails = actionUtil.getActionDetailsByID(actionID);
+	
+	if (
+		!actionDetails ||
+		!actionDetails.hasOwnProperty('data') ||
+		!actionDetails.data.hasOwnProperty('status')
+	) {
+		throw new Error(
+			'Attempted to get status of Tanium Action but a valid action ID was not ' +
+			'specified or found in Tanium.'
+		);
+	}
+	
+	actionStatus = actionDetails.data.status.toString();
+	
+	outputs['tan_action_status'] = actionStatus;
+	outputs['tan_action_details'] = actionDetails;
+	
+	actionResults = actionUtil.getActionResultsByID(actionID);
+	actionResults = actionResults.data.result_sets[0];
+	completedCount = getCompletedCount(actionResults);
+	
+	outputs['tan_endpoints_completed'] = completedCount;
+	
+	//HELPER FUNCTIONS BELOW
+	
+	function getCompletedCount(actionResults) {
+		var i, statusRows;
+		var completedCount = 0;
+		var resultsColumnIndex = getStatusColumnIndex(actionResults);
+		
+		if (resultsColumnIndex === false) {
+			return 0;
+		}
+		
+		statusRows = actionResults.rows;
+		for (i = 0; i &lt; statusRows.length; i++) {
+			if (statusRows[i].data[resultsColumnIndex][0].text.indexOf('Completed') &gt;= 0) {
+				completedCount++;
+			}
+		}
+		
+		return completedCount;
+	}
+	
+	function getStatusColumnIndex(actionResults) {
+		var i;
+		
+		for (i = 0; i &lt; actionResults.columns.length; i++) {
+			if (actionResults.columns[i].name == 'Action Statuses') {
+				return i;
+			}
+		}
+		
+		//Unable to find results column
+		return false;
+	}
+	
+})(inputs, outputs);
+</value>
+        <variable display_value="Script">71aa7f6647032200b4fad7527c9a719b</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="id=c0129665dbafc910495d70f339961923"/>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>application</field>
+        <id>c0129665dbafc910495d70f339961923</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:53</sys_created_on>
+        <sys_id>94129665dbafc910495d70f33996192e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:53</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>script</field>
+        <id>c0129665dbafc910495d70f339961923</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:53</sys_created_on>
+        <sys_id>dc129665dbafc910495d70f33996192e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:53</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_id</field>
+        <id>c0129665dbafc910495d70f339961923</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 22:06:10</sys_created_on>
+        <sys_id>ad55d229dbafc910495d70f3399619a2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_c0129665dbafc910495d70f339961923</table>
+        <value>{{action.tan_action_id}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923^id=c0129665dbafc910495d70f339961923"/>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7^id=c0129665dbafc910495d70f339961923"/>
+    <sys_hub_step_ext_input action="delete_multiple" query="model=c0129665dbafc910495d70f339961923^sys_idNOT IN2d55d229dbafc910495d70f339961994"/>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_id</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">c0129665dbafc910495d70f339961923</model>
+        <model_id>c0129665dbafc910495d70f339961923</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_c0129665dbafc910495d70f339961923</name>
+        <next_element/>
+        <order>0</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 22:06:10</sys_created_on>
+        <sys_id>2d55d229dbafc910495d70f339961994</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_output action="delete_multiple" query="model=c0129665dbafc910495d70f339961923^sys_idNOT IN22e3dea5dbafc910495d70f339961944,26e3dea5dbafc910495d70f33996194a,aae3dea5dbafc910495d70f33996193c"/>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=integer,uiTypeLabel=Integer,uiUniqueId=acb83d01-9694-4e57-8b81-03ea95377ffa</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_endpoints_completed</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Integer">integer</internal_type>
+        <label>Endpoints Completed</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">c0129665dbafc910495d70f339961923</model>
+        <model_id>c0129665dbafc910495d70f339961923</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:58</sys_created_on>
+        <sys_id>22e3dea5dbafc910495d70f339961944</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:58</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=json,uiTypeLabel=JSON,uiUniqueId=2d8abaa4-c9cd-4e46-9bf8-71d0c2bddd4b</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_details</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="JSON">json</internal_type>
+        <label>Tanium Action Details</label>
+        <mandatory>false</mandatory>
+        <max_length>4000</max_length>
+        <model display_value="Script step">c0129665dbafc910495d70f339961923</model>
+        <model_id>c0129665dbafc910495d70f339961923</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <next_element/>
+        <order>3</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:58</sys_created_on>
+        <sys_id>26e3dea5dbafc910495d70f33996194a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:58</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=01fb47e9-8967-4bf5-89a2-a78594d03349</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_status</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action Status</label>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">c0129665dbafc910495d70f339961923</model>
+        <model_id>c0129665dbafc910495d70f339961923</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:57</sys_created_on>
+        <sys_id>aae3dea5dbafc910495d70f33996193c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:57</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=c0129665dbafc910495d70f339961923"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923^sys_idNOT IN62e3dea5dbafc910495d70f33996194f,6ae3dea5dbafc910495d70f339961942,6ee3dea5dbafc910495d70f339961948"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_details</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action Details</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:58</sys_created_on>
+        <sys_id>62e3dea5dbafc910495d70f33996194f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_status</element>
+        <help/>
+        <hint>The current status of the Tanium Action (usually "Open", "Closed", "Stopped", or "Error" if something went wrong. </hint>
+        <label>Tanium Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:58</sys_created_on>
+        <sys_id>6ae3dea5dbafc910495d70f339961942</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:01:18</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_endpoints_completed</element>
+        <help/>
+        <hint/>
+        <label>Endpoints Completed</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_c0129665dbafc910495d70f339961923</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:59:58</sys_created_on>
+        <sys_id>6ee3dea5dbafc910495d70f339961948</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:59:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_hub_action_input action="delete_multiple" query="model=b5a11265dbafc910495d70f33996191e^sys_idNOT IN8c129665dbafc910495d70f339961917"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=6e6dfdb0-5868-4221-abfe-ef4e7fea4c37</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_id</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action ID</label>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:52</sys_created_on>
+        <sys_id>8c129665dbafc910495d70f339961917</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:52</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=8c129665dbafc910495d70f339961917"/>
+    <sys_hub_action_output action="delete_multiple" query="model=b5a11265dbafc910495d70f33996191e^sys_idNOT IN2dc212a5dbafc910495d70f33996193c,61c212a5dbafc910495d70f339961943,6dc212a5dbafc910495d70f33996194f,a5c212a5dbafc910495d70f339961935,a5c212a5dbafc910495d70f339961949"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=json,uiTypeLabel=JSON,uiUniqueId=196abb98-0d46-45ba-8369-395e947e2b48</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_details</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="JSON">json</internal_type>
+        <label>Tanium Action Details</label>
+        <mandatory>false</mandatory>
+        <max_length>4000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>3</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>2dc212a5dbafc910495d70f33996193c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:01:18</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=2dc212a5dbafc910495d70f33996193c"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=2dc212a5dbafc910495d70f33996193c"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=integer,uiTypeLabel=Integer,uiUniqueId=25650043-5fd4-45d1-8433-b5c67fd07ca6</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_endpoints_completed</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="Integer">integer</internal_type>
+        <label>Endpoints Completed</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>61c212a5dbafc910495d70f339961943</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:01:18</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=61c212a5dbafc910495d70f339961943"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=61c212a5dbafc910495d70f339961943"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False,uiUniqueId=37a0d649-548c-45b2-9ba1-0c5f1ee4eb22,visible_in_ui=false</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>true</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__dont_treat_as_error__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="">boolean</internal_type>
+        <label>Don't Treat as Error</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>5</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>6dc212a5dbafc910495d70f33996194f</sys_id>
+        <sys_mod_count>9</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:27:59</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=6dc212a5dbafc910495d70f33996194f"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=6dc212a5dbafc910495d70f33996194f"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,pwd2droppable=true,uiType=string,uiTypeLabel=String,uiUniqueId=0bd84b06-dba7-4dd6-b909-1082b3ed9dfc</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_status</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action Status</label>
+        <mandatory>true</mandatory>
+        <max_length>254</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a5c212a5dbafc910495d70f339961935</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 22:06:10</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=a5c212a5dbafc910495d70f339961935"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=a5c212a5dbafc910495d70f339961935"/>
+    <sys_complex_object action="INSERT_OR_UPDATE">
+        <label/>
+        <name>FD51c212a53aafc910da496a3e3a4b6d32</name>
+        <namespace>FlowDesigner</namespace>
+        <scope_name>c4134c50db6ec910495d70f339961931</scope_name>
+        <serialized_content>{"FlowDesigner:FD51c212a53aafc910da496a3e3a4b6d32":{"code":"Integer","code.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"Integer\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"integer\",\"default_value\":\"\",\"label\":\"Code\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"40\"}"},"message":"String","message.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Message\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"4000\"}"}},"FlowDesigner:FD51c212a53aafc910da496a3e3a4b6d32.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"default_value\":\"\",\"label\":\"Action Status\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"uiUniqueId\":\"fbf75e2d-b139-41a9-b3ee-8b5f5554910c\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FD51c212a53aafc910da496a3e3a4b6d32\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":\"\",\"uiType\":\"object\",\"order\":\"4\",\"max_length\":\"65000\"}"}}</serialized_content>
+        <sys_class_name>sys_complex_object</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>25c212a5dbafc910495d70f339961932</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:27:59</sys_updated_on>
+        <type>complex_object_schema</type>
+    </sys_complex_object>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,co_type_name=FD51c212a53aafc910da496a3e3a4b6d32,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=object,uiTypeLabel=Object,uiUniqueId=fbf75e2d-b139-41a9-b3ee-8b5f5554910c</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__action_status__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Action Status</label>
+        <mandatory>false</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</model>
+        <model_id>b5a11265dbafc910495d70f33996191e</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <next_element/>
+        <order>4</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a5c212a5dbafc910495d70f339961949</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=a5c212a5dbafc910495d70f339961949"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=a5c212a5dbafc910495d70f339961949"/>
+    <sys_hub_pill_compound action="delete_multiple" query="attached_to=b5a11265dbafc910495d70f33996191e"/>
+    <sys_hub_action_status_metadata action="delete_multiple" query="action_type_id=b5a11265dbafc910495d70f33996191e^sys_idNOT INd8129665dbafc910495d70f339961933"/>
+    <sys_hub_action_status_metadata action="INSERT_OR_UPDATE">
+        <action_type_id display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</action_type_id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:53</sys_created_on>
+        <sys_id>d8129665dbafc910495d70f339961933</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:53</sys_updated_on>
+    </sys_hub_action_status_metadata>
+    <sys_hub_status_condition action="delete_multiple" query="action_status_metadata_id=d8129665dbafc910495d70f339961933"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_input_b5a11265dbafc910495d70f33996191e^sys_idNOT IN04129665dbafc910495d70f339961920"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_id</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action ID</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:51:52</sys_created_on>
+        <sys_id>04129665dbafc910495d70f339961920</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:51:52</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_input_b5a11265dbafc910495d70f33996191e"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e^sys_idNOT IN29c212a5dbafc910495d70f339961958,65c212a5dbafc910495d70f33996193b,a5c212a5dbafc910495d70f33996194e,a9c212a5dbafc910495d70f339961941,edc212a5dbafc910495d70f339961947"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__dont_treat_as_error__</element>
+        <help/>
+        <hint/>
+        <label>Don't Treat as Error</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>29c212a5dbafc910495d70f339961958</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_status</element>
+        <help/>
+        <hint>The current status of the Tanium Action (usually "Open", "Closed", "Stopped", or "Error" if something went wrong. </hint>
+        <label>Tanium Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>65c212a5dbafc910495d70f33996193b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__action_status__</element>
+        <help/>
+        <hint/>
+        <label>Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a5c212a5dbafc910495d70f33996194e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_details</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action Details</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>a9c212a5dbafc910495d70f339961941</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_endpoints_completed</element>
+        <help/>
+        <hint>The number of endpoints on which the specified action was completed. </hint>
+        <label>Endpoints Completed</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-18 21:54:58</sys_created_on>
+        <sys_id>edc212a5dbafc910495d70f339961947</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-18 21:54:58</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_output_b5a11265dbafc910495d70f33996191e"/>
+    <sys_hub_action_plan action="delete_multiple" query="action_id=b5a11265dbafc910495d70f33996191e^sys_idNOT INfa55fea1db230d10495d70f33996190d"/>
+    <sys_hub_action_plan action="INSERT_OR_UPDATE">
+        <action_id display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</action_id>
+        <plan>{"persistor":{"@class":".ChunkingPlanPersistor","table":"sys_hub_action_plan","id":"fa55fea1db230d10495d70f33996190d","name":"plan","plan_signature":null}}</plan>
+        <snapshot>ed17421b1b750250a1ae117b234bcb4e</snapshot>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:04</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>fa55fea1db230d10495d70f33996190d</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_overrides/>
+        <sys_scope/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:28:02</sys_updated_on>
+    </sys_hub_action_plan>
+    <sys_hub_action_type_snapshot action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <acls/>
+        <action_status/>
+        <action_template/>
+        <annotation>Get the status of a specified Action in Tanium.</annotation>
+        <attributes/>
+        <authored_on_release_version/>
+        <callable_by_client_api>false</callable_by_client_api>
+        <category display_value="Tanium Actions">9200c9081b3cce50216efeee034bcbc9</category>
+        <copied_from/>
+        <copied_from_name/>
+        <description>Get the status of a specified Action in Tanium, by Action ID. </description>
+        <flow_priority/>
+        <internal_name>taniumget_action_status</internal_name>
+        <label_cache>[{"name":"{{action.tanium_action_id}}","label":"action➛Tanium Action ID","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.tan_action_id}}","label":"action➛Tanium Action ID","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].variable}}","label":"step➛Script step➛variable","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tanium_action_status}}","label":"step➛Script step➛Tanium Action Status","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_status}}","label":"step➛Script step➛Tanium Action Status","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","uiUniqueId":"01fb47e9-8967-4bf5-89a2-a78594d03349"}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].endpoints_completed}}","label":"step➛Script step➛Endpoints Completed","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_endpoints_completed}}","label":"step➛Script step➛Endpoints Completed","type":"step","ref":"","reference_display":"","base_type":"integer","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tanium_action_details}}","label":"step➛Script step➛Tanium Action Details","type":"step","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}},{"name":"{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_details}}","label":"step➛Script step➛Tanium Action Details","type":"step","ref":"","reference_display":"","base_type":"json","parent_table_name":"","column_name":"","choices":null,"attributes":{"sourceId":"","sourceUiUniqueId":"","sourceType":""}}]</label_cache>
+        <master>true</master>
+        <name>Tanium-Get Action Status by ID</name>
+        <natlang/>
+        <outputs/>
+        <outputs/>
+        <parent_action display_value="Tanium-Get Action Status by ID">b5a11265dbafc910495d70f33996191e</parent_action>
+        <sys_class_name>sys_hub_action_type_snapshot</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:01</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>da55bea1db230d10495d70f339961954</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-02 18:03:02</sys_updated_on>
+        <system_level>false</system_level>
+        <type/>
+    </sys_hub_action_type_snapshot>
+    <sys_translated_text action="delete_multiple" query="documentkey=da55bea1db230d10495d70f339961954"/>
+    <sys_variable_value action="delete_multiple" query="document_key=da55bea1db230d10495d70f339961954"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_snapshot</document>
+        <document_key>da55bea1db230d10495d70f339961954</document_key>
+        <order>4</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>2a55bea1db230d10495d70f3399619c6</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-02 18:03:03</sys_updated_on>
+        <value>{"version":"1.0","complexObject":{"code":{"$cv":{"$c":"java.lang.String","$v":""}},"message":{"$cv":{"$c":"java.lang.String","$v":""}}},"complexObjectSchema":{"FlowDesigner:FDd655bea12f230d1085003e6d71190890":{"code":"Integer","code.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"Integer\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"integer\",\"default_value\":\"\",\"label\":\"Code\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"40\"}"},"message":"String","message.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Message\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"4000\"}"}},"FlowDesigner:FDd655bea12f230d1085003e6d71190890.$type_facets":{"SimpleMapFacet":"{\"default_value\":\"\",\"label\":\"Action Status\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"uiUniqueId\":\"fbf75e2d-b139-41a9-b3ee-8b5f5554910c\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FDd655bea12f230d1085003e6d71190890\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"object\",\"order\":\"4\",\"max_length\":\"65000\"}"}},"serializationFormat":"JSON"}</value>
+        <variable display_value="Action Status">aa55bea1db230d10495d70f3399619b2</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_snapshot</document>
+        <document_key>da55bea1db230d10495d70f339961954</document_key>
+        <order>2</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>6655bea1db230d10495d70f3399619c6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <value/>
+        <variable display_value="Endpoints Completed">a255bea1db230d10495d70f3399619a6</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_snapshot</document>
+        <document_key>da55bea1db230d10495d70f339961954</document_key>
+        <order>5</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>a255bea1db230d10495d70f3399619c6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <value>0</value>
+        <variable display_value="Don't Treat as Error">2255bea1db230d10495d70f3399619b9</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="id=da55bea1db230d10495d70f339961954"/>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_details</field>
+        <id>da55bea1db230d10495d70f339961954</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>aa55bea1db230d10495d70f3399619c5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <table>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_details}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_status</field>
+        <id>da55bea1db230d10495d70f339961954</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>e655bea1db230d10495d70f3399619c5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <table>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_action_status}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_endpoints_completed</field>
+        <id>da55bea1db230d10495d70f339961954</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>2655bea1db230d10495d70f3399619c5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <table>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</table>
+        <value>{{step[f6e2e540-5574-441c-ad60-019aa51c4792].tan_endpoints_completed}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>__action_status__</field>
+        <id>da55bea1db230d10495d70f339961954</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>2255bea1db230d10495d70f3399619c6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <table>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>__dont_treat_as_error__</field>
+        <id>da55bea1db230d10495d70f339961954</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>6e55bea1db230d10495d70f3399619c5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <table>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_hub_step_instance action="delete_multiple" query="action=da55bea1db230d10495d70f339961954^sys_idNOT IN9a55bea1db230d10495d70f33996195f"/>
+    <sys_hub_step_instance action="INSERT_OR_UPDATE">
+        <action display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</action>
+        <cid>f6e2e540-5574-441c-ad60-019aa51c4792</cid>
+        <error_handling_type>1</error_handling_type>
+        <extended_inputs/>
+        <extended_inputs/>
+        <extended_outputs/>
+        <icon/>
+        <inputs/>
+        <label>Script step</label>
+        <order>1</order>
+        <outputs/>
+        <section/>
+        <step_type display_value="Script">106afb6647032200b4fad7527c9a71e7</step_type>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>9a55bea1db230d10495d70f33996195f</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:59:00</sys_updated_on>
+    </sys_hub_step_instance>
+    <sys_variable_value action="delete_multiple" query="document_key=9a55bea1db230d10495d70f33996195f"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>9a55bea1db230d10495d70f33996195f</document_key>
+        <order>400</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>1e55bea1db230d10495d70f33996198c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <value>35aa573fd7802200bdbaee5b5e610375</value>
+        <variable display_value="MID Application">f5e56d79b3101300176b051a16a8dce4</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>9a55bea1db230d10495d70f33996195f</document_key>
+        <order>600</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>de55bea1db230d10495d70f33996198c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:59:00</sys_updated_on>
+        <value>(function execute(inputs, outputs) {
+	
+	var actionDetails, actionResults, actionStatus;
+	var actionUtil = new x_taniu_tan_core.TaniumActionUtil();
+	var actionID = inputs['tan_action_id'];
+	var completedCount = 0;
+	
+	if (!actionID) {
+		throw new Error(
+			'Attempted to get status of Tanium Action but a valid action ID was not specified.'
+		);
+	}
+	
+	actionDetails = actionUtil.getActionDetailsByID(actionID);
+	
+	if (
+		!actionDetails ||
+		!actionDetails.hasOwnProperty('data') ||
+		!actionDetails.data.hasOwnProperty('status')
+	) {
+		throw new Error(
+			'Attempted to get status of Tanium Action but a valid action ID was not ' +
+			'specified or found in Tanium.'
+		);
+	}
+	
+	actionStatus = actionDetails.data.status.toString();
+	
+	outputs['tan_action_status'] = actionStatus;
+	outputs['tan_action_details'] = actionDetails;
+	
+	actionResults = actionUtil.getActionResultsByID(actionID);
+	actionResults = actionResults.data.result_sets[0];
+	completedCount = getCompletedCount(actionResults);
+	
+	outputs['tan_endpoints_completed'] = completedCount;
+	
+	//HELPER FUNCTIONS BELOW
+	
+	function getCompletedCount(actionResults) {
+		var i, statusRows;
+		var completedCount = 0;
+		var resultsColumnIndex = getStatusColumnIndex(actionResults);
+		
+		if (resultsColumnIndex === false) {
+			return 0;
+		}
+		
+		statusRows = actionResults.rows;
+		for (i = 0; i &lt; statusRows.length; i++) {
+			if (statusRows[i].data[resultsColumnIndex][0].text.indexOf('Completed') &gt;= 0) {
+				completedCount++;
+			}
+		}
+		
+		return completedCount;
+	}
+	
+	function getStatusColumnIndex(actionResults) {
+		var i;
+		
+		for (i = 0; i &lt; actionResults.columns.length; i++) {
+			if (actionResults.columns[i].name == 'Action Statuses') {
+				return i;
+			}
+		}
+		
+		//Unable to find results column
+		return false;
+	}
+	
+})(inputs, outputs);
+</value>
+        <variable display_value="Script">71aa7f6647032200b4fad7527c9a719b</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="id=9a55bea1db230d10495d70f33996195f"/>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>application</field>
+        <id>9a55bea1db230d10495d70f33996195f</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>d655bea1db230d10495d70f33996198c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>script</field>
+        <id>9a55bea1db230d10495d70f33996195f</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>9a55bea1db230d10495d70f33996198c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>tan_action_id</field>
+        <id>9a55bea1db230d10495d70f33996195f</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>5a55bea1db230d10495d70f33996198d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_9a55bea1db230d10495d70f33996195f</table>
+        <value>{{action.tan_action_id}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f^id=9a55bea1db230d10495d70f33996195f"/>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7^id=9a55bea1db230d10495d70f33996195f"/>
+    <sys_hub_step_ext_input action="delete_multiple" query="model=9a55bea1db230d10495d70f33996195f^sys_idNOT IN9e55bea1db230d10495d70f339961962"/>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_id</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>tan_action_id</label>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">9a55bea1db230d10495d70f33996195f</model>
+        <model_id>9a55bea1db230d10495d70f33996195f</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_9a55bea1db230d10495d70f33996195f</name>
+        <next_element/>
+        <order>0</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>9e55bea1db230d10495d70f339961962</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_output action="delete_multiple" query="model=9a55bea1db230d10495d70f33996195f^sys_idNOT INd255bea1db230d10495d70f33996196a,d655bea1db230d10495d70f33996197d,da55bea1db230d10495d70f339961983"/>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=01fb47e9-8967-4bf5-89a2-a78594d03349</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_status</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action Status</label>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">9a55bea1db230d10495d70f33996195f</model>
+        <model_id>9a55bea1db230d10495d70f33996195f</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>d255bea1db230d10495d70f33996196a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=integer,uiTypeLabel=Integer,uiUniqueId=acb83d01-9694-4e57-8b81-03ea95377ffa</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_endpoints_completed</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Integer">integer</internal_type>
+        <label>Endpoints Completed</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">9a55bea1db230d10495d70f33996195f</model>
+        <model_id>9a55bea1db230d10495d70f33996195f</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>d655bea1db230d10495d70f33996197d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=json,uiTypeLabel=JSON,uiUniqueId=2d8abaa4-c9cd-4e46-9bf8-71d0c2bddd4b</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_details</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="JSON">json</internal_type>
+        <label>Tanium Action Details</label>
+        <mandatory>false</mandatory>
+        <max_length>4000</max_length>
+        <model display_value="Script step">9a55bea1db230d10495d70f33996195f</model>
+        <model_id>9a55bea1db230d10495d70f33996195f</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <next_element/>
+        <order>3</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>da55bea1db230d10495d70f339961983</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=9a55bea1db230d10495d70f33996195f"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f^sys_idNOT IN1255bea1db230d10495d70f33996197c,1655bea1db230d10495d70f339961982,1a55bea1db230d10495d70f339961988"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_status</element>
+        <help/>
+        <hint>The current status of the Tanium Action (usually "Open", "Closed", "Stopped", or "Error" if something went wrong. </hint>
+        <label>Tanium Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>1255bea1db230d10495d70f33996197c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-02 18:03:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_endpoints_completed</element>
+        <help/>
+        <hint/>
+        <label>Endpoints Completed</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>1655bea1db230d10495d70f339961982</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_details</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action Details</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_9a55bea1db230d10495d70f33996195f</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>1a55bea1db230d10495d70f339961988</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_hub_action_input action="delete_multiple" query="model=da55bea1db230d10495d70f339961954^sys_idNOT INda55bea1db230d10495d70f339961957"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=6e6dfdb0-5868-4221-abfe-ef4e7fea4c37</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_id</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action ID</label>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_input_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>da55bea1db230d10495d70f339961957</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=da55bea1db230d10495d70f339961957"/>
+    <sys_hub_action_output action="delete_multiple" query="model=da55bea1db230d10495d70f339961954^sys_idNOT IN2255bea1db230d10495d70f3399619b9,2655bea1db230d10495d70f33996199f,a255bea1db230d10495d70f3399619a6,a655bea1db230d10495d70f3399619ac,aa55bea1db230d10495d70f3399619b2"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False,uiUniqueId=37a0d649-548c-45b2-9ba1-0c5f1ee4eb22,visible_in_ui=false</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>true</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__dont_treat_as_error__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="">boolean</internal_type>
+        <label>Don't Treat as Error</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>5</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>2255bea1db230d10495d70f3399619b9</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:28:01</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=2255bea1db230d10495d70f3399619b9"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=2255bea1db230d10495d70f3399619b9"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,pwd2droppable=true,uiType=string,uiTypeLabel=String,uiUniqueId=0bd84b06-dba7-4dd6-b909-1082b3ed9dfc</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_status</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Tanium Action Status</label>
+        <mandatory>true</mandatory>
+        <max_length>254</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>2655bea1db230d10495d70f33996199f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=2655bea1db230d10495d70f33996199f"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=2655bea1db230d10495d70f33996199f"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=integer,uiTypeLabel=Integer,uiUniqueId=25650043-5fd4-45d1-8433-b5c67fd07ca6</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_endpoints_completed</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="Integer">integer</internal_type>
+        <label>Endpoints Completed</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>a255bea1db230d10495d70f3399619a6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=a255bea1db230d10495d70f3399619a6"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=a255bea1db230d10495d70f3399619a6"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=json,uiTypeLabel=JSON,uiUniqueId=196abb98-0d46-45ba-8369-395e947e2b48</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>tan_action_details</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="JSON">json</internal_type>
+        <label>Tanium Action Details</label>
+        <mandatory>false</mandatory>
+        <max_length>4000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>3</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>a655bea1db230d10495d70f3399619ac</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=a655bea1db230d10495d70f3399619ac"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=a655bea1db230d10495d70f3399619ac"/>
+    <sys_complex_object action="INSERT_OR_UPDATE">
+        <label/>
+        <name>FDd655bea12f230d1085003e6d71190890</name>
+        <namespace>FlowDesigner</namespace>
+        <scope_name>c4134c50db6ec910495d70f339961931</scope_name>
+        <serialized_content>{"FlowDesigner:FDd655bea12f230d1085003e6d71190890":{"code":"Integer","code.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"Integer\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"integer\",\"default_value\":\"\",\"label\":\"Code\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"40\"}"},"message":"String","message.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Message\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"4000\"}"}},"FlowDesigner:FDd655bea12f230d1085003e6d71190890.$type_facets":{"SimpleMapFacet":"{\"default_value\":\"\",\"label\":\"Action Status\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"uiUniqueId\":\"fbf75e2d-b139-41a9-b3ee-8b5f5554910c\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FDd655bea12f230d1085003e6d71190890\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"object\",\"order\":\"4\",\"max_length\":\"65000\"}"}}</serialized_content>
+        <sys_class_name>sys_complex_object</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>9a55bea1db230d10495d70f339961990</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 16:28:01</sys_updated_on>
+        <type>complex_object_schema</type>
+    </sys_complex_object>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,co_type_name=FDd655bea12f230d1085003e6d71190890,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=object,uiTypeLabel=Object,uiUniqueId=fbf75e2d-b139-41a9-b3ee-8b5f5554910c</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__action_status__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Action Status</label>
+        <mandatory>false</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</model>
+        <model_id>da55bea1db230d10495d70f339961954</model_id>
+        <model_table>sys_hub_action_type_snapshot</model_table>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <next_element/>
+        <order>4</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>aa55bea1db230d10495d70f3399619b2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=aa55bea1db230d10495d70f3399619b2"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=aa55bea1db230d10495d70f3399619b2"/>
+    <sys_hub_pill_compound action="delete_multiple" query="attached_to=da55bea1db230d10495d70f339961954"/>
+    <sys_hub_action_status_metadata action="delete_multiple" query="action_type_id=da55bea1db230d10495d70f339961954^sys_idNOT INa255bea1db230d10495d70f3399619c9"/>
+    <sys_hub_action_status_metadata action="INSERT_OR_UPDATE">
+        <action_type_id display_value="Tanium-Get Action Status by ID">da55bea1db230d10495d70f339961954</action_type_id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>a255bea1db230d10495d70f3399619c9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+    </sys_hub_action_status_metadata>
+    <sys_hub_status_condition action="delete_multiple" query="action_status_metadata_id=a255bea1db230d10495d70f3399619c9"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_input_da55bea1db230d10495d70f339961954^sys_idNOT INd255bea1db230d10495d70f33996195d"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_id</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action ID</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>d255bea1db230d10495d70f33996195d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_input_da55bea1db230d10495d70f339961954"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954^sys_idNOT IN6655bea1db230d10495d70f3399619c1,6a55bea1db230d10495d70f3399619b7,e255bea1db230d10495d70f3399619b1,ea55bea1db230d10495d70f3399619a4,ee55bea1db230d10495d70f3399619aa"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__dont_treat_as_error__</element>
+        <help/>
+        <hint/>
+        <label>Don't Treat as Error</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:03</sys_created_on>
+        <sys_id>6655bea1db230d10495d70f3399619c1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:03</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__action_status__</element>
+        <help/>
+        <hint/>
+        <label>Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>6a55bea1db230d10495d70f3399619b7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_details</element>
+        <help/>
+        <hint/>
+        <label>Tanium Action Details</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>e255bea1db230d10495d70f3399619b1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:26:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_action_status</element>
+        <help/>
+        <hint>The current status of the Tanium Action (usually "Open", "Closed", "Stopped", or "Error" if something went wrong. </hint>
+        <label>Tanium Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>ea55bea1db230d10495d70f3399619a4</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-02 18:03:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>tan_endpoints_completed</element>
+        <help/>
+        <hint>The number of endpoints on which the specified action was completed. </hint>
+        <label>Endpoints Completed</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-19 00:26:02</sys_created_on>
+        <sys_id>ee55bea1db230d10495d70f3399619aa</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-03-02 18:03:02</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_output_da55bea1db230d10495d70f339961954"/>
+    <sys_hub_action_type_definition action="UPDATE">
+        <sys_id>b5a11265dbafc910495d70f33996191e</sys_id>
+        <latest_snapshot>da55bea1db230d10495d70f339961954</latest_snapshot>
+        <compiler_build>glide-vancouver-07-06-2023__patch7-hotfix1-03-05-2024_03-06-2024_1225.zip</compiler_build>
+    </sys_hub_action_type_definition>
+</record_update>

@@ -1,0 +1,2883 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_hub_action_type_definition">
+    <sys_hub_action_type_definition action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <acls/>
+        <action_status/>
+        <action_template/>
+        <active>true</active>
+        <annotation>Deploy a list of one or more patches to one or more endpoints.</annotation>
+        <attributes/>
+        <authored_on_release_version/>
+        <callable_by_client_api>false</callable_by_client_api>
+        <category display_value="Tanium Patch">316e2d4c1bfcce50216efeee034bcbe0</category>
+        <compiler_build/>
+        <copied_from/>
+        <copied_from_name/>
+        <description>Deploy the selected patches (by Tanium UIDs) to the selected endpoints (by serial number and/or FQDN) within the specified patch window (start and end time).</description>
+        <flow_priority/>
+        <ih_action>false</ih_action>
+        <internal_name>taniumdeploy_patches_to_endpoints</internal_name>
+        <label_cache>[{"name":"{{action.patch_deployment_name}}","label":"action➛Patch deployment name","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.name}}","label":"action➛Patch deployment name","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.patch_deployment_description}}","label":"action➛Patch deployment description","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.description}}","label":"action➛Patch deployment description","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.operating_system_type}}","label":"action➛Operating system type","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.os_type}}","label":"action➛Operating system type","type":"action","ref":"","reference_display":"","base_type":"choice","parent_table_name":"","column_name":"","choices":[{"label":"Linux","value":"LINUX","order":200},{"label":"Windows","value":"WINDOWS","order":100}],"attributes":{}},{"name":"{{action.patch_uids}}","label":"action➛Patch UIDs","type":"action","ref":"","reference_display":"","base_type":"array.string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.patch_uids.patch_id}}","label":"action➛Patch UIDs➛Patch ID","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints}}","label":"action➛Target endpoints","type":"action","ref":"","reference_display":"","base_type":"array.object","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints.Serial_number}}","label":"action➛Target endpoints➛Serial number","type":"action","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints.serial_number}}","label":"action➛Target endpoints➛Serial number","type":"action","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":[],"attributes":{}},{"name":"{{action.target_endpoints.Endpoint}}","label":"action➛Target endpoints➛Endpoint","type":"action","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":[],"attributes":{}},{"name":"{{action.target_endpoints.endpoint}}","label":"action➛Target endpoints➛Endpoint","type":"action","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":[],"attributes":{}},{"name":"{{action.target_endpoints.endpoint.Serial_number}}","label":"action➛Target endpoints➛Endpoint➛Serial number","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints.endpoint.serial_number}}","label":"action➛Target endpoints➛Endpoint➛Serial number","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints.endpoint.FQDN}}","label":"action➛Target endpoints➛Endpoint➛FQDN","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.target_endpoints.endpoint.fqdn}}","label":"action➛Target endpoints➛Endpoint➛FQDN","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.start_time}}","label":"action➛Start time","type":"action","ref":"","reference_display":"","base_type":"glide_date_time","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.end_time}}","label":"action➛End time","type":"action","ref":"","reference_display":"","base_type":"glide_date_time","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.override_maintenance_windows}}","label":"action➛Override maintenance windows","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.override_maint_window}}","label":"action➛Override maintenance windows","type":"action","ref":"","reference_display":"","base_type":"boolean","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.override_block_lists}}","label":"action➛Override block lists","type":"action","ref":"","reference_display":"","base_type":"boolean","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.override_maint_windows}}","label":"action➛Override maintenance windows","type":"action","ref":"","reference_display":"","base_type":"boolean","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.require_restart}}","label":"action➛Require restart","type":"action","ref":"","reference_display":"","base_type":"choice","parent_table_name":"","column_name":"","choices":[{"label":"Yes","value":"ON_INSTALL","order":100},{"label":"If required","value":"ON_REQUIRED","order":200},{"label":"No","value":"NEVER","order":300}],"attributes":{}}]</label_cache>
+        <latest_snapshot/>
+        <master_snapshot/>
+        <name>(WIP) Tanium-Deploy Patches to Endpoints</name>
+        <natlang/>
+        <outputs/>
+        <pre_compiled>false</pre_compiled>
+        <state>draft</state>
+        <sys_class_name>sys_hub_action_type_definition</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 17:53:22</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>3f9a521f1bb50250a1ae117b234bcbc5</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>(WIP) Tanium-Deploy Patches to Endpoints</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_hub_action_type_definition_3f9a521f1bb50250a1ae117b234bcbc5</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <system_level>false</system_level>
+        <type/>
+    </sys_hub_action_type_definition>
+    <sys_translated_text action="delete_multiple" query="documentkey=3f9a521f1bb50250a1ae117b234bcbc5"/>
+    <sys_variable_value action="delete_multiple" query="document_key=3f9a521f1bb50250a1ae117b234bcbc5"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_definition</document>
+        <document_key>3f9a521f1bb50250a1ae117b234bcbc5</document_key>
+        <order>1</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>b963ee571bf50250a1ae117b234bcb98</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <value>{"version":"1.0","complexObject":{"code":{"$cv":{"$c":"java.lang.String","$v":""}},"message":{"$cv":{"$c":"java.lang.String","$v":""}}},"complexObjectSchema":{"FlowDesigner:FDACTIONSTATUS":{"code":"Integer","code.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"Integer\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"integer\",\"default_value\":\"\",\"label\":\"Code\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"40\"}"},"message":"String","message.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Message\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"4000\"}"}},"FlowDesigner:FDACTIONSTATUS.$type_facets":{"SimpleMapFacet":"{\"default_value\":\"\",\"label\":\"Action Status\",\"action_error_output\":\"true\",\"mandatory\":\"false\",\"uiUniqueId\":\"794bc342-9c9d-444b-a3f2-dd4b6a5a0173\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FDACTIONSTATUS\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"hint\":null,\"uiType\":\"object\",\"order\":\"1\",\"max_length\":\"65000\"}"}},"serializationFormat":"JSON"}</value>
+        <variable display_value="Action Status">b163ee571bf50250a1ae117b234bcb8b</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_action_type_definition</document>
+        <document_key>3f9a521f1bb50250a1ae117b234bcbc5</document_key>
+        <order>2</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>f563ee571bf50250a1ae117b234bcb98</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <value>0</value>
+        <variable display_value="Don't Treat as Error">b163ee571bf50250a1ae117b234bcb90</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5^id=3f9a521f1bb50250a1ae117b234bcbc5"/>
+    <sys_hub_step_instance action="delete_multiple" query="action=3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT IN2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_hub_step_instance action="INSERT_OR_UPDATE">
+        <action display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</action>
+        <cid>365d9587-90a5-4025-adb6-b2ac287aa22d</cid>
+        <error_handling_type>1</error_handling_type>
+        <extended_inputs/>
+        <extended_inputs/>
+        <extended_outputs/>
+        <icon/>
+        <inputs/>
+        <label>Script step</label>
+        <order>1</order>
+        <outputs/>
+        <section/>
+        <step_type display_value="Script">106afb6647032200b4fad7527c9a71e7</step_type>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>2963ee571bf50250a1ae117b234bcb2d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+    </sys_hub_step_instance>
+    <sys_variable_value action="delete_multiple" query="document_key=2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>700</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3963ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value>0</value>
+        <variable display_value="">f963ee571bf50250a1ae117b234bcb6b</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>400</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7563ee571bf50250a1ae117b234bcb83</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value>35aa573fd7802200bdbaee5b5e610375</value>
+        <variable display_value="MID Application">f5e56d79b3101300176b051a16a8dce4</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>500</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7563ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value/>
+        <variable display_value="">6163ee571bf50250a1ae117b234bcb67</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>600</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7d63ee571bf50250a1ae117b234bcb83</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value>(function execute(inputs, outputs) {&#13;
+// ... code ...&#13;
+})(inputs, outputs);&#13;
+</value>
+        <variable display_value="Script">71aa7f6647032200b4fad7527c9a719b</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>800</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>bd63ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value>0</value>
+        <variable display_value="">3163ee571bf50250a1ae117b234bcb6e</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_step_instance</document>
+        <document_key>2963ee571bf50250a1ae117b234bcb2d</document_key>
+        <order>600</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f963ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <value/>
+        <variable display_value="">a563ee571bf50250a1ae117b234bcb69</variable>
+    </sys_variable_value>
+    <sys_element_mapping action="delete_multiple" query="id=2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>application</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3d63ee571bf50250a1ae117b234bcb82</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>description</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>b963ee571bf50250a1ae117b234bcb85</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.description}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>end_time</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3563ee571bf50250a1ae117b234bcb85</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.end_time}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>name</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f563ee571bf50250a1ae117b234bcb85</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.name}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>os_type</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7163ee571bf50250a1ae117b234bcb85</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.os_type}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>override_block_lists</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f163ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.override_block_lists}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>override_maint_windows</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>bd63ee571bf50250a1ae117b234bcb84</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.override_maint_windows}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>patch_uids</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3963ee571bf50250a1ae117b234bcb84</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.patch_uids}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>require_restart</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3163ee571bf50250a1ae117b234bcb86</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.require_restart}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>script</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f163ee571bf50250a1ae117b234bcb83</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7</table>
+        <value/>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>start_time</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f963ee571bf50250a1ae117b234bcb84</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.start_time}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="INSERT_OR_UPDATE">
+        <field>target_endpoints</field>
+        <id>2963ee571bf50250a1ae117b234bcb2d</id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7d63ee571bf50250a1ae117b234bcb85</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</table>
+        <value>{{action.target_endpoints}}</value>
+    </sys_element_mapping>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d^id=2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_element_mapping action="delete_multiple" query="table=var__m_sys_flow_step_definition_input_106afb6647032200b4fad7527c9a71e7^id=2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_hub_step_ext_input action="delete_multiple" query="model=2963ee571bf50250a1ae117b234bcb2d^sys_idNOT IN2d63ee571bf50250a1ae117b234bcb64,3163ee571bf50250a1ae117b234bcb6e,6163ee571bf50250a1ae117b234bcb67,6d63ee571bf50250a1ae117b234bcb5d,7563ee571bf50250a1ae117b234bcb70,a163ee571bf50250a1ae117b234bcb60,a563ee571bf50250a1ae117b234bcb69,e563ee571bf50250a1ae117b234bcb5a,e563ee571bf50250a1ae117b234bcb62,f963ee571bf50250a1ae117b234bcb6b"/>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=array.object,uiTypeLabel=Array.Object</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>target_endpoints</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>400</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>2d63ee571bf50250a1ae117b234bcb64</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>override_block_lists</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">boolean</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>800</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>3163ee571bf50250a1ae117b234bcb6e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=glide_date_time,uiTypeLabel=Date/Time</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>start_time</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">glide_date_time</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>500</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>6163ee571bf50250a1ae117b234bcb67</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>description</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>100</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>6d63ee571bf50250a1ae117b234bcb5d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=choice,uiTypeLabel=Choice</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice>1</choice>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>require_restart</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Choice">choice</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>900</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>7563ee571bf50250a1ae117b234bcb70</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=Choice</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>os_type</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>200</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>a163ee571bf50250a1ae117b234bcb60</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=glide_date_time,uiTypeLabel=Date/Time</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>end_time</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">glide_date_time</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>600</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>a563ee571bf50250a1ae117b234bcb69</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>name</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>8000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>0</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>e563ee571bf50250a1ae117b234bcb5a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=array.string,uiTypeLabel=Array.String</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>patch_uids</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>300</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>e563ee571bf50250a1ae117b234bcb62</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>override_maint_windows</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">boolean</internal_type>
+        <label/>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_input_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>700</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f963ee571bf50250a1ae117b234bcb6b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_input>
+    <sys_hub_step_ext_output action="delete_multiple" query="model=2963ee571bf50250a1ae117b234bcb2d^sys_idNOT INb163ee571bf50250a1ae117b234bcb7a,b963ee571bf50250a1ae117b234bcb75"/>
+    <sys_complex_object action="INSERT_OR_UPDATE">
+        <label/>
+        <name>FDf963ee579ff502504f83721c9daa9474</name>
+        <namespace>FlowDesigner</namespace>
+        <scope_name>c4134c50db6ec910495d70f339961931</scope_name>
+        <serialized_content>{"FlowDesigner:FDf963ee579ff502504f83721c9daa9474":{},"FlowDesigner:FDf963ee579ff502504f83721c9daa9474.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"default_value\":\"\",\"label\":\"Response body\",\"mandatory\":\"true\",\"uiUniqueId\":\"811f231a-76d6-44f2-8d66-732c89bee919\",\"uiTypeLabel\":\"Object\",\"co_type_name\":\"FDf963ee579ff502504f83721c9daa9474\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":null,\"uiType\":\"object\",\"order\":\"2\",\"max_length\":\"0\"}"}}</serialized_content>
+        <sys_class_name>sys_complex_object</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>bd63ee571bf50250a1ae117b234bcb74</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <type>complex_object_schema</type>
+    </sys_complex_object>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>co_type_name=FDf963ee579ff502504f83721c9daa9474,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=object,uiTypeLabel=Object,uiUniqueId=811f231a-76d6-44f2-8d66-732c89bee919</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>response_body</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Response body</label>
+        <mandatory>true</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>b163ee571bf50250a1ae117b234bcb7a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_step_ext_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=integer,uiTypeLabel=Integer,uiUniqueId=e3e97263-6389-41e9-87cc-490c4ef0b58a</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>deployment_id</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Integer">integer</internal_type>
+        <label>Patch deployment ID</label>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="Script step">2963ee571bf50250a1ae117b234bcb2d</model>
+        <model_id>2963ee571bf50250a1ae117b234bcb2d</model_id>
+        <model_table>sys_hub_step_instance</model_table>
+        <name>var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_step_ext_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>b963ee571bf50250a1ae117b234bcb75</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_step_ext_output>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=2963ee571bf50250a1ae117b234bcb2d"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d^sys_idNOT INf163ee571bf50250a1ae117b234bcb79,f963ee571bf50250a1ae117b234bcb7c"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>deployment_id</element>
+        <help/>
+        <hint>The ID of the Patch deployment in Tanium</hint>
+        <label>Patch deployment ID</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f163ee571bf50250a1ae117b234bcb79</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>response_body</element>
+        <help/>
+        <hint/>
+        <label>Response body</label>
+        <language>en</language>
+        <name>var__m_sys_hub_step_ext_output_2963ee571bf50250a1ae117b234bcb2d</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:43</sys_created_on>
+        <sys_id>f963ee571bf50250a1ae117b234bcb7c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:43</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_hub_action_input action="delete_multiple" query="model=3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT IN13a026131bf50250a1ae117b234bcb89,17a0e2d31bf50250a1ae117b234bcb0f,17a0e2d31bf50250a1ae117b234bcb1a,1fa0a2d31bf50250a1ae117b234bcbe7,1fa0e2d31bf50250a1ae117b234bcb14,5ba0a2d31bf50250a1ae117b234bcbeb,5ba0a2d31bf50250a1ae117b234bcbf2,d3a0a2d31bf50250a1ae117b234bcbfb,d7a0e2d31bf50250a1ae117b234bcb0b,dfa0a2d31bf50250a1ae117b234bcbf6"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=1df92751-5b85-49fd-ba02-37aa6bc2e05e</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>name</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Patch deployment name</label>
+        <mandatory>true</mandatory>
+        <max_length>254</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:48</sys_created_on>
+        <sys_id>13a026131bf50250a1ae117b234bcb89</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:48</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=13a026131bf50250a1ae117b234bcb89"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False,uiUniqueId=33aaa651-31e4-4c05-88a2-4ec7534f75bd</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>true</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>override_maint_windows</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">boolean</internal_type>
+        <label>Override maintenance windows</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>8</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>17a0e2d31bf50250a1ae117b234bcb0f</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=17a0e2d31bf50250a1ae117b234bcb0f"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=choice,uiTypeLabel=Choice,uiUniqueId=296e2ad5-052e-4411-a0a4-b0504828fb19</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice>1</choice>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>NEVER</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>require_restart</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Choice">choice</internal_type>
+        <label>Require restart</label>
+        <mandatory>true</mandatory>
+        <max_length>32</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>10</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>17a0e2d31bf50250a1ae117b234bcb1a</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=17a0e2d31bf50250a1ae117b234bcb1a"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=string,uiTypeLabel=String,uiUniqueId=c6f1efac-ba8d-4d7c-aaf2-d0363983e6b5</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>description</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Patch deployment description</label>
+        <mandatory>false</mandatory>
+        <max_length>1000</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>1fa0a2d31bf50250a1ae117b234bcbe7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=1fa0a2d31bf50250a1ae117b234bcbe7"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False,uiUniqueId=d25388a2-2e61-4c1e-b354-637c2485c6d4</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>true</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>override_block_lists</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">boolean</internal_type>
+        <label>Override block lists</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>9</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>1fa0e2d31bf50250a1ae117b234bcb14</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=1fa0e2d31bf50250a1ae117b234bcb14"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=choice,uiTypeLabel=Choice,uiUniqueId=ef5f3bcc-153b-47db-9f48-6b5073ad6c05</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice>3</choice>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>WINDOWS</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>os_type</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="Choice">choice</internal_type>
+        <label>Operating system type</label>
+        <mandatory>true</mandatory>
+        <max_length>32</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>3</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>5ba0a2d31bf50250a1ae117b234bcbeb</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=5ba0a2d31bf50250a1ae117b234bcbeb"/>
+    <sys_complex_object action="INSERT_OR_UPDATE">
+        <label/>
+        <name>FD97a02613dff50250db4ce2e2d6163887</name>
+        <namespace>FlowDesigner</namespace>
+        <scope_name>c4134c50db6ec910495d70f339961931</scope_name>
+        <serialized_content>{"FlowDesigner:FD97a02613dff50250db4ce2e2d6163887":{"$COCollectionField":["String"],"$COCollectionField.$field_facets":{"SimpleMapFacet":"{\"up-shift-collection-level\":\"true\"}"}},"FlowDesigner:FD97a02613dff50250db4ce2e2d6163887.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"max_rows\":\"500\",\"default_value\":\"\",\"child_hint\":\"Tanium Patch UID for a Windows/Linux patch\",\"child_maxsize\":\"48\",\"label\":\"Patch UIDs\",\"mandatory\":\"true\",\"child_name\":\"patch_id\",\"uiUniqueId\":\"6a474a0c-756f-4028-b8c8-8e24bdc10234\",\"uiTypeLabel\":\"Array.String\",\"co_type_name\":\"FD97a02613dff50250db4ce2e2d6163887\",\"child_label\":\"Patch ID\",\"child_type_label\":\"String\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":\"Must be valid patches for the specified operating system (Windows or Linux)\",\"uiType\":\"array.string\",\"child_defaultValue\":\"\",\"child_type\":\"string\",\"order\":\"4\",\"max_length\":\"65000\",\"child_uiUniqueId\":\"67e20922-cc4b-4cbe-addb-088ac58e386d\"}"}}</serialized_content>
+        <sys_class_name>sys_complex_object</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:48</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>5ba026131bf50250a1ae117b234bcb87</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <type>complex_object_collection</type>
+    </sys_complex_object>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>child_hint=Tanium Patch UID for a Windows/Linux patch,child_label=Patch ID,child_maxsize=48,child_name=patch_id,child_type=string,child_type_label=String,child_uiUniqueId=67e20922-cc4b-4cbe-addb-088ac58e386d,co_type_name=FD97a02613dff50250db4ce2e2d6163887,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,max_rows=500,uiType=array.string,uiTypeLabel=Array.String,uiUniqueId=6a474a0c-756f-4028-b8c8-8e24bdc10234</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>patch_uids</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Patch UIDs</label>
+        <mandatory>true</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>4</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>5ba0a2d31bf50250a1ae117b234bcbf2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=5ba0a2d31bf50250a1ae117b234bcbf2"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=glide_date_time,uiTypeLabel=Date/Time,uiUniqueId=e1b66b15-a19b-45d7-8208-eeffb7b0bd21</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>start_time</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">glide_date_time</internal_type>
+        <label>Start time</label>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>6</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>d3a0a2d31bf50250a1ae117b234bcbfb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=d3a0a2d31bf50250a1ae117b234bcbfb"/>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=glide_date_time,uiTypeLabel=Date/Time,uiUniqueId=c0c2d121-596a-4e70-97d0-53d596a1bec7</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>end_time</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="">glide_date_time</internal_type>
+        <label>End time</label>
+        <mandatory>true</mandatory>
+        <max_length>40</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>7</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>d7a0e2d31bf50250a1ae117b234bcb0b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=d7a0e2d31bf50250a1ae117b234bcb0b"/>
+    <sys_complex_object action="INSERT_OR_UPDATE">
+        <label/>
+        <name>FD53a0261343f50250e65a69e8e2d2cd88</name>
+        <namespace>FlowDesigner</namespace>
+        <scope_name>c4134c50db6ec910495d70f339961931</scope_name>
+        <serialized_content>{"FlowDesigner:FD53a0261343f50250e65a69e8e2d2cd88":{"$COCollectionField":[{"endpoint":{"fqdn":"String","fqdn.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"FQDN for endpoint matching OS type (&lt;512 char)\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"FQDN\",\"mandatory\":\"false\",\"order\":\"2\",\"max_length\":\"512\"}"},"serial_number":"String","serial_number.$field_facets":{"SimpleMapFacet":"{\"uiTypeLabel\":\"String\",\"read_only\":\"false\",\"hint\":\"Serial for endpoint matching OS type (&lt;254 char)\",\"uiType\":\"string\",\"default_value\":\"\",\"label\":\"Serial number\",\"mandatory\":\"false\",\"order\":\"1\",\"max_length\":\"254\"}"}}}],"$COCollectionField.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"max_rows\":\"500\",\"default_value\":\"\",\"child_hint\":\"\",\"child_maxsize\":\"\",\"label\":\"Target endpoints\",\"mandatory\":\"true\",\"child_name\":\"endpoint\",\"uiUniqueId\":\"4c918dfb-4fde-41e8-8a71-7454c9f259f5\",\"uiTypeLabel\":\"Array.Object\",\"co_type_name\":\"FD53a0261343f50250e65a69e8e2d2cd88\",\"child_label\":\"Endpoint\",\"child_type_label\":\"Object\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":\"A list of target endpoint FQDN and/or serial numbers\",\"uiType\":\"array.object\",\"child_defaultValue\":\"\",\"child_type\":\"object\",\"order\":\"5\",\"max_length\":\"65000\",\"child_uiUniqueId\":\"c3d3c046-47d8-4d47-bd3d-fa6d9fc1cd66\"}"},"$COCollectionField.$field_facets":{"SimpleMapFacet":"{\"up-shift-collection-level\":\"true\"}"}},"FlowDesigner:FD53a0261343f50250e65a69e8e2d2cd88.$type_facets":{"SimpleMapFacet":"{\"sourceId\":\"\",\"max_rows\":\"500\",\"default_value\":\"\",\"child_hint\":\"\",\"child_maxsize\":\"\",\"label\":\"Target endpoints\",\"mandatory\":\"true\",\"child_name\":\"endpoint\",\"uiUniqueId\":\"4c918dfb-4fde-41e8-8a71-7454c9f259f5\",\"uiTypeLabel\":\"Array.Object\",\"co_type_name\":\"FD53a0261343f50250e65a69e8e2d2cd88\",\"child_label\":\"Endpoint\",\"child_type_label\":\"Object\",\"element_mapping_provider\":\"com.glide.flow_design.action.data.FlowDesignVariableMapper\",\"read_only\":\"false\",\"sourceUiUniqueId\":\"\",\"sourceType\":\"\",\"hint\":\"A list of target endpoint FQDN and/or serial numbers\",\"uiType\":\"array.object\",\"child_defaultValue\":\"\",\"child_type\":\"object\",\"order\":\"5\",\"max_length\":\"65000\",\"child_uiUniqueId\":\"c3d3c046-47d8-4d47-bd3d-fa6d9fc1cd66\"}"}}</serialized_content>
+        <sys_class_name>sys_complex_object</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:48</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>17a026131bf50250a1ae117b234bcb88</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+        <type>complex_object_collection</type>
+    </sys_complex_object>
+    <sys_hub_action_input action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>child_label=Endpoint,child_name=endpoint,child_type=object,child_type_label=Object,child_uiUniqueId=c3d3c046-47d8-4d47-bd3d-fa6d9fc1cd66,co_type_name=FD53a0261343f50250e65a69e8e2d2cd88,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,max_rows=500,uiType=array.object,uiTypeLabel=Array.Object,uiUniqueId=4c918dfb-4fde-41e8-8a71-7454c9f259f5</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>target_endpoints</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Target endpoints</label>
+        <mandatory>true</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>5</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_input</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>dfa0a2d31bf50250a1ae117b234bcbf6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_input>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=dfa0a2d31bf50250a1ae117b234bcbf6"/>
+    <sys_hub_action_output action="delete_multiple" query="model=3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT INb163ee571bf50250a1ae117b234bcb8b,b163ee571bf50250a1ae117b234bcb90"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,co_type_name=FDACTIONSTATUS,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=object,uiTypeLabel=Object,uiUniqueId=92357463-8562-4782-9f2b-c77f87b078e9</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__action_status__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="String">string</internal_type>
+        <label>Action Status</label>
+        <mandatory>false</mandatory>
+        <max_length>65000</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>1</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>b163ee571bf50250a1ae117b234bcb8b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=b163ee571bf50250a1ae117b234bcb8b"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=b163ee571bf50250a1ae117b234bcb8b"/>
+    <sys_hub_action_output action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <array>false</array>
+        <array_denormalized>false</array_denormalized>
+        <attributes>action_error_output=true,element_mapping_provider=com.glide.flow_design.action.data.FlowDesignVariableMapper,uiType=boolean,uiTypeLabel=True/False,uiUniqueId=37da38b3-0a13-42a6-baf1-fa5dffc40efd,visible_in_ui=false</attributes>
+        <audit>false</audit>
+        <calculation><![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]></calculation>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label/>
+        <comments/>
+        <create_roles/>
+        <default_value>true</default_value>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>__dont_treat_as_error__</element>
+        <element_prototype/>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <formula/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <help/>
+        <hint/>
+        <internal_link/>
+        <internal_type display_value="">boolean</internal_type>
+        <label>Don't Treat as Error</label>
+        <mandatory>false</mandatory>
+        <max_length>40</max_length>
+        <model display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</model>
+        <model_id>3f9a521f1bb50250a1ae117b234bcbc5</model_id>
+        <model_table>sys_hub_action_type_definition</model_table>
+        <name>var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <next_element/>
+        <order>2</order>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <sizeclass/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_hub_action_output</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>b163ee571bf50250a1ae117b234bcb90</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_package/>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <virtual_type>script</virtual_type>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_hub_action_output>
+    <sys_hub_action_input_action_instance action="delete_multiple" query="action_input=b163ee571bf50250a1ae117b234bcb90"/>
+    <sys_hub_input_scripts action="delete_multiple" query="instance=b163ee571bf50250a1ae117b234bcb90"/>
+    <sys_hub_pill_compound action="delete_multiple" query="attached_to=3f9a521f1bb50250a1ae117b234bcbc5"/>
+    <sys_hub_action_status_metadata action="delete_multiple" query="action_type_id=3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT INaba0e2d31bf50250a1ae117b234bcb29"/>
+    <sys_hub_action_status_metadata action="INSERT_OR_UPDATE">
+        <action_type_id display_value="(WIP) Tanium-Deploy Patches to Endpoints">3f9a521f1bb50250a1ae117b234bcbc5</action_type_id>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>aba0e2d31bf50250a1ae117b234bcb29</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+    </sys_hub_action_status_metadata>
+    <sys_hub_status_condition action="delete_multiple" query="action_status_metadata_id=aba0e2d31bf50250a1ae117b234bcb29"/>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT IN13a0a2d31bf50250a1ae117b234bcbf6,17a0a2d31bf50250a1ae117b234bcbfa,1ba0e2d31bf50250a1ae117b234bcb0a,1ba0e2d31bf50250a1ae117b234bcb20,57a0e2d31bf50250a1ae117b234bcb0e,57a0e2d31bf50250a1ae117b234bcb19,5fa0a2d31bf50250a1ae117b234bcbe6,5fa0e2d31bf50250a1ae117b234bcb13,9ba0a2d31bf50250a1ae117b234bcbea,9ba0a2d31bf50250a1ae117b234bcbf1"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>patch_uids</element>
+        <help/>
+        <hint>Must be valid patches for the specified operating system (Windows or Linux)</hint>
+        <label>Patch UIDs</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>13a0a2d31bf50250a1ae117b234bcbf6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>target_endpoints</element>
+        <help/>
+        <hint>A list of target endpoint FQDN and/or serial numbers</hint>
+        <label>Target endpoints</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>17a0a2d31bf50250a1ae117b234bcbfa</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>start_time</element>
+        <help/>
+        <hint>The start time for the patch window.</hint>
+        <label>Start time</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>1ba0e2d31bf50250a1ae117b234bcb0a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>require_restart</element>
+        <help/>
+        <hint>Require restart if installed</hint>
+        <label>Require restart</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>1ba0e2d31bf50250a1ae117b234bcb20</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>end_time</element>
+        <help/>
+        <hint>The end time for the patch window (must be after the start time)</hint>
+        <label>End time</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>57a0e2d31bf50250a1ae117b234bcb0e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>override_block_lists</element>
+        <help/>
+        <hint>Override (ignore) Tanium Patch Block Lists for this Patch deployment. Default: true. </hint>
+        <label>Override block lists</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>57a0e2d31bf50250a1ae117b234bcb19</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>name</element>
+        <help/>
+        <hint>The name to give the patch deployment within Tanium. This can be anything you want, but should be descriptive. &lt;255 characters.</hint>
+        <label>Patch deployment name</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:48</sys_created_on>
+        <sys_id>5fa0a2d31bf50250a1ae117b234bcbe6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:48</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>override_maint_windows</element>
+        <help/>
+        <hint>Override (ignore) Tanium Patch Maintenance Windows for this Patch deployment. Default: true. </hint>
+        <label>Override maintenance windows</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>5fa0e2d31bf50250a1ae117b234bcb13</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>description</element>
+        <help/>
+        <hint>The description for the patch deployment within Tanium. If not specified, this will be set to the same value as the name. &lt;1,000 characters. </hint>
+        <label>Patch deployment description</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>9ba0a2d31bf50250a1ae117b234bcbea</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>os_type</element>
+        <help/>
+        <hint>Endpoints must be Win or Linux</hint>
+        <label>Operating system type</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+        <sys_id>9ba0a2d31bf50250a1ae117b234bcbf1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:19:49</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT IN1ba0e2d31bf50250a1ae117b234bcb1c,57a0a2d31bf50250a1ae117b234bcbee,5fa0a2d31bf50250a1ae117b234bcbed,5fa0e2d31bf50250a1ae117b234bcb1d,97a0e2d31bf50250a1ae117b234bcb1d,dfa0e2d31bf50250a1ae117b234bcb1c"/>
+    <sys_choice field="os_type" table="var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>os_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Windows</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>0</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>57a0a2d31bf50250a1ae117b234bcbee</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value>WINDOWS</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>os_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Linux</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>1</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5fa0a2d31bf50250a1ae117b234bcbed</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value>LINUX</value>
+        </sys_choice>
+    </sys_choice>
+    <sys_choice field="require_restart" table="var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>require_restart</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>-- None --</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>0</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>1ba0e2d31bf50250a1ae117b234bcb1c</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value/>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>require_restart</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>No</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>3</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5fa0e2d31bf50250a1ae117b234bcb1d</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value>NEVER</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>require_restart</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>If required</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>2</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>97a0e2d31bf50250a1ae117b234bcb1d</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value>ON_REQUIRED</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>require_restart</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Yes</label>
+            <language>en</language>
+            <name>var__m_sys_hub_action_input_3f9a521f1bb50250a1ae117b234bcbc5</name>
+            <sequence>1</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2024-05-01 18:19:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>dfa0e2d31bf50250a1ae117b234bcb1c</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2024-05-01 18:31:42</sys_updated_on>
+            <value>ON_INSTALL</value>
+        </sys_choice>
+    </sys_choice>
+    <sys_documentation action="delete_multiple" query="name=var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5^sys_idNOT INb563ee571bf50250a1ae117b234bcb95,f163ee571bf50250a1ae117b234bcb8f"/>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__dont_treat_as_error__</element>
+        <help/>
+        <hint/>
+        <label>Don't Treat as Error</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>b563ee571bf50250a1ae117b234bcb95</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_documentation action="INSERT_OR_UPDATE">
+        <element>__action_status__</element>
+        <help/>
+        <hint/>
+        <label>Action Status</label>
+        <language>en</language>
+        <name>var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5</name>
+        <plural/>
+        <sys_class_name>sys_documentation</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-05-01 18:31:44</sys_created_on>
+        <sys_id>f163ee571bf50250a1ae117b234bcb8f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name/>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-05-01 18:31:44</sys_updated_on>
+        <url/>
+        <url_target/>
+    </sys_documentation>
+    <sys_choice action="delete_multiple" query="name=var__m_sys_hub_action_output_3f9a521f1bb50250a1ae117b234bcbc5"/>
+    <sys_hub_action_plan action="delete_multiple" query="action_id=3f9a521f1bb50250a1ae117b234bcbc5"/>
+</record_update>

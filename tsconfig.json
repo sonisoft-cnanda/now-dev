@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "lib": ["ESNext", "es6"],
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "lib": ["ES2023", "es6"],
+    "target": "ES2023",
+    "module": "ES2022",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
@@ -16,8 +17,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "allowJs": true,
-
-    "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64"]
+    "checkJs": false,
+    "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64", "@servicenow/glide",]
   },
   "include": ["src/**/*"],
   "exclude": [
