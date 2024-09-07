@@ -291,12 +291,9 @@ export class FluentConverter{
                 //this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
                 //Try bulk editing them.  
                 let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
-                
-                
             //}
         }else if(xmlMetadataFiles.length == 1){
             let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
-            
         }
     }
 
