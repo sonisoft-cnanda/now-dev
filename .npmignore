@@ -39,3 +39,7 @@ dist/**/*
 
 # ignore yarn.lock
 yarn.lock
+
+.gitlab-ci.yml
+jest.config.ts
+tsconfig.json

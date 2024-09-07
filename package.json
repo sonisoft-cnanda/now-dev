@@ -1,5 +1,5 @@
 {
-  "name": "@sonisoft/now-dev",
+  "name": "@sonisoft/now-sdk-ext-core",
   "version": "0.1.0",
   "description": "",
   "type": "module",
@@ -17,15 +17,23 @@
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "start": "npm run serve",
+    "semantic-release": "semantic-release",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --coverage --verbose",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "watch-test": "npm run test -- --watchAll",
     "watch-ts": "tsc -w",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\""
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
-    "@servicenow/sdk": "^2.0.0",
     "@servicenow/glide": "^26.0.1",
+    "@servicenow/sdk": "^2.0.0",
     "@servicenow/sdk-build": "^2.0.0",
     "@servicenow/sdk-cli": "^2.0.0",
     "@servicenow/sdk-cli-core": "^2.0.0",
@@ -66,6 +74,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.9.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/gitlab": "^13.2.1",
+    "@semantic-release/npm": "^12.0.1",
+    "@servicenow/eslint-plugin-sdk-app-plugin": "2.0.0",
     "@types/async": "3.2.24",
     "@types/bcrypt-nodejs": "0.0.31",
     "@types/bluebird": "3.5.42",
@@ -100,14 +112,14 @@
     "mock-fs": "^5.2.0",
     "nodemon": "^3.1.4",
     "rimraf": "^3.0.1",
+    "semantic-release": "^24.1.0",
     "shelljs": "0.8.5",
     "supertest": "7.0.0",
     "ts-jest": "^29.2.4",
     "ts-jest-mocker": "^1.0.0",
     "ts-node": "10.9.2",
     "tslint": "^5.20.1",
-    "typescript": "5.5.4",
-    "@servicenow/eslint-plugin-sdk-app-plugin": "2.0.0"
+    "typescript": "5.5.4"
   },
   "engines": {
     "node": ">=14.0.0"
