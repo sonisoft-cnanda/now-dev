@@ -1,6 +1,9 @@
 import type { JestConfigWithTsJest } from "ts-jest";
 
 const config: JestConfigWithTsJest = {
+  collectCoverageFrom: ["src/**/*.js", "src/**/*.ts","!**/node_modules/**"],
+  testMatch: ["**/*.test.js", "**/*.test.ts"],
+  coverageReporters: ["html", "text", "text-summary", "cobertura"],
   verbose: true,
   transform: {
     "^.+\\.ts?$": [
