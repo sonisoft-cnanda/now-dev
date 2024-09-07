@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role_contains">
+    <sys_user_role_contains action="INSERT_OR_UPDATE">
+        <contains display_value="x_taniu_tan_core.action_history_read" name="x_taniu_tan_core.action_history_read">2aa35b36db9e5950495d70f33996194e</contains>
+        <role display_value="x_taniu_tan_core.core_admin" name="x_taniu_tan_core.core_admin">d35a4aaddbfa4910495d70f339961912</role>
+        <sys_class_name>sys_user_role_contains</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-10-06 16:55:31</sys_created_on>
+        <sys_id>7d66573adb9e5950495d70f339961967</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core.action_history_read.x_taniu_tan_core.core_admin</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_user_role_contains_7d66573adb9e5950495d70f339961967</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-10-06 16:55:31</sys_updated_on>
+    </sys_user_role_contains>
+</record_update>

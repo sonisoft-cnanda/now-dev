@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_taniu_tan_core_configured_sensor</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition table="x_taniu_tan_core_configured_sensor">sensorVALCHANGES^sensorISNOTEMPTY^EQ<item endquery="false" field="sensor" goto="false" newquery="false" operator="VALCHANGES" or="false" value=""/>
+            <item endquery="false" field="sensor" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter_condition>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Pop Configured Sensor Parameters</name>
+        <order>1000</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	/*
+		When (after) a Configured Sensor is created, find all Sensor Parameters
+		 associated with the selected Sensor, and create records in the
+		 "Configured Sensor Parameter" table for each of them.
+	*/
+	
+	var paramKey, paramDefaultValue, paramLabel;
+	//The current "Configured Sensor" record that triggered this BR
+	var currentConfiguredSensorID = current.getUniqueValue();
+	//Selected sensor ID
+	var selectedSensorSysID = current.getValue('sensor');
+	var grConfiguredSensorParam = new GlideRecord('x_taniu_tan_core_configured_sensor_parameter');
+	var grSensorParam = new GlideRecord('x_taniu_tan_core_sensor_parameter');
+	
+	//If a sensor has somehow not been selected (which should be impossible, but you never
+	// know), then warn.
+	if (!selectedSensorSysID) {
+		gs.warn(
+			'The Configured  Sensor in table ' + current.getTableName() + ' with ID ' +
+			currentConfiguredSensorID + ' has been created or updated without a Tanium ' +
+			'Sensor selected. This should not be possible. You may want to investigate.'
+		);
+		return;
+		//We could abort the update here, but since this should be impossible, we don't want to
+		// risk breaking something - so just log a warning for whoever investigates this later.
+	}
+	
+	grSensorParam.addQuery('sensor', selectedSensorSysID);
+	//It should not be possible to create parameters without keys, but we're being cautious.
+	grSensorParam.addNotNullQuery('key');
+	grSensorParam.query();
+	
+	while (grSensorParam.next()) {
+		paramKey = grSensorParam.getValue('key');
+		paramDefaultValue = grSensorParam.getValue('default_value') || '';
+		paramLabel = grSensorParam.getValue('label') || '';
+		
+		grConfiguredSensorParam.initialize();
+		
+		grConfiguredSensorParam.setValue(
+			'sensor_parameter',
+			grSensorParam.getUniqueValue()
+		);
+		grConfiguredSensorParam.setValue(
+			'configured_sensor',
+			currentConfiguredSensorID
+		);
+		grConfiguredSensorParam.setValue(
+			'key',
+			paramKey
+		);
+		
+		if (paramDefaultValue) {
+			grConfiguredSensorParam.setValue(
+				'value',
+				paramDefaultValue
+			);
+		}
+		if (paramLabel) {
+			grConfiguredSensorParam.setValue(
+				'label',
+				paramLabel
+			);
+		}
+		
+		grConfiguredSensorParam.insert();
+	}
+	
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-30 19:04:15</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>4d5af049db5a1550acc1ef92ca9619ac</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Pop Configured Sensor Parameters</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_4d5af049db5a1550acc1ef92ca9619ac</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-30 20:42:14</sys_updated_on>
+        <template/>
+        <when>after</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=4d5af049db5a1550acc1ef92ca9619ac"/>
+</record_update>

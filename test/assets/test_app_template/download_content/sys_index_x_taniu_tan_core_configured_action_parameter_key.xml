@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_index">
+    <sys_index action="INSERT_OR_UPDATE">
+        <col_name_string>key</col_name_string>
+        <index_col_name element="key" name="x_taniu_tan_core_configured_action_parameter">3751dea3dbbd9110acc1ef92ca9619e0</index_col_name>
+        <logical_table_name>x_taniu_tan_core_configured_action_parameter</logical_table_name>
+        <sys_class_name>sys_index</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2022-09-26 22:22:30</sys_created_on>
+        <sys_id>4e510d77dbc61150acc1ef92ca961966</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core_configured_action_parameter</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_index_x_taniu_tan_core_configured_action_parameter_key</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2022-09-26 22:22:30</sys_updated_on>
+        <table display_value="Configured Action Parameter" name="x_taniu_tan_core_configured_action_parameter">40c589a7dbb99110acc1ef92ca96199b</table>
+        <unique_index>false</unique_index>
+    </sys_index>
+</record_update>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_index">
+    <sys_index action="INSERT_OR_UPDATE">
+        <col_name_string>name</col_name_string>
+        <index_col_name element="name" name="x_taniu_tan_core_tanium_package">a5cbe35fdbbd4d10495d70f339961941</index_col_name>
+        <logical_table_name>x_taniu_tan_core_tanium_package</logical_table_name>
+        <sys_class_name>sys_index</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2022-09-26 22:24:38</sys_created_on>
+        <sys_id>d1d145bfdb8e9d10495d70f33996196e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core_tanium_package</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_index_x_taniu_tan_core_tanium_package_name</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2022-09-26 22:24:38</sys_updated_on>
+        <table display_value="Action Package" name="x_taniu_tan_core_tanium_package">a1cbe35fdbbd4d10495d70f33996190f</table>
+        <unique_index>false</unique_index>
+    </sys_index>
+</record_update>

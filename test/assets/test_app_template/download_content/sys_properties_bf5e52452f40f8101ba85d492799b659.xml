@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>&lt;hr /&gt;&#13;
+&lt;h3 id="api-token"&gt;Tanium API Token&lt;/h3&gt;&#13;
+&lt;p&gt;The API token for the Tanium integration to use for API requests.&lt;/p&gt;&#13;
+&lt;p&gt;The token expiration period should be at least 30 days, and the token should be valid for all IPs (using 0.0.0.0/0 as the valid IP range), or for the CIDR range for your ServiceNow environment (which you can find by contacting ServiceNow support). If this token is not set, then the &lt;a href="sys_properties.do?sys_id=972f16852f40f8101ba85d492799b676" target="_blank"&gt;username&lt;/a&gt; and &lt;a href="sys_properties.do?sys_id=60de96052f40f8101ba85d492799b695" target="_blank"&gt;password&lt;/a&gt; system properties must be set. Most tasks requiring authentication to the Tanium API will use whichever authentication method is available, so either the token or username/password are both acceptable. If possible, it's recommended to set both the username/password, &lt;i&gt;and&lt;/i&gt; API token properties in case something goes wrong with either, to avoid interruption. Doing so also allows Tanium Integration Core to automatically update its own API token. &lt;/p&gt;&#13;
+&lt;p&gt;This token expires every 30 days by default. A &lt;a href="nav_to.do?uri=sysauto_script.do?sys_id=30706e092f40f8101ba85d492799b639" target="_blank"&gt;scheduled job&lt;/a&gt; will update it approximately every 7 days by default. You can adjust this schedule by modifying the linked scheduled job.&lt;/p&gt;&#13;
+&lt;p&gt;To set this API token manually, either for the initial setup or thereafter, please follow the instructions in the &lt;a href="https://docs.tanium.com/platform_user/platform_user/console_api_tokens.html" target="_blank"&gt;Tanium documentation&lt;/a&gt;.&lt;/p&gt;&#13;
+&lt;strong&gt;Default&lt;/strong&gt;: &lt;i&gt;(none; must be set)&lt;/i&gt;</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_taniu_tan_core.tanium_api_token</name>
+        <read_roles>x_taniu_tan_core.core_admin</read_roles>
+        <suffix>tanium_api_token</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 13:38:07</sys_created_on>
+        <sys_id>bf5e52452f40f8101ba85d492799b659</sys_id>
+        <sys_mod_count>274</sys_mod_count>
+        <sys_name>x_taniu_tan_core.tanium_api_token</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_bf5e52452f40f8101ba85d492799b659</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-08-20 15:31:00</sys_updated_on>
+        <type>password2</type>
+        <value>{{dflt-gpaes}}cmEfPpOytbibaCeJZoMdWY7RZuhZZEF5am1/oEvQTeuIg8rm5N0x76GGBG8QsbY6paCLk9rhL1yc&#13;
+TgTngO+WKUruRVcTccQYNjIwBEXucdI=</value>
+        <write_roles>x_taniu_tan_core.core_admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=bf5e52452f40f8101ba85d492799b659"/>
+</record_update>

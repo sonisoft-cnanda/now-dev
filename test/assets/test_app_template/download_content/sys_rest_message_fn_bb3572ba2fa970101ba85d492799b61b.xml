@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_fn">
+    <sys_rest_message_fn action="INSERT_OR_UPDATE">
+        <authentication_type>no_authentication</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile/>
+        <basic_auth_user/>
+        <content>{"query":"{\n  directEndpoint(input: {endpointID: ${endpoint_id}}) {\n    performance {\n      cpuUsagePercent\n      memoryUsagePercent\n    }\n    processes {\n      all {\n        pid\n        name\n        cpuUserTimeSeconds\n        cpuKernelTimeSeconds\n        memoryResidentBytes\n      }\n    }\n    alerts {\n      all {\n        schema\n        key\n        type\n        ref\n        topProcessesExpr\n        labels\n        pendingAt\n        start\n        resolvedAt\n        leadup\n        value\n        firing\n        evidenceToGather\n        evidence {\n          name\n          value\n          values {\n            value\n            labels\n          }\n        }\n      }\n    }\n  }\n}\n"}</content>
+        <function_name>Gateway-Query Direct Connection</function_name>
+        <http_method>post</http_method>
+        <lock>false</lock>
+        <oauth2_profile/>
+        <protocol_name/>
+        <qualified_name>Tanium Integration Core [ Gateway-Query Direct Connection ]</qualified_name>
+        <rest_endpoint>${tanium_module_api_url}/gateway/graphql</rest_endpoint>
+        <rest_message display_value="Tanium Integration Core">e8cc9a812f40f8101ba85d492799b6a2</rest_message>
+        <sys_class_name>sys_rest_message_fn</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-07-28 19:02:12</sys_created_on>
+        <sys_id>bb3572ba2fa970101ba85d492799b61b</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Gateway-Query Direct Connection</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_rest_message_fn_bb3572ba2fa970101ba85d492799b61b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-09-30 17:49:51</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mid_server/>
+        <use_mutual_auth>false</use_mutual_auth>
+    </sys_rest_message_fn>
+</record_update>

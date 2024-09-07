@@ -164,34 +164,34 @@ export class FluentConverter{
         //After saving the file, mv the original metadata file to a backup directory
         if(this.backupMetadata){
             //get xml file that is associated with the source file
-            const xmlFilePath:string = this.getXmlFileByFluentSourceFilePath(metadataFilePath);
-            if(!NowStringUtil.isStringEmpty(xmlFilePath)){
-                this.moveFile(xmlFilePath, this.metadataBackupDirectory);
-            }
+            // const transformResult:TransformResult = this.getTransformResultByFluentSourceFilePath(metadataFilePath);
+            // if(!NowStringUtil.isStringEmpty(xmlFilePath)){
+            //     this.moveFile(xmlFilePath, this.metadataBackupDirectory);
+            // }
 
             
         }
     }
 
-    private getXmlFileByFluentSourceFilePath(fluentSourceFilePath:string) : string{
-        let result:string = null;
-        let sourceFilePath:string = fluentSourceFilePath.toLowerCase().trim();
-        if(this.processedFiles.length > 0){
-            for(var i=0; i < this.processedFiles.length; i++){
-                let fileResult:TransformResult = this.processedFiles[i];
-                if(Array.isArray(fileResult.sources) && fileResult.sources.length > 0){
-                    const transformResultSourceFilePath = fileResult.sources[0].getFilePath().toLowerCase().trim();
-                    if(transformResultSourceFilePath === sourceFilePath){
-                        result = fileResult.handledXmls[0];
-                        break;
-                    }
-                }
+    // private getTransformResultByFluentSourceFilePath(fluentSourceFilePath:string) : TransformResult{
+    //     let result:string = null;
+    //     let sourceFilePath:string = fluentSourceFilePath.toLowerCase().trim();
+    //     if(this.processedFiles.length > 0){
+    //         for(var i=0; i < this.processedFiles.length; i++){
+    //             let fileResult:TransformResult = this.processedFiles[i];
+    //             if(Array.isArray(fileResult.sources) && fileResult.sources.length > 0){
+    //                 const transformResultSourceFilePath = fileResult.sources[0].getFilePath().toLowerCase().trim();
+    //                 if(transformResultSourceFilePath === sourceFilePath){
+    //                     result = fileResult.handledXmls[0];
+    //                     break;
+    //                 }
+    //             }
 
                 
-            }
-        }
-        return result;
-    }
+    //         }
+    //     }
+    //     return result;
+    // }
    
 
     private verifyMetadataBackupDirectory(metadataBackupDirectory:string) : void{
@@ -286,42 +286,24 @@ export class FluentConverter{
     private async executeTransform(entities:AstData[], xmlMetadataFiles:XmlData[], context:Context, options:BuildOptions){
        
         if(xmlMetadataFiles.length > 1){
-            for(var i=0; i < xmlMetadataFiles.length; i++){
-                var xmlFile = xmlMetadataFiles.slice(i, i+1);
-                this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
-                let result:TransformResult = await this.processFile(xmlFile, entities, context, options);
-                // try{
-                //    let result:TransformResult = null;
-                   
-
-                //     result = await transform(entities, xmlFile, context, options as BuildOptions);
-                //     this._logger.debug("Transform Result.", result);
-                //     if(result)
-                //         this.processedFiles.push(result);
-                // }catch(ex){
-                //     this._logger.error(ex.message, {error:ex, xmlMetadataFiles: xmlMetadataFiles, entities:entities, context:context, options: options});
-                // }
+            //for(var i=0; i < xmlMetadataFiles.length; i++){
+                //var xmlFile = xmlMetadataFiles.slice(i, i+1);
+                //this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
+                //Try bulk editing them.  
+                let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
                 
-            }
+                
+            //}
         }else if(xmlMetadataFiles.length == 1){
             let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
-            // try{
-            //     let result:TransformResult = null;
-            //      this._logger.debug("Attempting transform of " + xmlMetadataFiles[0].filePath);
-            //      result = await transform(entities, xmlMetadataFiles, context, options as BuildOptions);
-            //      this._logger.debug("Transform Result.", result);
-            //      if(result)
-            //         this.processedFiles.push(result);
-            //  }catch(ex){
-            //      this._logger.error("Error transforming file: " + xmlMetadataFiles[0].filePath + ". \n" + ex.message, {error:ex,   options: options});
-            //  }
+            
         }
     }
 
     private async processFile(xmlFilesArr:XmlData[], entities:AstData[], context:Context, options:BuildOptions) : Promise<TransformResult>{
         let result:TransformResult = null;
         try{
-             this._logger.debug("Attempting transform of " + xmlFilesArr[0].filePath);
+             this._logger.debug("Attempting transform of " + xmlFilesArr.length + " files.", xmlFilesArr);
              result = await transform(entities, xmlFilesArr, context, options as BuildOptions);
              this._logger.debug("Transform Result.", result);
              //Store the processed file from this run.  The TransformResult maps the xml file to the now.ts file that was generated so we can backup the xml metadata file once the now.ts file
@@ -348,7 +330,7 @@ export class FluentConverter{
 
     private async saveGeneratedFiles(context:Context, parsedOptions:BuildOptions){
         await this.saveChanges(context, parsedOptions)
-        //await context.keys.save(context, formatSourceFile) // TODO: Can probably remove this since keys.ts should get saved in `saveChanges`
+        await context.keys.save(context, formatSourceFile) // TODO: Can probably remove this since keys.ts should get saved in `saveChanges`
         
     }
 
@@ -403,10 +385,7 @@ export class FluentConverter{
             context.logger.info('No entities were handled while parsing source files')
         }
     
-        // if (options.debug) {
-        //     // this.debugData(entities, context.logger)
-        // }
-    
+      
         // Check Fluent diagnostics after extraction now that we have all the necessary information
         this.checkDiagnosticErrors(diagnostics as Diagnostic[], context)
 
