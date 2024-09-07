@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action">
+    <sys_ui_policy_action action="INSERT_OR_UPDATE">
+        <cleared>false</cleared>
+        <disabled>ignore</disabled>
+        <field>value_script</field>
+        <field_message/>
+        <field_message_type>none</field_message_type>
+        <mandatory>true</mandatory>
+        <sys_class_name>sys_ui_policy_action</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-30 21:51:46</sys_created_on>
+        <sys_id>68a02549dbda1550acc1ef92ca961987</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>value_script</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_ui_policy_action_68a02549dbda1550acc1ef92ca961987</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-30 21:51:46</sys_updated_on>
+        <table>x_taniu_tan_core_configured_sensor_parameter</table>
+        <ui_policy display_value="If advanced, show script. Otherwise, show value. ">fd702dc5dbda1550acc1ef92ca961991</ui_policy>
+        <value/>
+        <value_action>ignore</value_action>
+        <visible>true</visible>
+    </sys_ui_policy_action>
+</record_update>

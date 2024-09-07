@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_atf_test">
+    <sys_atf_test action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <copied_from/>
+        <description>Test that the provided Tanium API endpoint is valid, and that the provided credentials are able to authenticate to it. </description>
+        <enable_parameterized_testing>false</enable_parameterized_testing>
+        <fail_on_server_error>false</fail_on_server_error>
+        <name>Test authentication</name>
+        <parameters/>
+        <remember/>
+        <sn_atf_tg_generated>false</sn_atf_tg_generated>
+        <sys_class_name>sys_atf_test</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-01-17 19:57:58</sys_created_on>
+        <sys_id>b24fe2aa2fc981101ba85d492799b685</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Test authentication</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_atf_test_b24fe2aa2fc981101ba85d492799b685</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-01-17 20:02:43</sys_updated_on>
+    </sys_atf_test>
+    <sys_variable_value action="delete_multiple" query="document_key=b24fe2aa2fc981101ba85d492799b685"/>
+</record_update>

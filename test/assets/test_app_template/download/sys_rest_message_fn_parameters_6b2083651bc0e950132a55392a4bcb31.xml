@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_fn_parameters">
+    <sys_rest_message_fn_parameters action="INSERT_OR_UPDATE">
+        <name>sensors_serialized</name>
+        <rest_message_function display_value="Gateway-Query with Refresh Token">2c40cdf61bf35150132a55392a4bcb72</rest_message_function>
+        <sys_class_name>sys_rest_message_fn_parameters</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-12-28 17:55:54</sys_created_on>
+        <sys_id>6b2083651bc0e950132a55392a4bcb31</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>sensors_serialized</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_rest_message_fn_parameters_6b2083651bc0e950132a55392a4bcb31</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-04-19 15:40:38</sys_updated_on>
+        <type>string</type>
+        <value/>
+    </sys_rest_message_fn_parameters>
+</record_update>

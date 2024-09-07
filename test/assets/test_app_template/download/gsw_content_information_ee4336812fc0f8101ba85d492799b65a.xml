@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="gsw_content_information">
+    <gsw_content_information action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <article><![CDATA[<p>Set the <em>x_taniu_tan_core.tanium_module_api_url</em> system property to the URL or IP Address of your Tanium Server (including HTTPS) PLUS the API path prefix (e.g. &#34;/plugin/products&#34;). This will typically be very similar to the Tanium API Endpoint property [<em>x_13231_tan_jit_ds.tanium_api_endpoint</em>]. <br />When this property is used for an API call, the module name, API version, and API method name will be appended automatically to the value of this property (e.g. &#34;/deploy/v1/api_method_name&#34; for Deploy).</p>
+<p><strong>Example</strong>: <em>https://i-abc123.i.labspace.tanium.com/plugin/products or https://192.168.7.193/plugin/products</em></p>]]></article>
+        <best_practice_acceptable>false</best_practice_acceptable>
+        <dependent_on_contents/>
+        <dependent_on_plugins/>
+        <dependent_on_plugins_ids/>
+        <description/>
+        <embedded_help_qualifier/>
+        <end_point>system_properties_ui.do?sysparm_category=Tanium%20Integration%20Core&amp;sysparm_title=Tanium%20Integration%20Core&amp;sysparm_domain_restore=false&amp;sysparm_stack=system_properties_ui.do?sysparm_category=Tanium%20Integration%20Core&amp;sysparm_title=Tanium%20Integration%20Core#module-api-endpoint</end_point>
+        <end_point_open_mode>1</end_point_open_mode>
+        <end_point_type>1</end_point_type>
+        <field/>
+        <filter/>
+        <filter_result/>
+        <implicit_dependent_on/>
+        <implicit_plugin_dependencies/>
+        <is_dynamic>false</is_dynamic>
+        <more_info_available>false</more_info_available>
+        <more_info_html/>
+        <order>200</order>
+        <parent display_value="Set System Properties">d54eaec92f80f8101ba85d492799b687</parent>
+        <parents>d54eaec92f80f8101ba85d492799b687,d9ad26c92f80f8101ba85d492799b696</parents>
+        <plugin_id/>
+        <property_name/>
+        <property_value/>
+        <quick_startable>false</quick_startable>
+        <root_parent display_value="Tanium Integration Core Setup">d9ad26c92f80f8101ba85d492799b696</root_parent>
+        <skippable>false</skippable>
+        <supports_child_content>false</supports_child_content>
+        <sys_class_name>gsw_content_information</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 15:09:10</sys_created_on>
+        <sys_id>ee4336812fc0f8101ba85d492799b65a</sys_id>
+        <sys_mod_count>9</sys_mod_count>
+        <sys_name>Set Tanium Module API Endpoint Property</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>gsw_content_information_ee4336812fc0f8101ba85d492799b65a</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-08-15 16:55:48</sys_updated_on>
+        <table/>
+        <title>Set Tanium Module API Endpoint Property</title>
+        <weight>3</weight>
+    </gsw_content_information>
+    <sys_translated_text action="delete_multiple" query="documentkey=ee4336812fc0f8101ba85d492799b65a"/>
+</record_update>

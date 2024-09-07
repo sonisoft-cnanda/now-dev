@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>&lt;hr /&gt;&#13;
+&lt;h3 id="user-password"&gt;Tanium Password&lt;/h3&gt;&#13;
+&lt;p&gt;The password for the Tanium user to use for API requests. &lt;br /&gt;&#13;
+It is recommended to use an API token instead of username/password if possible. </description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_taniu_tan_core.tanium_password</name>
+        <read_roles>x_taniu_tan_core.core_admin</read_roles>
+        <suffix>tanium_password</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 13:40:29</sys_created_on>
+        <sys_id>60de96052f40f8101ba85d492799b695</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>x_taniu_tan_core.tanium_password</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_60de96052f40f8101ba85d492799b695</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-08-15 17:04:41</sys_updated_on>
+        <type>password2</type>
+        <value/>
+        <write_roles>x_taniu_tan_core.core_admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=60de96052f40f8101ba85d492799b695"/>
+</record_update>

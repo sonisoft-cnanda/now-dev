@@ -1,0 +1,31 @@
+var ui_script_scope = ui_script_scope || {};
+
+ui_script_scope.ui_script_name = (function() {
+	"use strict";
+
+/* set your private variables and functions here. For example: 
+	var privateVar = 0; 
+	function private_function() {
+		return ++privateVar;
+	}
+*/
+
+/* Share variables between multiple UI scripts by adding them to your scope object. For example: 
+	ui_script_scope.sharedVar = 0; 
+
+ Then access them in your scripts the same way. For example: 
+	function get_shared() {
+		return ui_script_scope.sharedVar;
+	}
+*/
+
+	return {
+
+/* set your public API here. For example:
+		incrementAndReturnPrivateVar: function() {
+			return private_function();
+		},
+*/
+		type:  "ui_script_name"
+	};
+})();

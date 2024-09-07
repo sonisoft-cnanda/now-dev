@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.TaniumTagUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>TaniumTagUtil</name>
+        <script><![CDATA[var TaniumTagUtil = Class.create();
+TaniumTagUtil.prototype = Object.extendsObject(x_taniu_tan_core.TaniumActionUtil, {
+	
+	/**
+	 * Add the specified tag to specified endpoint.
+	 *
+	 * @param {String} endpointSerial - The serial number of the endpoint on which to add the tag.
+	 * @param {String} tagName - The tag name to apply to the target endpoint.
+	 * Example: "sn-lab_machine"
+	 * @param {Boolean} [isWindows=true] - If the endpoint is a Windows machine, set this
+	 *  argument to true. Otherwise, set it to false. This will determine which package
+	 *  is used to deploy the tag to the target endpoint.
+	 * Default value: true
+	 * @param {Number} [expireSeconds=86400] - The number of seconds after which the Action
+	 *  will expire. If the endpoint is offline when this Action is issued, and remains
+	 *  offline for the duration in expireSeconds, the Action will not be deployed on that
+	 *  endpoint.
+	 * Default value: 86,400 (24 hours)
+	 * @example
+	 * var ttu = new TaniumTagUtil();
+	 * ttu.addTagBySerial('some_serial_number', 'sn_test_1');
+	 */
+	addTagBySerial : function (
+		endpointSerial,
+		tagName,
+		isWindows,
+		expireSeconds
+	) {
+		var i, packageDetails, packageName;
+		var packageParams = {};
+		
+		//Set default value(s)
+		isWindows = (typeof isWindows == 'undefined') ? true : isWindows;
+		expireSeconds = (typeof expireSeconds == 'undefined') ? 86400 : parseInt(expireSeconds);
+		
+		//Get appropriate package name, depending on whether endpoint OS is Windows.
+		packageName = (isWindows) ?
+			'Custom Tagging - Add Tags' :
+			'Custom Tagging - Add Tags (Non-Windows)';
+		//Inherited from TaniumActionUtil
+		packageDetails = this.getPackageDetailsByName(packageName, 'Core Content', true);
+		
+		//Check that AT LEAST one package was returned. Otherwise, throw an error.
+		if (packageDetails.length == 0) {
+			throw new Error(
+				'Unable to locate the Tanium Package "' + packageName + '" in Content Set ' +
+				'"Core Content", in the Tanium Package [x_taniu_tan_core_tanium_package] ' +
+				'table. Unable to add tag. Have the Tanium Packages been synced into ServiceNow?'
+			);
+		}
+		//Check that ONLY one package was returned. Otherwise, log warning but continue.
+		if (packageDetails.length > 1) {
+			gs.warn(
+				'When attempting to add a tag, found more than one package with name ' +
+				packageName + ' in the Core Content Content Set. Continuing with the first ' +
+				'package found, but this may indicate a sync error, or an issue with your ' +
+				'Tanium configuration.'
+			);
+		}
+		
+		//Get the specific package details
+		packageDetails = packageDetails[0];
+		for (i = 0; i < packageDetails.parameters.length; i++) {
+			//If parameter label begins with "Add tags", or key is "$1", use it.
+			if (
+				packageDetails.parameters[0].label.indexOf('Add tags') == 0 ||
+				packageDetails.parameters[0].param_key == '$1'
+			) {
+				packageParams[packageDetails.parameters[0].param_key] = tagName;
+				break;
+			}
+		}
+		
+		//Validate state is ready to create tag
+		if (
+			Object.keys(packageParams).length == 0 || //Params not found
+			!packageDetails.id || //Package ID not found
+			!endpointSerial //endpoint serial not specified
+		) {
+			throw new Error(
+				'Cannot create action to add tag on endpoint because serial number, ' +
+				'package parameters, or package ID could not be found. \n' +
+				'Serial: ' + endpointSerial + '\n' +
+				'Package ID: ' + packageDetails.id +
+				'\nPackage parameters: \n' +
+				JSON.stringify(packageParams, null, 2)
+			);
+		}
+		
+		//Inherited from TaniumActionUtil
+		return this.createActionOnEndpointBySerial(
+			packageDetails.id,
+			endpointSerial,
+			packageParams,
+			expireSeconds
+		);
+	},
+	
+	/**
+	 * Remove the specified tag from the specified endpoint.
+	 *
+	 * @param {String} endpointSerial - The serial number of the endpoint on which to remove
+	 *  the tag.
+	 * @param {String} tagName - The tag name to remove from the target endpoint.
+	 * Example: "sn-lab_machine"
+	 * @param {Boolean} [isWindows=true] - If the endpoint is a Windows machine, set this
+	 *  argument to true. Otherwise, set it to false. This will determine which package
+	 *  is used to remove the tag from the target endpoint.
+	 * Default value: true
+	 * @param {Number} [expireSeconds=86400] - The number of seconds after which the Action
+	 *  will expire. If the endpoint is offline when this Action is issued, and remains
+	 *  offline for the duration in expireSeconds, the Action will not be deployed on that
+	 *  endpoint.
+	 * Default value: 86,400 (24 hours)
+	 * @returns {Object|Boolean}
+	 * @example
+	 * var ttu = new TaniumTagUtil();
+	 * ttu.removeTagBySerial('some_serial_number', 'sn_test_1');
+	 */
+	removeTagBySerial : function (
+		endpointSerial,
+		tagName,
+		isWindows,
+		expireSeconds
+	) {
+		var packageDetails, packageName;
+		var packageParams = {
+			'||Custom Tags||' : tagName
+		};
+		
+		//Set default value(s)
+		isWindows = (typeof isWindows == 'undefined') ? true : isWindows;
+		expireSeconds = (typeof expireSeconds == 'undefined') ? 86400 : parseInt(expireSeconds);
+		
+		//Get appropriate package name, depending on whether endpoint OS is Windows.
+		packageName = (isWindows) ?
+			'Custom Tagging - Remove Tags' :
+			'Custom Tagging - Remove Tags (Non-Windows)';
+		//Inherited from TaniumActionUtil. No need to get parameters because this is a
+		// sensor-based package which requires the non-declared param "||Custom Tags||".
+		packageDetails = this.getPackageDetailsByName(packageName, 'Core Content', false);
+		
+		//Check that AT LEAST one package was returned. Otherwise, throw an error.
+		if (packageDetails.length == 0) {
+			throw new Error(
+				'Unable to locate the Tanium Package "' + packageName + '" in Content Set ' +
+				'"Core Content", in the Tanium Package [x_taniu_tan_core_tanium_package] ' +
+				'table. Unable to add tag. Have the Tanium Packages been synced into ServiceNow?'
+			);
+		}
+		//Check that ONLY one package was returned. Otherwise, log warning but continue.
+		if (packageDetails.length > 1) {
+			gs.warn(
+				'When attempting to add a tag, found more than one package with name ' +
+				packageName + ' in the Core Content Content Set. Continuing with the first ' +
+				'package found, but this may indicate a sync error, or an issue with your ' +
+				'Tanium configuration.'
+			);
+		}
+		
+		//Get the specific package details
+		packageDetails = packageDetails[0];
+		
+		//Validate state is ready to create tag
+		if (
+			!packageDetails.id || //Package ID not found
+			!endpointSerial || //endpoint serial not specified
+			!tagName
+		) {
+			throw new Error(
+				'Cannot create action to add tag "' + tagName + '" on endpoint because ' +
+				'serial number, package parameters, tag name, or package ID could not ' +
+				'be found. \n' +
+				'Serial: ' + endpointSerial + '\n' +
+				'Package details: \n' +
+				JSON.stringify(packageDetails, null, 2) + '\n' +
+				'Package parameters: \n' +
+				JSON.stringify(packageParams, null, 2)
+			);
+		}
+		
+		//Inherited from TaniumActionUtil
+		return this.createActionOnEndpointBySerial(
+			packageDetails.id,
+			endpointSerial,
+			packageParams,
+			expireSeconds,
+			true
+		);
+	},
+	
+	/*_config: {
+		"windows": {
+			"add_tag" : this.getPackageDetailsByName(
+				'Custom Tagging - Add Tags',
+				'Core Content',
+				true
+			),
+			"remove_tag": this.getPackageDetailsByName(
+				'Custom Tagging - Remove Tags',
+				'Core Content',
+				true
+			)
+		},
+		"non-windows": {
+			"add_tag": this.getPackageDetailsByName(
+				'Custom Tagging - Add Tags (Non-Windows)',
+				'Core Content',
+				true
+			),
+			"remove_tag": this.getPackageDetailsByName(
+				'Custom Tagging - Remove Tags (Non-Windows)',
+				'Core Content',
+				true
+			)
+		}
+	},*/
+	
+	type : 'TaniumTagUtil'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-05-06 19:59:04</sys_created_on>
+        <sys_id>3a15c0b9db9b4550495d70f33996198e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>TaniumTagUtil</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_3a15c0b9db9b4550495d70f33996198e</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-05-06 19:59:04</sys_updated_on>
+    </sys_script_include>
+</record_update>

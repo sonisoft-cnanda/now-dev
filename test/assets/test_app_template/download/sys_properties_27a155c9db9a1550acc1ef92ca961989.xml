@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Configured Sensor activity formatter fields</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>glide.ui.x_taniu_tan_core_configured_sensor_activity.fields</name>
+        <read_roles/>
+        <suffix>x_taniu_tan_core</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-30 20:46:16</sys_created_on>
+        <sys_id>27a155c9db9a1550acc1ef92ca961989</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>glide.ui.x_taniu_tan_core_configured_sensor_activity.fields</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_27a155c9db9a1550acc1ef92ca961989</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-10-24 21:06:37</sys_updated_on>
+        <type>string</type>
+        <value/>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=27a155c9db9a1550acc1ef92ca961989"/>
+</record_update>

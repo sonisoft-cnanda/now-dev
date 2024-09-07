@@ -48,12 +48,12 @@ export class Channel{
 	 *
 	 * @return Integer id for the newly registered listener
 	 */
-	public subscribe(listener:ChannelListener) : number {
+	public subscribe(listener:ChannelListener) : number | null {
 
 		if (!listener.getCallback()) {
 			this._logger.addErrorMessage("Cannot subscribe to channel: " + this._channelName
 				+ ", callback not provided");
-			return -1;
+			return null;
 		}
 
 		for (let i = 0; i < this.listeners.length; i++) {
@@ -79,8 +79,8 @@ export class Channel{
 			try {
 				this.subscribeToCometD();
 			} catch (e) {
-				this._logger.addErrorMessage("",e);
-				return -1;
+				this._logger.addErrorMessage("Error subscribing to cometd.",e);
+				return null;
 			}
 		}
 

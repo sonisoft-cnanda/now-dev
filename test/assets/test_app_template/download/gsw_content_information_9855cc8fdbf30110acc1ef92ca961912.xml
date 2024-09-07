@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="gsw_content_information">
+    <gsw_content_information action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <article><![CDATA[<p>If you have the Tanium Performance module licensed and enabled in your environment, you may skip this step. If you do not, however, then set the <em>x_taniu_tan_core.performance_module_enabled</em> system property to <em>false</em>. This will alter the behavior of some features of Tanium Integration Core, and may even disable some features which are reliant on the Tanium Performance module. </p>]]></article>
+        <best_practice_acceptable>false</best_practice_acceptable>
+        <dependent_on_contents/>
+        <dependent_on_plugins/>
+        <dependent_on_plugins_ids/>
+        <description/>
+        <embedded_help_qualifier/>
+        <end_point>system_properties_ui.do?sysparm_category=Tanium%20Integration%20Core&amp;sysparm_title=Tanium%20Integration%20Core&amp;sysparm_domain_restore=false&amp;sysparm_stack=system_properties_ui.do?sysparm_category=Tanium%20Integration%20Core&amp;sysparm_title=Tanium%20Integration%20Core/#performance-enabled</end_point>
+        <end_point_open_mode>1</end_point_open_mode>
+        <end_point_type>1</end_point_type>
+        <field/>
+        <filter/>
+        <filter_result/>
+        <implicit_dependent_on/>
+        <implicit_plugin_dependencies/>
+        <is_dynamic>false</is_dynamic>
+        <more_info_available>false</more_info_available>
+        <more_info_html/>
+        <order>500</order>
+        <parent display_value="Set System Properties">d54eaec92f80f8101ba85d492799b687</parent>
+        <parents>d54eaec92f80f8101ba85d492799b687,d9ad26c92f80f8101ba85d492799b696</parents>
+        <plugin_id/>
+        <property_name/>
+        <property_value/>
+        <quick_startable>false</quick_startable>
+        <root_parent display_value="Tanium Integration Core Setup">d9ad26c92f80f8101ba85d492799b696</root_parent>
+        <skippable>true</skippable>
+        <supports_child_content>false</supports_child_content>
+        <sys_class_name>gsw_content_information</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-06-04 13:43:32</sys_created_on>
+        <sys_id>9855cc8fdbf30110acc1ef92ca961912</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Set Performance Enabled property</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>gsw_content_information_9855cc8fdbf30110acc1ef92ca961912</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-08-15 17:05:51</sys_updated_on>
+        <table/>
+        <title>Set Performance Enabled property</title>
+        <weight>3</weight>
+    </gsw_content_information>
+    <sys_translated_text action="delete_multiple" query="documentkey=9855cc8fdbf30110acc1ef92ca961912"/>
+</record_update>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="update_eligible_on" label="Update eligible on" language="en" table="x_taniu_tan_core_deploy_spkg">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>update_eligible_on</element>
+            <help/>
+            <hint/>
+            <label>Update eligible on</label>
+            <language>en</language>
+            <name>x_taniu_tan_core_deploy_spkg</name>
+            <plural>Update eligible ons</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-08-12 14:08:18</sys_created_on>
+            <sys_id>88b0a74ddb999510495d70f339961956</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Update eligible on</sys_name>
+            <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+            <sys_update_name>sys_documentation_x_taniu_tan_core_deploy_spkg_update_eligible_on_en</sys_update_name>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-08-12 14:08:18</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

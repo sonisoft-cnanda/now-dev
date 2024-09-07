@@ -1,0 +1,5 @@
+// Set the variable 'answer' to true to indicate that this risk condition matches, and false if it does not match the change request
+//
+//   answer = false;
+//   if (current.category == 'Network')
+//      answer = true;

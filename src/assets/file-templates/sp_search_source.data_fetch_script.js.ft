@@ -1,0 +1,6 @@
+(function(query) {
+  var results = [];
+  /* Calculate your results here. */
+  
+  return results;
+})(query);

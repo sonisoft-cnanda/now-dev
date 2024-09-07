@@ -1,0 +1,5 @@
+(function scriptedWebServiceOperation(request, response) {
+
+	// Add your code here
+
+})(request, response);

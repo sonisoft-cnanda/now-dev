@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_wizard_answer">
+    <sys_wizard_answer action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <answer>Configured Action Parameter</answer>
+        <button_label/>
+        <dependent_value/>
+        <element/>
+        <name>Configured Action Parameter</name>
+        <next_question/>
+        <order>100</order>
+        <payload_name/>
+        <question display_value="Application File" name="Application File">4fb53e00db210110acc1ef92ca9619e8</question>
+        <roles/>
+        <script/>
+        <sys_class_name>sys_wizard_answer</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-13 17:48:52</sys_created_on>
+        <sys_id>f6068da7dbb99110acc1ef92ca96194b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Configured Action Parameter</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_wizard_answer_f6068da7dbb99110acc1ef92ca96194b</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-09-13 17:48:52</sys_updated_on>
+        <table/>
+        <target_url>x_taniu_tan_core_configured_action_parameter.do</target_url>
+        <type>1</type>
+    </sys_wizard_answer>
+</record_update>

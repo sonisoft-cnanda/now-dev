@@ -1,0 +1,11 @@
+(function partitionHash(import_set_row) {
+
+	// Add your code here
+	
+	// eg:
+	// return import_set_row.u_important_category;
+	// This would ensure all rows with the same 'u_important_category' value will be in the same Import Set.
+
+	 return import_set_row.sys_import_row;
+
+})(import_set_row);

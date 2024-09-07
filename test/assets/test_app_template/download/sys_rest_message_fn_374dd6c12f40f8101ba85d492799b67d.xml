@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_fn">
+    <sys_rest_message_fn action="INSERT_OR_UPDATE">
+        <authentication_type>no_authentication</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile/>
+        <basic_auth_user/>
+        <content>{&#13;
+	"username": "${username}",&#13;
+	"password": "${password}"&#13;
+}</content>
+        <function_name>Login - Get Session ID</function_name>
+        <http_method>post</http_method>
+        <lock>false</lock>
+        <oauth2_profile/>
+        <protocol_name/>
+        <qualified_name>Tanium Integration Core [ Login - Get Session ID ]</qualified_name>
+        <rest_endpoint>${tanium_api_endpoint}/session/login</rest_endpoint>
+        <rest_message display_value="Tanium Integration Core">e8cc9a812f40f8101ba85d492799b6a2</rest_message>
+        <sys_class_name>sys_rest_message_fn</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 13:33:08</sys_created_on>
+        <sys_id>374dd6c12f40f8101ba85d492799b67d</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Login - Get Session ID</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_rest_message_fn_374dd6c12f40f8101ba85d492799b67d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-10-28 17:53:48</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mid_server/>
+        <use_mutual_auth>false</use_mutual_auth>
+    </sys_rest_message_fn>
+</record_update>

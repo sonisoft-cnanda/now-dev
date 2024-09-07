@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.TaniumCoreAJAX</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>TaniumCoreAJAX</name>
+        <script><![CDATA[var TaniumCoreAJAX = Class.create();
+TaniumCoreAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	
+	establishDirectConnectionBySerial: function() {
+		var directConnectionID, endpointID;
+		var coreUtil = new x_taniu_tan_core.TaniumIntegrationCore();
+		var endpointSerial = this.getParameter('endpoint_serial');
+		
+		if (!endpointSerial) {
+			throw new Error(
+				'Failed to establish direct connection with endpoint via Tanium. Endpoint ' +
+				'serial number not specified in AJAX parameter "endpoint_serial".'
+			);
+		}
+		
+		endpointID = coreUtil.getEndpointIDBySerial(endpointSerial);
+		//Throws if DC not established or EID not specified.
+		directConnectionID = this._establishDCByEID(endpointID, coreUtil);
+		
+		return directConnectionID;
+	},
+	
+	establishDirectConnectionByEndpointID: function() {
+		var directConnectionID;
+		var endpointID = this.getParameter('endpoint_id');
+		
+		if (!endpointID) {
+			throw new Error(
+				'Failed to establish direct connection with endpoint via Tanium. Endpoint ' +
+				'ID not specified in AJAX parameter "endpoint_id".'
+			);
+		}
+		
+		//Throws if DC not established or EID not specified.
+		directConnectionID = this._establishDCByEID(endpointID);
+		
+		return directConnectionID;
+	},
+	
+	queryDirectConnectionBySerial: function() {
+		var directConnectionResponse, endpointID;
+		var coreUtil = new x_taniu_tan_core.TaniumIntegrationCore();
+		var endpointSerial = this.getParameter('endpoint_serial');
+		
+		if (!endpointSerial) {
+			throw new Error(
+				'Failed to query direct connection with endpoint via Tanium. Endpoint ' +
+				'serial number not specified in AJAX parameter "endpoint_serial".'
+			);
+		}
+		
+		endpointID = coreUtil.getEndpointIDBySerial(endpointSerial);
+		//Throws if DC not established or EID not specified.
+		directConnectionResponse = this._queryDCByEID(endpointID, coreUtil);
+		
+		return directConnectionResponse;
+	},
+	
+	queryDirectConnectionByEndpointID: function() {
+		var directConnectionResponse;
+		var endpointID = this.getParameter('endpoint_id');
+		
+		if (!endpointID) {
+			throw new Error(
+				'Failed to query direct connection with endpoint via Tanium. Endpoint ' +
+				'ID not specified in AJAX parameter "endpoint_id".'
+			);
+		}
+		
+		directConnectionResponse = this._queryDCByEID(endpointID);
+		
+		return directConnectionResponse;
+	},
+	
+	/**
+	 * Helper method to establish a direct connection to an endpoint by endpoint ID.
+	 * Returns the direct connection ID. Throws an error if endpoint ID is not specified,
+	 *  or if direct connection cannot be established.
+	 * @param {String|Number} endpointID - The Tanium Endpoint ID
+	 * @param {TaniumIntegrationCore} [coreUtil=new x_taniu_tan_core.TaniumIntegrationCore()] -
+	 * Optionally, pass an instance of TaniumIntegrationCore to prevent an additional authentication
+	 *  API call, which would be unnecessary if an instance has already been initialized.
+	 * @return {string} - The direct connection ID (not currently used for anything).
+	 * @private
+	 */
+	_establishDCByEID: function(endpointID, coreUtil) {
+		var directConnectionID;
+		coreUtil = (typeof coreUtil == 'undefined') ? new x_taniu_tan_core.TaniumIntegrationCore() : coreUtil;
+		
+		if (!endpointID) {
+			throw new Error(
+				'Failed to establish direct connection with endpoint via Tanium. ' +
+				'Endpoint ID not specified.'
+			);
+		}
+		
+		directConnectionID = coreUtil.establishDirectConnection(endpointID);
+		
+		if (!directConnectionID) {
+			throw new Error(
+				'Failed to establish direct connection with endpoint with ID ' + endpointID +
+				' via Tanium.'
+			);
+		}
+		
+		return directConnectionID;
+	},
+	
+	/**
+	 * Helper method to query a direct connection to an endpoint by endpoint ID.
+	 * Returns a JSON object containing the data from the direct connection.
+	 * @param {String|Number} endpointID - The Tanium Endpoint ID
+	 * @param {TaniumIntegrationCore} [coreUtil=new x_taniu_tan_core.TaniumIntegrationCore()] -
+	 * Optionally, pass an instance of TaniumIntegrationCore to prevent an additional authentication
+	 *  API call, which would be unnecessary if an instance has already been initialized.
+	 * @return {Object} - The direct connection query result object.
+	 * @private
+	 */
+	_queryDCByEID: function(endpointID, coreUtil) {
+		var directConnectionResponse;
+		coreUtil = (typeof coreUtil == 'undefined') ? new x_taniu_tan_core.TaniumIntegrationCore() : coreUtil;
+		
+		if (!endpointID) {
+			throw new Error(
+				'Failed to query direct connection with endpoint via Tanium. ' +
+				'Endpoint ID not specified.'
+			);
+		}
+		
+		directConnectionResponse = coreUtil.queryOpenDirectConnection(endpointID);
+		
+		if (!directConnectionResponse) {
+			throw new Error(
+				'Failed to query direct connection with endpoint with ID ' + endpointID +
+				' via Tanium.'
+			);
+		}
+		
+		return directConnectionResponse;
+	},
+	
+	type: 'TaniumCoreAJAX'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-11-28 18:47:15</sys_created_on>
+        <sys_id>24a834622fc485901ba85d492799b6aa</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>TaniumCoreAJAX</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_24a834622fc485901ba85d492799b6aa</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-03-31 16:46:59</sys_updated_on>
+    </sys_script_include>
+</record_update>

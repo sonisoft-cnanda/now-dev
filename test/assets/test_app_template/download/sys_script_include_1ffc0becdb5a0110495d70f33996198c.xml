@@ -1,0 +1,1972 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_taniu_tan_core.GatewayQueryUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Tanium API Gateway Query Util</description>
+        <name>GatewayQueryUtil</name>
+        <script><![CDATA[var GatewayQueryUtil = Class.create();
+GatewayQueryUtil.prototype = Object.extendsObject(x_taniu_tan_core.TaniumIntegrationCore, {
+	//Replaced with this._initGatewayConfigIfEmpty():
+	/*query_config : {
+		'include_filter' : false,
+		'filters' : [],
+		'refresh_token': '',
+		'page_info' : {
+			'page_size' : 0,
+			'previous_page_start_cursor' : '',
+			'previous_page_end_cursor' : '',
+			'has_next_page' : true,
+			'has_previous_page' : false
+		},
+		'sensors_to_read' : [],
+		'expected_count' : 0,
+		'data_source' : {
+			'ts' : {} //ts: live data, tds: cached data
+		}
+	},*/
+	
+	/**
+	 * Add a filter to your query, using one of several pre-specified sensor paths.
+	 * This method can be called multiple times, to add multiple filters (all of which must
+	 *  evaluate to true for a given machine to match this query condition).
+	 * Not adding a filter at all will result in all endpoints matching the query. This may
+	 *  result in an inordinate number of endpoints being returned, so be sure to set a page size
+	 *  to avoid too large of a response payload.
+	 *
+	 *
+	 * @param {("serialNumber"|"id"|"name"|"computerID"|"domainName"|"manufacturer"|"model"|
+	 * "ipAddress"|"isVirtual"|"os.name"|"os.platform"|"os.windows.name"|"os.windows.type"|
+	 * "os.windows.majorVersion"|"os.windows.releaseId"|"installedApplications.name"|
+	 * "installedApplications.version")} path The path to the node containing the value to match on.
+	 *
+	 * @param {("EQ"|"LT"|"LTE"|"GT"|"GTE"|"CONTAINS"|"STARTS_WITH"|"ENDS_WITH"|
+	 * "MATCHES"|"UPDATED_AFTER"|"READ_AFTER")} queryOperator - The operator by which to compare the given value to the field value.
+	 * Note that not all operators are valid for all fields or data sources. If the operator is
+	 *  not valid, the query will return an error. Pleast test your query (for example, in
+	 *  something like a background script) before using it in a live environment.
+	 * Here is a description for all valid operators:
+	 * <ul>
+	 *    <li>EQ: Equal to. The field value and specified values must be equal.<br />Note: To
+	 *    do an "is NOT equal to" query, use the "EQ" operator and set the "negated" argument to true.</li>
+	 *    <li>LT: Less than. The field value must be less than the specified value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>LTE: Less than or equal to. The field value must be less than or equal to the given
+	 *    value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>GT: Greater than. The field value must be greater than the specified value. <br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>GTE: Greater than or equal to. The field value must be greater than or equal to the
+	 *    given value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>CONTAINS: The string contains operator. The field value must contain the specified
+	 *    value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>STARTS_WITH: The field value must start with the specified value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>ENDS_WITH: The field value must end with the specified value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>MATCHES: The field value must fully match the specified value, which is interpreted
+	 *    as a regular expression in Perl syntax.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>UPDATED_AFTER: The field value must have been updated after the specified
+	 *    (zulu-formatted) date and time.<br />
+	 *    This is only valid for fields from certain data sources.</li>
+	 *    <li>READ_AFTER: The field value must have been read/updated after the specified
+	 *    (zulu-formatted) date and time.<br />
+	 *    This is only valid for fields from certain data sources.</li>
+	 * </ul>
+	 *
+	 * @param {String} value - The value to compare with the field value, expressed as a string.
+	 * If this value cannot be interpreted as a valid value for the field type, the query will
+	 *  return an error.
+	 *
+	 * @param {Boolean} [negated=false] - Optionally indicate the filter is negated, so that
+	 *  records with field rows matching the filter will be <strong>excluded</strong> from the
+	 *  query results.
+	 *
+	 * @return {GatewayQueryUtil} - Returns 'this' so you can chain API method calls.
+	 *
+	 * @example
+	 * var tUtil = new x_taniu_tan_core.GatewayQueryUtil();
+	 * //Only wait for one live machine matching the filter before returning response.
+	 * tUtil.useLiveData(1);
+	 * tUtil.addFilter('serialNumber', 'CONTAINS', 'VMware')
+	 *    .addFilter('serialNumber', 'CONTAINS', '56')
+	 *    .addFilter('id', 'EQ', '4');
+	 *
+	 * tUtil.addSensor('Computer Name');
+	 *
+	 * gs.debug(
+	 *    JSON.stringify(
+	 *       tUtil.getNextPage(), null, 2
+	 *    )
+	 * );
+	 */
+	addFilter: function(path, queryOperator, value, negated) {
+		this._initGatewayConfigIfEmpty();
+		if (!path || !queryOperator || !value) {
+			throw new Error(
+				'Attempted to add a filter, but failed to specify a valid filter path, ' +
+				'queryOperator, or sensor.'
+			);
+		}
+		negated = (typeof negated == 'undefined') ? false : !!negated;
+		this.query_config.filters.push({
+			'path': path,
+			'op': queryOperator,
+			'value': value,
+			'negated': negated,
+			'any': false //upcoming_feature: Add "any" argument to this method?
+		});
+		this.query_config.include_filter = true;
+		return this;
+	},
+	
+	/**
+	 * Add a sensor-based filter to your query, filtering on any specified sensor's readings.
+	 * This method can be called multiple times, to add multiple filters (ALL of which must
+	 *  evaluate to true for a given machine to match this query condition).
+	 * Not adding a filter at all will result in all endpoints matching the query. This may
+	 *  result in an inordinate number of endpoints being returned, so be sure to set a page size
+	 *  to avoid too large of a response payload.
+	 *
+	 *  NOTE: At present, this method only supports sensors which return a single column/value,
+	 *   and which do not require any parameters to be passed to them.
+	 *
+	 * @param {String} sensorName - The precise name of the sensor that must have a result
+	 *  matching the specified value based on the specified operator.
+	 *
+	 * @param {("EQ"|"LT"|"LTE"|"GT"|"GTE"|"CONTAINS"|"STARTS_WITH"|"ENDS_WITH"|
+	 * "MATCHES"|"UPDATED_AFTER"|"READ_AFTER")} queryOperator - The operator by which to compare the given value to the field value.
+	 * Note that not all operators are valid for all fields or data sources. If the operator is
+	 *  not valid, the query will return an error. Please test your query (for example, in
+	 *  something like a background script) before using it in a live environment.
+	 *
+	 * Here is a description for all valid operators:
+	 * <ul>
+	 *    <li>EQ: Equal to. The field value and specified values must be equal.<br />Note: To
+	 *    do an "is NOT equal to" query, use the "EQ" operator and set the "negated" argument to true.</li>
+	 *    <li>LT: Less than. The field value must be less than the specified value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>LTE: Less than or equal to. The field value must be less than or equal to the given
+	 *    value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>GT: Greater than. The field value must be greater than the specified value. <br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>GTE: Greater than or equal to. The field value must be greater than or equal to the
+	 *    given value.<br />
+	 *    This is valid only for 'comparable' types.</li>
+	 *    <li>CONTAINS: The string contains operator. The field value must contain the specified
+	 *    value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>STARTS_WITH: The field value must start with the specified value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>ENDS_WITH: The field value must end with the specified value.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>MATCHES: The field value must fully match the specified value, which is interpreted
+	 *    as a regular expression in Perl syntax.<br />
+	 *    This is valid only for 'string' types.</li>
+	 *    <li>UPDATED_AFTER: The field value must have been updated after the specified
+	 *    (zulu-formatted) date and time.<br />
+	 *    This is only valid for fields from certain data sources.</li>
+	 *    <li>READ_AFTER: The field value must have been read/updated after the specified
+	 *    (zulu-formatted) date and time.<br />
+	 *    This is only valid for fields from certain data sources.</li>
+	 * </ul>
+	 *
+	 * @param {String} value - The value to compare with the field value, expressed as a string.
+	 * If this value cannot be interpreted as a valid value for the field type, the query will
+	 *  return an error.
+	 *
+	 * @param {Boolean} [negated=false] - Optionally indicate the filter is negated, so that
+	 *  records with field rows matching the filter will be <strong>excluded</strong> from the
+	 *  query results.
+	 *
+	 * @return {GatewayQueryUtil} - Returns 'this' so you can chain API method calls.
+	 *
+	 * @example
+	 * var queryResponse;
+	 * var gquGetWatchlists = new x_taniu_tan_core.GatewayQueryUtil();
+	 * //Use cached data to drastically reduce the time it takes to run the query.
+	 * gquGetWatchlists.useCachedData();
+	 *
+	 * gquGetWatchlists.addSensor('Computer Name')
+	 * gquGetWatchlists.addSensor('Integrity Monitor - Active Watchlists');
+	 *
+	 * gquGetWatchlists.addSensorFilter(
+	 * 	'Integrity Monitor - Active Watchlists', //Sensor Name
+	 * 	'EQ', //Operator (negated = "is NOT equal to")
+	 * 	'N/A on Mac', //Value
+	 * 	true //Negate the operator (i.e. "is NOT equal to")
+	 * ).addSensorFilter(
+	 * 	'Integrity Monitor - Active Watchlists', //Sensor Name
+	 * 	'EQ', //Operator (negated = "is NOT equal to")
+	 * 	'No Results Found', //Value
+	 * 	true //Negate the operator (i.e. "is NOT equal to")
+	 * );
+	 *
+	 * queryResponse = gquGetWatchlists.queryAsync();
+	 *
+	 * gs.debug(
+	 * 	JSON.stringify(
+	 * 		queryResponse, null, 2
+	 * 	)
+	 * );
+	 */
+	addSensorFilter: function(sensorName, queryOperator, value, negated) {
+		this._initGatewayConfigIfEmpty();
+		if (!sensorName || !queryOperator || !value) {
+			throw new Error(
+				'Attempted to add a filter, but failed to specify a valid filter sensorName, ' +
+				'queryOperator, or sensor.'
+			);
+		}
+		negated = (typeof negated == 'undefined') ? false : !!negated;
+		this.query_config.filters.push({
+			'sensor': {
+				"name": sensorName
+			},
+			'op': queryOperator,
+			'value': value,
+			'negated': negated,
+			'any': false //upcoming_feature: Add "any" argument to this method?
+		});
+		this.query_config.include_filter = true;
+		return this;
+	},
+	
+	/**
+	 * Add a sensor to your query by specifying the exact name of the sensor in Tanium.
+	 * Note that if using cached rather than live data (by calling .useCachedData()), if the
+	 *  specified sensor is not "harvested" for TDS (Tanium Data Services), then this API call may
+	 *  result in an error.
+	 * @param {String} sensorName - The exact name of the Tanium sensor. For example, "Computer
+	 *  Name" or "Computer Serial Number".
+	 * If in doubt, use the Tanium Question Builder (/interact/buildquestion) to identify the
+	 *  exact names of the sensors you may want to use.
+	 * @param {Boolean} [allowDuplicates=false] - Set this to true if you need to add the same
+	 *  sensor to this single query multiple times; for example, if you want to query the same
+	 *  sensor twice with two different sets of parameters.
+	 * @return {GatewayQueryUtil._Sensor} - An instance of the newly-created _Sensor object, with
+	 *  the .addParam() method. You can either store a reference to this _Sensor object in a
+	 *  variable and call the .addParam() method of that variable, or simply chain-call the
+	 *  .addParam() method like so:
+	 * gqUtil.addSensor('sensor_name').addParam('param_name', 'param_value');
+	 * @example
+	 * var tUtil = new x_taniu_tan_core.GatewayQueryUtil();
+	 * //Only wait for one live machine matching the filter before returning response.
+	 * tUtil.useLiveData(1);
+	 * tUtil.addFilter('serialNumber', 'CONTAINS', 'VMware')
+	 *    .addFilter('serialNumber', 'CONTAINS', '56')
+	 *    .addFilter('id', 'EQ', '4');
+	 * //Add several sensors, including one requiring multiple parameters.
+	 * tUtil.addSensor('OS Platform');
+	 * tUtil.addSensor('Computer Name');
+	 * tUtil.addSensor('Performance - Top Process Metric Analysis')
+	 *    .addParam('Number', '1')
+	 *    .addParam('Metric', 'CPU Total')
+	 *    .addParam('Analysis', 'Quantile')
+	 *    .addParam('Hours', '24')
+	 *    .addParam('Quantile', '0')
+	 *    .addParam('Normalize', '0');
+	 *
+	 * gs.debug(
+	 *    JSON.stringify(
+	 *       tUtil.getNextPage(), null, 2
+	 *    )
+	 * );
+	 */
+	addSensor: function(sensorName, allowDuplicates) {
+		var i, newSensor;
+		this._initGatewayConfigIfEmpty();
+		//Set default param value or coerce provided value to boolean
+		allowDuplicates = (typeof allowDuplicates === 'undefined') ? false : !!allowDuplicates;
+		
+		if (!sensorName) {
+			throw new Error(
+				'Attempted to add a sensor to the query, but failed to specify a sensor name.'
+			);
+		}
+		
+		if (!allowDuplicates) {
+			//If not allowing duplicate sensors, check if this sensor already exists.
+			for (i = 0; i < this.query_config.sensors_to_read.length; i++) {
+				if (sensorName === this.query_config.sensors_to_read[i].name) {
+					//If the sensor already exists, log an error and
+					gs.error(
+						'Attempted to add Tanium sensor "' + sensorName + '" to API Gateway ' +
+						'query. However, that sensor is already part of this query.\n' +
+						'You can allow duplicate sensor names by specifying a second argument ' +
+						'(allowDuplicates) when calling GatewayQueryUtil.addSensor(), and ' +
+						'setting that argument to the boolean true.'
+					);
+					return this.query_config.sensors_to_read[i];
+				}
+			}
+		}
+		newSensor = new this._Sensor(sensorName);
+		this.query_config.sensors_to_read.push(
+			newSensor
+		);
+		//Return reference to newly created sensor object for chaining .addParam() calls.
+		return newSensor;
+	},
+	
+	/**
+	 * Tell this query to use live, rather than cached data.
+	 *
+	 * @param {Number} [expectedCount=0] - The number of endpoints to await. If you're not sure
+	 *  how many endpoints you're expecting to respond, you can set this to 0, and it will be
+	 *  ignored, if you prefer to use stableWaitTime; or you can not specify either, and the
+	 *  server defaults will be used.
+	 *
+	 * @param {Number} [stableWaitTime=0] - The number of seconds allowed to elapse without the
+	 *  server receiving new endpoint results. Once this number of seconds have elapsed following
+	 *  the most recent endpoint to respond, any results from endpoints that <i>have</i> responded
+	 *  will be included and the result will be returned.
+	 *
+	 * @return {GatewayQueryUtil} - Returns 'this' so you can chain API method calls.
+	 */
+	useLiveData: function(expectedCount, stableWaitTime) {
+		this._initGatewayConfigIfEmpty();
+		this.query_config.data_source = {
+			'ts': {
+				"excludeErrors": this.query_config.excludeErrors || false,
+				"excludeNoResults": this.query_config.exclude_no_results || false
+			}
+		};
+		if (expectedCount) {
+			this.query_config.data_source.ts.expectedCount = expectedCount;
+		}
+		if (stableWaitTime) {
+			this.query_config.data_source.ts.stableWaitTime = stableWaitTime;
+		}
+		return this;
+	},
+	
+	/**
+	 * Tell this query to use cached, rather than live data. Cached data is pulled from TDS
+	 *  (Tanium Data Services), and any sensors used must be harvested for inclusion in TDS or
+	 *  this query may return an error.
+	 * @return {GatewayQueryUtil} - Returns 'this' so you can chain API method calls.
+	 */
+	useCachedData: function() {
+		this._initGatewayConfigIfEmpty();
+		this.query_config.data_source = {
+			'tds': {
+				"allNamespaces": true,
+				"excludeErrors": this.query_config.excludeErrors || false,
+				"excludeNoResults": this.query_config.exclude_no_results || false
+			}
+		};
+		return this;
+	},
+	
+	/**
+	 * Set the page size for this query. Only up to this number of results will be returned.
+	 * If there are more than this number of results available, the response's
+	 *  data.endpoints.pageInfo.hasNextPage node will be set to true, and you can call
+	 *  .getNextPage() to get the next page of results.
+	 *
+	 * This will set the property "first" in the "endpoints" node of the resultant GQL query body.
+	 * @param {Number} newPageSize - An integer representing the number of endpoints to retrieve
+	 *  (up to the expectedCount, if using live data) per "page". Call .getNextPage() again to
+	 *  get the next page automatically.
+	 * @return {GatewayQueryUtil} - Returns 'this' so you can chain API method calls.
+	 */
+	setPageSize: function(newPageSize) {
+		this._initGatewayConfigIfEmpty();
+		if (typeof newPageSize !== 'number') {
+			throw new Error(
+				'.setPageSize() method called with non-numerical argument, "' + newPageSize +
+				'". Only integers are allowed.'
+			);
+		}
+		//ensure that
+		this.query_config.page_info.page_size = parseInt(newPageSize.toFixed());
+		return this;
+	},
+	
+	/**
+	 * Retrieve the current query configuration object.
+	 * @returns {*|{include_filter: boolean, refresh_token: string, page_info: {has_previous_page:
+	 *     boolean, previous_page_start_cursor: string, previous_page_end_cursor: string,
+	 *     has_next_page: boolean, page_size: number}, sensors_to_read: *[], expected_count:
+	 *     number, filters: *[], data_source: {ts: {}}}}
+	 */
+	getQueryConfig: function() {
+		this._initGatewayConfigIfEmpty();
+		return this.query_config;
+	},
+	
+	/**
+	 * Manually set the "cursor" (where to begin the next page query).
+	 * This will only really be necessary if you're somehow passing off the query between one page
+	 * and another, to a new script or context.
+	 * @param {String} newCursor - The new "cursor" location (where to begin the next page query).
+	 * Example: .setCursor('2222775:1907365970:2');
+	 * @return {GatewayQueryUtil}
+	 */
+	setCursor: function(newCursor) {
+		this._initGatewayConfigIfEmpty();
+		if (typeof newCursor !== 'string') {
+			throw new Error(
+				'.setCursor() called with invalid argument. Expected a string with the cursor ' +
+				'value from a previous query. Example: "2214657:2480081680:0"'
+			);
+		}
+		this.query_config.page_info.previous_page_end_cursor = newCursor;
+		return this;
+	},
+	
+	/**
+	 * Retrieve the refresh token for the current query.
+	 * This should typically not be necessary, unless you need to pass the refresh token for
+	 *  the current query into the .refreshQueryWithToken() method of a new instance of the
+	 *  GatewayQueryUtil class. If refreshing the query by token using the same instance of this
+	 *  class that was used to initiate the query (using .initQueryGetTokenAsync()), then the
+	 *  instance will already have the refresh token, as it is retained in the instance's query
+	 *  configuration object, which can be inspected by calling the .getQueryConfig() method.
+	 * @returns {String}
+	 */
+	getRefreshToken: function() {
+		return this.query_config.page_info.refresh_token;
+	},
+	
+	/**
+	 * AFTER calling .getNextPage(), get the cursor position representing the end of the current
+	 *  "page" of results.
+	 * This will only really be necessary if you're somehow passing off the query between one page
+	 *  and another, to a new script or context.
+	 * @return {string} - The current cursor, as a string.
+	 */
+	getCursor: function() {
+		this._initGatewayConfigIfEmpty();
+		return this.query_config.page_info.previous_page_end_cursor;
+	},
+	
+	/**
+	 * Get a boolean representing whether there is a "next" page of results to your query.
+	 * @return {boolean} - True if there is a "next" page of results, or false if not.
+	 * Only provides meaningful data AFTER calling .getNextPage() at least once. Otherwise, always
+	 *  returns true.
+	 */
+	hasNextPage: function() {
+		this._initGatewayConfigIfEmpty();
+		return this.query_config.page_info.has_next_page;
+	},
+	
+	/**
+	 * Execute the query and get the next (or first) page of results.
+	 * Calling this method will automatically update the page info, so you can call
+	 *  .getNextPage() again to get the next page (if .hasNextPage() returns true).
+	 *
+	 * @param {boolean} [executeAsync=this.rest_async] - If set to true, the .executeAsync() method of
+	 *  RESTMessageV2 will be used instead of the .execute() method. This may result in a longer
+	 *  time between call and response, but may be preferable if the total number of requests is
+	 *  very high, which could otherwise bog down instance performance.
+	 *
+	 * If not specified, this argument defaults to the value of this.rest_async, which initializes
+	 *  to false but can be set using the .setRESTAsync() method. Specifying the executeAsync argument here, overrides the behavior set by calling .setRESTAsync().
+	 *
+	 * See this link to ServiceNow's API documentation on .executeAsync():
+	 * https://developer.servicenow.com/dev.do#!/reference/api/sandiego/server/sn_ws-namespace/c_RESTMessageV2API#r_RMV2-executeAsync
+	 *
+	 * @return {Object|Boolean}
+	 */
+	getNextPage: function(executeAsync) {
+		this._initGatewayConfigIfEmpty();
+		var rQueryGateway,
+			sensorsSerialized,
+			sourceSerialized,
+			pageSize,
+			afterCursor,
+			responseBody;
+		var filtersSerialized = '';
+		var readyStatus = this._isReadyToSend();
+		//Set default value of executeAsync
+		executeAsync = (typeof executeAsync == 'undefined') ? this.rest_async : !!executeAsync;
+		
+		if (!readyStatus.ready) {
+			throw new Error(
+				'API Gateway query not ready to send. \n' +
+				JSON.stringify(readyStatus, null, 2)
+			);
+		}
+		
+		rQueryGateway = this._getRESTObject( //Inherited from TaniumIntegrationCore
+			'Tanium Integration Core',
+			'Gateway-Query Sensors'
+		);
+		rQueryGateway.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		
+		pageSize = this.query_config.page_info.page_size;
+		afterCursor = this.query_config.page_info.previous_page_end_cursor || '';
+		afterCursor = afterCursor ? ('after:\\"' + afterCursor) + '\\"' : '';
+		sourceSerialized = this._serializeObjectForGQL(this.query_config.data_source).replaceAll(
+			'"',
+			'\\"'
+		);
+		sensorsSerialized = this._serializeObjectForGQL(this.query_config.sensors_to_read).replaceAll(
+			'"',
+			'\\"'
+		);
+		
+		if (this.query_config.include_filter && this.query_config.filters) {
+			filtersSerialized = 'filter:{filters:' + (this._serializeFiltersForGQL(this.query_config.filters).replaceAll(
+				'"',
+				'\\"'
+			)) + '}';
+		}
+		
+		rQueryGateway.setStringParameterNoEscape('page_size', pageSize);
+		rQueryGateway.setStringParameterNoEscape('after_cursor', afterCursor);
+		rQueryGateway.setStringParameterNoEscape('source_serialized', sourceSerialized);
+		rQueryGateway.setStringParameterNoEscape('sensors_serialized', sensorsSerialized);
+		rQueryGateway.setStringParameterNoEscape('filters_serialized', filtersSerialized);
+		//Inherited from TaniumIntegrationCore
+		
+		responseBody = this._executeRESTCall(rQueryGateway, false, true, false, executeAsync);
+		
+		if (
+			!(
+				responseBody.hasOwnProperty('data') &&
+				responseBody.data
+			) ||
+			!(
+				responseBody.data.hasOwnProperty('endpoints') &&
+				responseBody.data.endpoints
+			) ||
+			!(
+				responseBody.data.endpoints.hasOwnProperty('pageInfo') &&
+				responseBody.data.endpoints.pageInfo
+			) ||
+			!(
+				responseBody.data.endpoints.pageInfo.hasOwnProperty('startCursor') &&
+				responseBody.data.endpoints.pageInfo.startCursor
+			)
+			//endCursor is not always returned, so we can't rely on it.
+			/* ||
+			!(
+				responseBody.data.endpoints.collectionInfo.hasOwnProperty('endCursor') &&
+				responseBody.data.endpoints.collectionInfo.endCursor
+			) */
+		) {
+			throw new Error('Invalid response body from Tanium API Gateway:\n' + JSON.stringify(
+				responseBody,
+				null,
+				2
+			));
+		}
+		//Update local page_info config info to prepare for next page, if necessary.
+		this.query_config.page_info.previous_page_start_cursor = (
+			responseBody.data.endpoints.pageInfo.startCursor ||
+			responseBody.data.endpoints.collectionInfo.startCursor ||
+			null
+		);
+		this.query_config.page_info.previous_page_end_cursor = (
+			responseBody.data.endpoints.pageInfo.endCursor ||
+			responseBody.data.endpoints.collectionInfo.endCursor ||
+			null
+		);
+		this.query_config.page_info.has_next_page = responseBody.data.endpoints.pageInfo.hasNextPage || false;
+		this.query_config.page_info.has_previous_page = responseBody.data.endpoints.pageInfo.hasPreviousPage || false;
+		return responseBody;
+	},
+	
+	/**
+	 * This method will initiate a query asynchronously using the Tanium API Gateway (APIGW).
+	 *  It will wait only the specified number of seconds (the value of the maxWaitTime argument,
+	 *  which is set to 5 (seconds) by default). After the specified number of seconds, whether
+	 *  any machines have responded yet or not, the APIGW will return a response which will be
+	 *  returned by this method.
+	 * The returned object will be virtually identical to the response from the .getNextPage()
+	 *  method. The value of the refresh cursor (located at data.endpoints.collectionInfo
+	 *  .startCursor) will be stored in the current instance of the GatewayQueryUtil class, so
+	 *  that .refreshQueryWithToken() can be called later to retrieve the results of the query
+	 *  without having to store and pass around the refresh cursor. However, if you're "refreshing"
+	 *  this query elsewhere (such as in a different step in a Flow), you will need to pass the
+	 *  refresh cursor into the .refreshQueryWithToken() method in that new instance of the
+	 *  GatewayQueryUtil class.
+	 *
+	 * These two methods (.initQueryGetTokenAsync() and .refreshQueryWithToken()) are typically
+	 *  used in conjunction with one another, in some kind of loop that waits until the response
+	 *  meets some condition for completeness. For example, you might want to continue calling
+	 *  .refreshQueryWithToken() until the value of data.endpoints.collectionInfo
+	 *  .respondedPercentage is greater than 0.85 (85%), or until the value of data.endpoints
+	 *  .edges.length is greater than 0 (meaning at least one machine has responded).
+	 * In this case though, it is important to also set a maximum number of loops, so that the
+	 *  loop doesn't run forever.
+	 *
+	 * NOTE: If you just want to perform a query using this polling functionality, you can call the
+	 * .queryAsync() method instead. That method will call .initQueryGetTokenAsync() and then
+	 * .refreshQueryWithToken() in a loop until the query is complete (based on the arguments you
+	 * specify), and then return the final response.
+	 *
+	 * @param {boolean} [executeAsync=false] - If set to true, the .executeAsync() method of
+	 *  RESTMessageV2 will be used instead of the .execute() method. This may result in a longer
+	 *  time between call and response, but may be preferable if the total number of requests is
+	 *  very high, which could otherwise bog down instance performance.
+	 * Note that this argument does not change whether this method itself is asynchronous; this
+	 *  method does not accept a callback function. It only changes whether the RESTMessageV2
+	 *  object is executed asynchronously within the instance. Server-side JavaScript code in
+	 *  ServiceNow always executes "synchronously".
+	 *
+	 * If not specified, this argument defaults to the value of this.rest_async, which
+	 *  initializes to false but can be set using the .setRESTAsync() method.
+	 * Specifying the executeAsync argument here, overrides the behavior set by calling .setRESTAsync().
+	 *
+	 * See this link to ServiceNow's API documentation on .executeAsync():
+	 * https://developer.servicenow.com/dev.do#!/reference/api/sandiego/server/sn_ws-namespace/c_RESTMessageV2API#r_RMV2-executeAsync
+	 * @param {number} [maxWaitTime=5] - The maximum number of seconds to wait for the response.
+	 * If this method is only used for initiating the query, it's recommended to leave this
+	 *  unspecified and accept the default value of 5 seconds, or manually set it to <10 seconds.
+	 * Never set this argument to a value greater than
+	 * NOTE: This argument only does anything if using live data. As mentioned in the documentation,
+	 *  this is accomplished by calling the .useLiveData() method.
+	 * @param {number} [expectedCount=0] - The number of endpoints to eventually retrieve.
+	 * If you're not sure how many endpoints you're expecting to respond, you can set this to 0
+	 *  (or leave it unspecified and accept the default value of 0) and it will be ignored,
+	 *  resulting in all endpoints matching any filters you've specified with the .addFilter()
+	 *  method being retrieved.
+	 * NOTE: This argument only does anything if using live data.
+	 * @return {{data}|Object|Boolean} - Returns the response body from the Tanium API Gateway,
+	 *  while also setting local properties like refresh cursor in order to prepare for refreshing
+	 *  the query if the results are not complete in the response. You can tell if the results are
+	 *  complete, because the data.endpoints.collectionInfo.success property will be set to true.
+	 *  In the event that the query has expired (which typically happens after 5-10 minutes), the
+	 *  data.endpoints.collectionInfo.active property will be set to false (in which case you'll
+	 *  need to call this function again in order to begin a new query). The data.endpoints.edges
+	 *  array may well be empty in the returned object. That is expected for queries that take
+	 *  longer than a few seconds. In that case, you'll need to call
+	 * .refreshQueryWithToken() and pass in the refresh token value from the
+	 * data.endpoints.collectionInfo.startCursor node in order to get the results, once they're
+	 * available.
+	 *
+	 * @example
+	 * var percentResponded, queryResponse, refreshToken;
+	 *
+	 * var gqu = new x_taniu_tan_core.GatewayQueryUtil();
+	 * var responseCount = 0;
+	 * var maxLoops = 40;
+	 * var currentLoop = 1;
+	 * var minimumEndpoints = 1;
+	 *
+	 * gqu.useLiveData();
+	 * gqu.addSensor('Computer Name');
+	 * gqu.addSensor('Computer Serial Number');
+	 *
+	 * gqu.addFilter(
+	 * 	'serialNumber',
+	 * 	'CONTAINS',
+	 * 	'some_serial_number'
+	 * );
+	 *
+	 * queryResponse = gqu.initQueryGetTokenAsync();
+	 * //Using + operator to return numeric representation of the respondedPercentage node.
+	 * percentResponded = +queryResponse.data.endpoints.collectionInfo.respondedPercentage;
+	 *
+	 * //Halt after maxLoops, OR 90% response, OR responseCount >= minimumEndpoints
+	 * while (currentLoop < maxLoops && percentResponded < 0.9 && responseCount < minimumEndpoints) {
+	 * 	refreshToken = gqu.getRefreshToken();
+	 *
+	 * 	if (!refreshToken) {
+	 * 		throw new Error(
+	 * 			'No refresh token found for query with the following config: \n' +
+	 * 			JSON.stringify(gqu.getQueryConfig(), null, 2)
+	 * 		);
+	 * 	}
+	 *
+	 * 	gs.debug('Refreshing query with token ' + refreshToken);
+	 * 	queryResponse = gqu.refreshQueryWithToken(refreshToken);
+	 *
+	 * 	gs.debug(
+	 * 		'Attempt ' + currentLoop + ' got ' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedPercentage +
+	 * 		' responded percentage (' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedPercentage + '/' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedTotal + ').\n' +
+	 * 		JSON.stringify(
+	 * 			queryResponse.data.endpoints.collectionInfo,
+	 * 			null,
+	 * 			2
+	 * 		)
+	 * 	);
+	 * 	gs.debug(
+	 * 		'Response body:\n' +
+	 * 		JSON.stringify(queryResponse, null, 2)
+	 * 	);
+	 *
+	 * 	percentResponded = +queryResponse.data.endpoints.collectionInfo.respondedPercentage;
+	 * 	responseCount = queryResponse.data.endpoints.edges.length;
+	 * 	currentLoop++;
+	 * }
+	 *
+	 * gs.debug('COMPLETE after ' + (currentLoop - 1) + ' loops: \n' +
+	 * 	JSON.stringify(
+	 * 		queryResponse,
+	 * 		null,
+	 * 		2
+	 * 	)
+	 * );
+	 */
+	initQueryGetTokenAsync: function(executeAsync, maxWaitTime, expectedCount) {
+		this._initGatewayConfigIfEmpty();
+		
+		var rQueryGateway, responseBody, queryConfig, sensorsSerialized;
+		var readyStatus = this._isReadyToSend();
+		
+		executeAsync = (typeof executeAsync === 'undefined') ? this.rest_async : !!executeAsync;
+		maxWaitTime = (typeof maxWaitTime === 'number') ? maxWaitTime : 5;
+		expectedCount = (typeof expectedCount === 'number') ? expectedCount : 0;
+		
+		if (!readyStatus.ready) {
+			throw new Error(
+				'API Gateway query not ready to send with .initQueryGetTokenAsync() method. Ready status:\n' +
+				JSON.stringify(readyStatus, null, 2)
+			);
+		}
+		
+		//Set query config object to be used to populate the GQL query variables.
+		queryConfig = this._getInitialTokenQueryVariables(maxWaitTime, expectedCount);
+		sensorsSerialized = this._serializeObjectForGQL(this.query_config.sensors_to_read).replaceAll(
+			'"',
+			'\\"'
+		);
+		
+		rQueryGateway = this._getRESTObject( //Inherited from TaniumIntegrationCore
+			'Tanium Integration Core',
+			'Gateway-Query with Refresh Token'
+		);
+		rQueryGateway.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rQueryGateway.setStringParameterNoEscape(
+			'sensors_serialized', sensorsSerialized
+		);
+		rQueryGateway.setStringParameterNoEscape(
+			'query_variables_object',
+			JSON.stringify(queryConfig)
+		);
+		
+		
+		responseBody = this._executeRESTCall(
+			rQueryGateway,
+			false,
+			true,
+			false,
+			executeAsync
+		);
+		
+		
+		if (
+			!(
+				responseBody.hasOwnProperty('data') &&
+				responseBody.data
+			) ||
+			!(
+				responseBody.data.hasOwnProperty('endpoints') &&
+				responseBody.data.endpoints
+			) ||
+			!(
+				responseBody.data.endpoints.hasOwnProperty('collectionInfo') &&
+				responseBody.data.endpoints.collectionInfo
+			) ||
+			!(
+				responseBody.data.endpoints.collectionInfo.hasOwnProperty('startCursor') &&
+				responseBody.data.endpoints.collectionInfo.startCursor
+			)
+		) {
+			throw new Error('Invalid response body from Tanium API Gateway:\n' + JSON.stringify(
+				responseBody,
+				null,
+				2
+			));
+		}
+		
+		//Update local page_info config info to prepare for token refresh, if necessary.
+		this.query_config.page_info.refresh_token = responseBody.data.endpoints.collectionInfo.startCursor;
+		this.query_config.page_info.previous_page_start_cursor = responseBody.data.endpoints.collectionInfo.startCursor;
+		this.query_config.page_info.previous_page_end_cursor = responseBody.data.endpoints.collectionInfo.endCursor;
+		this.query_config.page_info.has_next_page = responseBody.data.endpoints.pageInfo.hasNextPage || false;
+		this.query_config.page_info.has_previous_page = responseBody.data.endpoints.pageInfo.hasPreviousPage || false;
+		
+		return responseBody;
+	},
+	
+	
+	/**
+	 * Refresh a query that has already been initialized with .initQueryGetTokenAsync() method,
+	 *  and get the current results.
+	 * Note that results returned from this method may not be complete, as the API will always
+	 *  return within the specified number of seconds based on the maxWaitTime argument (5 seconds
+	 *  by default). This method is intended to be called repeatedly until the results are complete.
+	 *  See the example for details.
+	 *
+	 * @param {String} [refreshToken=this.query_config.refresh_token] - Optionally specify the
+	 *  specific refresh token to use. If not specified, the default value will be used (see
+	 *  important note below).
+	 * Default: The value of the current query config object's refresh_token node, which is only
+	 *  set if the current instance of the GatewayQueryUtil class has been used to call
+	 *  .initQueryGetTokenAsync() previously. Otherwise, (such as if the .refreshQueryWithToken()
+	 *  method is being called on a new instance of the GatewayQueryUtil class), a valid refresh
+	 *  token must be specified in the refreshToken argument.
+	 *
+	 * @param {Boolean} [executeAsync=false] - If set to true, the .executeAsync() method of
+	 *  RESTMessageV2 will be used instead of the .execute() method. This can result in
+	 *  SIGNIFICANTLY  longer time between call and response, but may be preferable if the total
+	 *  number or size of requests/responses is very high, which could otherwise bog down
+	 *  instance performance.
+	 * If not specified, this argument defaults to the value of this.rest_async, which
+	 *  initializes to false but can be set using the .setRESTAsync() method.
+	 * Specifying the executeAsync argument here, overrides the behavior set by calling
+	 *  .setRESTAsync().
+	 *
+	 * See this link to ServiceNow's API documentation on .executeAsync():
+	 * https://developer.servicenow.com/dev.do#!/reference/api/sandiego/server/sn_ws-namespace/c_RESTMessageV2API#r_RMV2-executeAsync
+	 *
+	 * @param {Number} [maxWaitTime=5] - The maximum number of seconds to wait for the query to
+	 *  respond.
+	 * The API call may take less time than this, but should not take more (give or take about a
+	 *  second or two).
+	 *
+	 * @param {Number} [expectedCount=0] - The number of endpoints to await.
+	 * If you're not sure  how many endpoints you're expecting to respond, you can set this to 0,
+	 *  and it will be  ignored, if you prefer to use stableWaitTime; or you can not specify
+	 *  either, and the server defaults will be used.
+	 *
+	 * @returns {{data}|Object|Boolean} - The response body from the API Gateway, even if the
+	 *  query is not yet complete (i.e. if the query is still running but maxWaitTime was reached
+	 *  on the Tanium server).
+	 *
+	 * @example
+	 * var percentResponded, queryResponse, refreshToken;
+	 *
+	 * var gqu = new x_taniu_tan_core.GatewayQueryUtil();
+	 * var responseCount = 0;
+	 * var maxLoops = 40;
+	 * var currentLoop = 1;
+	 * var minimumEndpoints = 1;
+	 *
+	 * gqu.useLiveData();
+	 * gqu.addSensor('Computer Name');
+	 * gqu.addSensor('Computer Serial Number');
+	 *
+	 * gqu.addFilter(
+	 * 	'serialNumber',
+	 * 	'CONTAINS',
+	 * 	'some_serial_number'
+	 * );
+	 *
+	 * queryResponse = gqu.initQueryGetTokenAsync();
+	 * //Using + operator to return numeric representation of the respondedPercentage node.
+	 * percentResponded = +queryResponse.data.endpoints.collectionInfo.respondedPercentage;
+	 *
+	 * //Halt after maxLoops, OR 90% response, OR responseCount >= minimumEndpoints
+	 * while (currentLoop < maxLoops && percentResponded < 0.9 && responseCount < minimumEndpoints) {
+	 * 	refreshToken = gqu.getRefreshToken();
+	 *
+	 * 	if (!refreshToken) {
+	 * 		throw new Error(
+	 * 			'No refresh token found for query with the following config: \n' +
+	 * 			JSON.stringify(gqu.getQueryConfig(), null, 2)
+	 * 		);
+	 * 	}
+	 *
+	 * 	gs.debug('Refreshing query with token ' + refreshToken);
+	 * 	queryResponse = gqu.refreshQueryWithToken(refreshToken);
+	 *
+	 * 	gs.debug(
+	 * 		'Attempt ' + currentLoop + ' got ' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedPercentage +
+	 * 		' responded percentage (' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedPercentage + '/' +
+	 * 		queryResponse.data.endpoints.collectionInfo.respondedTotal + ').\n' +
+	 * 		JSON.stringify(
+	 * 			queryResponse.data.endpoints.collectionInfo,
+	 * 			null,
+	 * 			2
+	 * 		)
+	 * 	);
+	 * 	gs.debug(
+	 * 		'Response body:\n' +
+	 * 		JSON.stringify(queryResponse, null, 2)
+	 * 	);
+	 *
+	 * 	percentResponded = +queryResponse.data.endpoints.collectionInfo.respondedPercentage;
+	 * 	responseCount = queryResponse.data.endpoints.edges.length;
+	 * 	currentLoop++;
+	 * }
+	 *
+	 * gs.debug(
+	 * 	'COMPLETE after ' + (currentLoop - 1) + ' loops: \n' +
+	 * 	JSON.stringify(
+	 * 		queryResponse,
+	 * 		null,
+	 * 		2
+	 * 	)
+	 * );
+	 */
+	refreshQueryWithToken: function(
+		refreshToken,
+		executeAsync,
+		maxWaitTime,
+		expectedCount
+	) {
+		
+		this._initGatewayConfigIfEmpty();
+		
+		var rQueryGateway, responseBody, queryConfig, sensorsSerialized;
+		var readyStatus = this._isReadyToSend();
+		
+		refreshToken = (typeof refreshToken === 'string') ? refreshToken : this.getRefreshToken();
+		executeAsync = (typeof executeAsync === 'undefined') ? this.rest_async : !!executeAsync;
+		maxWaitTime = (typeof maxWaitTime === 'number') ? maxWaitTime : 5;
+		expectedCount = (typeof expectedCount === 'number') ? expectedCount : 0;
+		
+		if (!readyStatus.ready) {
+			throw new Error(
+				'API Gateway query not ready to send. \n' +
+				JSON.stringify(readyStatus, null, 2)
+			);
+		}
+		
+		//Set query config object to be used to populate the GQL query variables.
+		queryConfig = this._getInitialTokenQueryVariables(maxWaitTime, expectedCount);
+		sensorsSerialized = this._serializeObjectForGQL(this.query_config.sensors_to_read).replaceAll(
+			'"',
+			'\\"'
+		);
+		
+		//Add refresh token to query config object.
+		queryConfig.refreshCursor = refreshToken;
+		
+		rQueryGateway = this._getRESTObject( //Inherited from TaniumIntegrationCore
+			'Tanium Integration Core',
+			'Gateway-Query with Refresh Token'
+		);
+		rQueryGateway.setStringParameterNoEscape(
+			'tanium_module_api_url',
+			this.TANIUM_MODULE_API_ENDPOINT
+		);
+		rQueryGateway.setStringParameterNoEscape('sensors_serialized', sensorsSerialized);
+		rQueryGateway.setStringParameterNoEscape(
+			'query_variables_object',
+			JSON.stringify(queryConfig)
+		);
+		
+		responseBody = this._executeRESTCall(
+			rQueryGateway,
+			false,
+			true,
+			false,
+			executeAsync
+		);
+		
+		if (
+			!(
+				responseBody.hasOwnProperty('data') &&
+				responseBody.data
+			) ||
+			!(
+				responseBody.data.hasOwnProperty('endpoints') &&
+				responseBody.data.endpoints
+			) ||
+			!(
+				responseBody.data.endpoints.hasOwnProperty('collectionInfo') &&
+				responseBody.data.endpoints.collectionInfo
+			) ||
+			!(
+				responseBody.data.endpoints.collectionInfo.hasOwnProperty('startCursor') &&
+				responseBody.data.endpoints.collectionInfo.startCursor
+			)
+		) {
+			throw new Error('Invalid response body from Tanium API Gateway:\n' + JSON.stringify(
+				responseBody,
+				null,
+				2
+			));
+		}
+		
+		//Update local page_info config info to prepare for token refresh, if necessary.
+		this.query_config.page_info.refresh_token = responseBody.data.endpoints.collectionInfo.startCursor;
+		this.query_config.page_info.previous_page_start_cursor = responseBody.data.endpoints.collectionInfo.startCursor;
+		this.query_config.page_info.previous_page_end_cursor = responseBody.data.endpoints.collectionInfo.endCursor;
+		this.query_config.page_info.has_next_page = responseBody.data.endpoints.pageInfo.hasNextPage || false;
+		this.query_config.page_info.has_previous_page = responseBody.data.endpoints.pageInfo.hasPreviousPage || false;
+		
+		return responseBody;
+	},
+	
+	/**
+	 * This method will initiate a truly asynchronous query using the configuration provided by
+	 *  calling other methods of the GatewayQueryUtil class (such as .addSensor() and
+	 *  .addFilter()). It will use .initQueryGetTokenAsync() and .refreshQueryWithToken() in the
+	 *  background automatically, and only return a result when the query is complete (based on
+	 *  the minimumEndpointCount or minimumResponsePercent arguments), or some maximum is reached
+	 *  (such as maxRetries or maxWaitTimePerRequest).
+	 *
+	 * @param {number} [minimumEndpointCount=0] - The minimum number of endpoints that must be
+	 *    returned by the query before the query will be considered complete, and the response will
+	 *    be returned by this method. If this value is set to 0 (or unspecified), it will be
+	 *    ignored.
+	 *
+	 * @param {number} [minimumResponsePercent=1] - The minimum percentage of endpoints that must
+	 *  respond to the query before the query will be considered complete, and the response will
+	 *  be returned by this method.
+	 * The default value is 1, meaning that the query will be considered complete when 100% of
+	 *  endpoints have responded. If this value is unspecified, or is set to 0, it will be set to
+	 *  its default value, which is 1. The query will stop and the results will be returned
+	 *  when 100% of endpoints have responded (usually not desired), or when one of the other
+	 *  stopping conditions are met (such as maxRetries or minimumEndpointCount is reached).
+	 * Must be a number between 0 and 1. 0.5 = 50%.
+	 *
+	 * @param {number} [maxRetries=180/maxWaitTimePerRequest] - The maximum number of times the
+	 *  query will be retried before the result is returned. Each "poll" of the API using the
+	 *  refresh token, the query will be retried until the query is complete (based on the other
+	 *  arguments specified for this method, such as minimumResponsePercent or
+	 *  minimumEndpointCount) or until the maxRetries limit is reached.
+	 * If this value is set to 0 (or unspecified), it will be set to its default value which is
+	 *  (180 (3 minutes) divided by the value of the maxWaitTimePerRequest argument). If
+	 *  maxWaitTime is set to 3 (seconds), then maxRetries will be set to 180/3=60.
+	 *
+	 * @param {Boolean} [executeAsync=false] - If set to true, the .executeAsync() method of
+	 *  RESTMessageV2 will be used instead of the .execute() method. This may result in a longer
+	 *  time between call and response, but may be preferable if the total number of requests is
+	 *  very high, which could otherwise bog down instance performance.
+	 * Note that this argument does not change whether this method itself is asynchronous; this
+	 *  method does not accept a callback function. It only changes whether the RESTMessageV2
+	 *  object is executed asynchronously within the instance. Server-side JavaScript code in
+	 *  ServiceNow always executes "synchronously".
+	 * See this link to ServiceNow's API documentation on .executeAsync():
+	 * https://developer.servicenow.com/dev.do#!/reference/api/sandiego/server/sn_ws-namespace/c_RESTMessageV2API#r_RMV2-executeAsync
+	 *
+	 * @param {Number} [expectedCount=0] - The number of endpoints to eventually retrieve.
+	 * If you're not sure how many endpoints you're expecting to respond, you can set this to 0
+	 *  (or leave it unspecified and accept the default value of 0) and it will be ignored,
+	 *  resulting in all endpoints matching any filters you've specified with the .addFilter()
+	 *  method being retrieved.
+	 * NOTE: This argument only does anything if using live data.
+	 * This is the number of endpoints that are expected to be returned by the query. This will
+	 *  often be set to the same value as minimumEndpointCount, if used.
+	 *
+	 * @param {Number} [maxWaitTimePerRequest=5] - The maximum time (in seconds) to wait for a
+	 *  response from the Tanium API Gateway *for each request*. Never set this to a value greater
+	 *  than ~25. This is the maximum amount of time to wait for a response from the Tanium API
+	 *  Gateway *for each request*. The .queryAsync() method will make multiple requests until
+	 *  some condition is met (based on the arguments provided), so this value will be multiplied
+	 *  by the number of requests made. A shorter maxWaitTimePerRequest argument may result in a
+	 *  faster response. A value of 0 will result in the default value of 5 being used, just as
+	 *  if the argument was not provided. The default value of 5 seconds is recommended, but any
+	 *  value *between 3 and 10* is a good range to use. Any values >= 30 will be ignored, as
+	 *  that would result in a potential timeout.
+	 *
+	 * @param {Boolean} [requireAvailableResults=false] - If set to false (or if unspecified),
+	 *  the response will be returned even if it contains "[current result unavailable]" or
+	 *  "[results currently unavailable]" for one or more sensors (as long as the other stopping
+	 *  conditions are met).
+	 * If set to true, the response will NOT be returned if it contains "[current result
+	 *  unavailable]" or "[results currently unavailable]" for any of the requested sensors (unless
+	 *  we've reached the maximum number of loops), meaning that it will continue attempting to
+	 *  refresh the query until the stopping conditions are met, AND all sensors have a current
+	 *  result available.
+	 * This argument is only relevant if using live data. If using cached data, one should never
+	 *  get a response without a "current" result.
+	 * Setting this argument to true may result in a longer wait time for some sensors, as the
+	 *  query will continue to be refreshed until all sensors have a current result available and
+	 *  will ignore the other stopping conditions (except for the maximum refresh attempts) until
+	 *  that happens.
+	 *
+	 * @returns {{data}} - The response body from the Tanium API Gateway, as a JavaScript object.
+	 *
+	 * @example
+	 * var queryResponse;
+	 *
+	 * var gqu = new x_taniu_tan_core.GatewayQueryUtil();
+	 * var minEndpoints = 1,
+	 * 	minResponsePercent = 0,
+	 * 	maxRetries = 15,
+	 * 	executeAsync = true,
+	 * 	expectedCount = 1,
+	 * 	maxWaitTimePerRequest = 5;
+	 *
+	 * gqu.useLiveData(expectedCount);
+	 *
+	 * gqu.addSensor('Computer Name');
+	 * gqu.addSensor('Computer Serial Number');
+	 * gqu.addSensor('Endpoint ID');
+	 *
+	 * gqu.addFilter(
+	 * 	'serialNumber',
+	 * 	'CONTAINS',
+	 * 	'some_serial_number'
+	 * );
+	 *
+	 * queryResponse = gqu.queryAsync(
+	 * 	minEndpoints,
+	 * 	minResponsePercent,
+	 * 	maxRetries,
+	 * 	executeAsync,
+	 * 	expectedCount,
+	 * 	maxWaitTimePerRequest
+	 * );
+	 *
+	 * gs.debug(
+	 * 	'COMPLETE: \n' +
+	 * 	JSON.stringify(queryResponse, null, 2)
+	 * );
+	 *
+	 * @changelog
+	 * v2.0.0 - Updated the queryAsync() method to correctly handle situations where we're getting cached rather than live data, but have not specified a minimumEndpointCount or minimumResponsePercent. In this case, the method will now return the response immediately, rather than waiting for a condition that would only have been met if we were querying live data.
+	 */
+	queryAsync: function(
+		minimumEndpointCount,
+		minimumResponsePercent,
+		maxRetries,
+		executeAsync,
+		expectedCount,
+		maxWaitTimePerRequest,
+		requireAvailableResults
+	) {
+		var readyStatus, queryResponse, respondedPercent, respondedCount;
+		var iCurrentLoop = 1;
+		
+		minimumEndpointCount = (typeof minimumEndpointCount === 'number') ? minimumEndpointCount : 0;
+		minimumResponsePercent = (typeof minimumResponsePercent === 'number') ? minimumResponsePercent : 1;
+		executeAsync = (typeof executeAsync !== 'undefined') ? executeAsync : false;
+		expectedCount = (typeof expectedCount === 'number') ? expectedCount : 0;
+		requireAvailableResults = (typeof requireAvailableResults !== 'undefined') ? !!requireAvailableResults : false;
+		
+		//Ensure a valid value for maxWaitTimePerRequest (>=2 and <30). If not, use default value (5).
+		if (typeof maxWaitTimePerRequest !== 'number' || maxWaitTimePerRequest < 2 || maxWaitTimePerRequest >= 30) {
+			maxWaitTimePerRequest = 5;
+		}
+		
+		/* Default value for maxRetries is 180 seconds (3 minutes) divided by maxWaitTimePerRequest.
+		For example, if maxWaitTimePerRequest is 5, maxRetries will be 36 to equal a maximum of
+		3 minutes.
+		Default value will be used if maxRetries is not a number or is less than 1. */
+		maxRetries = (typeof maxRetries === 'number' && maxRetries > 0) ? maxRetries : (180 / maxWaitTimePerRequest);
+		
+		//Ensure a valid value for minimumResponsePercent. If >1, divide by 100 to get a percentage.
+		if (minimumResponsePercent > 1) {
+			if (minimumResponsePercent > 100) {
+				gs.warn(
+					'queryAsync() minimumResponsePercent value is greater than 100. Value ' +
+					'should be between 0 and 1. \n' +
+					'If set to >1, it will be divided by 100 to get the percentage. However, if ' +
+					'>100, it will be ignored.'
+				);
+				minimumResponsePercent = 1;
+			} else {
+				gs.debug(
+					'queryAsync() minimumResponsePercent value is greater than 1. Value ' +
+					'should be between 0 and 1. \n' +
+					'If set to >1 && <100, it will be divided by 100 to get the percentage.'
+				);
+				minimumResponsePercent = minimumResponsePercent / 100;
+			}
+		}
+		
+		//Ensure the query is ready to send. If not, throw an error.
+		readyStatus = this._isReadyToSend();
+		if (!readyStatus.ready) {
+			throw new Error(
+				'API Gateway query not ready to send. \n' +
+				JSON.stringify(readyStatus, null, 2)
+			);
+		}
+		
+		queryResponse = this.initQueryGetTokenAsync(
+			executeAsync,
+			maxWaitTimePerRequest,
+			expectedCount
+		);
+		
+		
+		try {
+			//Use Unary plus operator to ensure value is a number.
+			respondedPercent = +queryResponse.data.endpoints.collectionInfo.respondedPercentage || 0;
+			respondedCount = queryResponse.data.endpoints.edges.length || 0;
+		} catch(ex) {
+			//If unable to parse the response, set count and percent to 0 and try again.
+			respondedPercent = 0;
+			respondedCount = 0;
+		}
+		
+		/*
+			If using LIVE rather than cached data, loop until one of the following conditions is met:
+				1. The number of endpoints that have responded is greater than or equal to the minimumEndpointCount (IF minimumEndpointCount is specified).
+				2. The percentage of endpoints that have responded is greater than or equal to the minimumResponsePercent (IF minimumResponsePercent is specified).
+				3. The number of retries has exceeded the maxRetries value.
+			
+			Note that if requireAvailableResults is true, then the response will not be returned until "current" results are available for all sensors in the query, unless maxRetries is reached. If maxRetries is reached, then the response will be returned regardless of whether current results are available for all sensors.
+			
+			This logic is only relevant when using live data, as cached data should always have current results available.
+		 */
+		if (!this._isUsingCachedData()) {
+			while (
+				(iCurrentLoop <= maxRetries) &&
+				(
+					(
+						(minimumEndpointCount ? (respondedCount < minimumEndpointCount) : true) &&
+						(minimumResponsePercent ? (respondedPercent < minimumResponsePercent) : true)
+					) || (
+						requireAvailableResults ? (
+							this._containsResultsUnavailable(
+								queryResponse,
+								true
+							)
+						) : false
+					)
+				)
+				) {
+				queryResponse = this.refreshQueryWithToken(
+					this.getRefreshToken(),
+					executeAsync,
+					maxWaitTimePerRequest,
+					expectedCount
+				);
+				
+				//Unary plus operator to ensure value is a number.
+				try {
+					respondedPercent = +queryResponse.data.endpoints.collectionInfo.respondedPercentage || 0;
+					respondedCount = queryResponse.data.endpoints.edges.length || 0;
+				} catch (ex) {
+					//If unable to parse the response, set count and percent to 0 and try again.
+					respondedPercent = 0;
+					respondedCount = 0;
+				}
+				
+				gs.debug(
+					'queryAsync() loop #' + iCurrentLoop + ' of ' + maxRetries + '.\n' +
+					respondedCount + ' of ' + minimumEndpointCount + ' endpoints included in results.\n' +
+					respondedPercent + ' of ' + (minimumResponsePercent * 100) +
+					'% of endpoints responded.\n' +
+					'Current refresh token (non-sensitive): ' + this.getRefreshToken() + '\n' +
+					'queryResponse: ' + JSON.stringify(queryResponse, null, 2)
+				);
+				
+				iCurrentLoop++;
+			}
+			
+			if ( //If stopping conditions weren't met, throw a message into the debug log.
+				(
+					(
+						(minimumEndpointCount ? (respondedCount < minimumEndpointCount) : true) &&
+						(minimumResponsePercent ? (respondedPercent < minimumResponsePercent) : true)
+					) || (
+						requireAvailableResults ? (
+							this._containsResultsUnavailable(
+								queryResponse,
+								true
+							)
+						) : false
+					)
+				)
+			) {
+				gs.debug(
+					'GatewayQueryUtil.queryAsync() did not meet stopping conditions before ' +
+					'hitting the maximum number of loops (' + maxRetries + ').'
+				);
+			} else {
+				gs.debug(
+					'GatewayQueryUtil.queryAsync() met stopping conditions in ' +
+					(iCurrentLoop) + ' loop(s), before exceeding the maximum (' + maxRetries + ').'
+				);
+			}
+		} else {
+			//If using cached data, only one request is needed as the data should be immediately available.
+			
+			//Commented out since we're already getting the response from the initial query much earlier in this method.
+			/* queryResponse = this.refreshQueryWithToken(
+				this.getRefreshToken(),
+				executeAsync,
+				maxWaitTimePerRequest,
+				expectedCount
+			); */
+		}
+		
+		return queryResponse;
+	},
+	
+	/**
+	 * This method will take the results of a query from the Tanium API Gateway (using either .queryAsync() or .getNextPage()), and transform it into a more readable and comprehensible format, suitable for use in ServiceNow or for display to a user.<br />
+	 * <br />
+	 * Note that this method is still in beta. It has been tested internally with a variety of single and multi-row sensors, but it should still be considered in 'beta', and tested before use.
+	 * Although we are not aware of any specific issues or incompatibilities, it's possible that it may not work as expected with all sensors. It is recommended to test this method with any sensors you intend to use it with, and to verify that the transformation is working as expected.
+	 *
+	 * @param {Object} responseObj - The response object from the Tanium API Gateway, as returned by the .queryAsync() or .getNextPage() methods.
+	 * @param {boolean} [removeNoResultRows=true] - If true, rows with "[no results]" will be removed.
+	 *
+	 * @returns {{columns: *[], rows: *[]}}
+	 * @beta
+	 * @stability beta - This method is still in beta, though it is expected to be stable. <br />
+	 * The INTENTION is for it to not be removed or changed in a way that is not backwards-compatible with any use-case in which this transformation may be considered fully working. It should only be modified in order to resolve potential bugs relating to rare and unexpected edge cases caused by sensors which return unexpected data that may be incompatible with the transformation process.
+	 * While in beta, it is strongly recommended to test this method with any sensors you intend to use it with and to verify that the transformation is working as expected. It is also recommended to test this method with a variety of single and multi-row sensors, and to verify that the transformation is working as expected, as this method has been tested more with single-row sensors (such as "Computer Name" or "Computer Serial Number") than with multi-row sensors (such as "Installed Applications" or "Running Processes").
+	 */
+	transformGatewayResponse: function(responseObj, removeNoResultRows) {
+		return this._transformGatewayQueryResponseV2(responseObj, removeNoResultRows);
+	},
+	
+	/**
+	 * Call this method to exclude rows with "[no results]" from the response.
+	 *
+	 * Works when querying either live or cached data.
+	 *
+	 * @param {boolean} [excludeNoResults=true] - If this argument is set to true (or if unspecified),
+	 *  then rows with "[no results]" will be removed from the response.
+	 * If set to false (or if you don't call this method at all), then they will not be removed.
+	 *
+	 * @returns {GatewayQueryUtil} - Returns the instance of the GatewayQueryUtil object to
+	 *  allow for method chaining.
+	 *
+	 * @example
+	 * var queryResponse;
+	 * var gquGetWatchlists = new x_taniu_tan_core.GatewayQueryUtil();
+	 * //Use cached data to drastically reduce the time it takes to run the query.
+	 * gquGetWatchlists.useCachedData();
+	 *
+	 * gquGetWatchlists.addSensor('Computer Name')
+	 * gquGetWatchlists.addSensor('Computer Serial Number');
+	 *
+	 * gquGetWatchlists.excludeNoResults(false);
+	 *
+	 * queryResponse = gquGetWatchlists.queryAsync();
+	 *
+	 * gs.debug(
+	 * 	JSON.stringify(
+	 * 		queryResponse, null, 2
+	 * 	)
+	 * );
+	 */
+	excludeNoResults: function(excludeNoResults) {
+		var sourceObj;
+		
+		//If excludeNoResults is not specified, default to true.
+		excludeNoResults = (typeof excludeNoResults !== 'undefined') ? !!excludeNoResults : true;
+		
+		if (this.query_config.data_source.hasOwnProperty('ts')) {
+			sourceObj = this.query_config.data_source.ts;
+		} else {
+			sourceObj = this.query_config.data_source.tds;
+		}
+		
+		sourceObj.excludeNoResults = !!excludeNoResults;
+		
+		return this;
+	},
+	
+	/**
+	 * upcoming_feature: test and document this method.
+	 * Call this method to exclude all endpoints that contain common error values in
+	 *  ANY requested sensor data.
+	 *
+	 * This method must be called AFTER calling either .useLiveData() or .useCachedData() to
+	 *  set your data source.
+	 *
+	 * Works when querying either live or cached data.
+	 *
+	 * @param {boolean} [excludeErrors=true] - If this argument is set to true (or if unspecified),
+	 *  then rows with "[no results]" will be removed from the response.
+	 * If set to false (or if you don't call this method at all), then they will not be removed.
+	 */
+	__wip_excludeErrors: function(excludeErrors) {
+		var sourceObj;
+		
+		//If excludeErrors is not specified, default to true.
+		excludeErrors = (typeof excludeErrors !== 'undefined') ? !!excludeErrors : true;
+		
+		if (this.query_config.data_source.hasOwnProperty('ts')) {
+			sourceObj = this.query_config.data_source.ts;
+		} else {
+			sourceObj = this.query_config.data_source.tds;
+		}
+		
+		sourceObj.excludeErrors = !!excludeErrors;
+		
+		return this;
+	},
+	
+	//***** PRIVATE HELPER METHODS BELOW *****/
+	
+	_containsResultsUnavailable: function(response, includeResultsCurrentlyUnavailable) {
+		var iEndpoint, iColumn, iValue, responseColumns, endpoints;
+		
+		includeResultsCurrentlyUnavailable = (
+			typeof includeResultsCurrentlyUnavailable !== 'undefined'
+		) ? !!includeResultsCurrentlyUnavailable : false;
+		
+		//Verify the response object is valid. If not, return false as an invalid response does
+		// not contain "[current result unavailable]". It is not this method's job to detect
+		// invalid responses, only to detect whether a valid response contains "[current result
+		// unavailable]".
+		if (
+			typeof response !== 'object' ||
+			!response.hasOwnProperty('data') ||
+			!response.data ||
+			!response.data.hasOwnProperty('endpoints') ||
+			!response.data.endpoints ||
+			!response.data.endpoints.hasOwnProperty('edges') ||
+			!response.data.endpoints.edges
+		) {
+			gs.debug(
+				'GatewayQueryUtil._containsCurrentResultUnavailable() received invalid response ' +
+				'object with no data.endpoints.edges node. Returning false.'
+			);
+			return false;
+		}
+		
+		endpoints = response.data.endpoints.edges;
+		
+		for (iEndpoint = 0; iEndpoint < endpoints.length; iEndpoint++) { //For each endpoint (edge)...
+			responseColumns = endpoints[iEndpoint].node.sensorReadings.columns;
+			if (!responseColumns || responseColumns.length === 0) {
+				continue;
+			}
+			for (iColumn = 0; iColumn < responseColumns.length; iColumn++) { //For each column...
+				if (
+					!responseColumns[iColumn] ||
+					!responseColumns[iColumn].hasOwnProperty('values') ||
+					!responseColumns[iColumn].values ||
+					responseColumns[iColumn].values.length === 0
+				) {
+					continue;
+				}
+				for (iValue = 0; iValue < responseColumns[iColumn].values.length; iValue++) { //For each value...
+					if (
+						responseColumns[iColumn].values[iValue] === '[current result unavailable]' ||
+						(
+							includeResultsCurrentlyUnavailable &&
+							responseColumns[iColumn].values[iValue] === '[results currently unavailable]'
+						)
+					) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	},
+	
+	/**
+	 * @param maxWaitTime
+	 * @param expectedCount
+	 * @private
+	 */
+	_getInitialTokenQueryVariables: function(maxWaitTime, expectedCount) {
+		var queryConfig;
+		
+		maxWaitTime = (typeof maxWaitTime === 'number') ? maxWaitTime : 5;
+		expectedCount = (typeof expectedCount === 'number') ? expectedCount : 0;
+		
+		queryConfig = {
+			'pageSize': this.query_config.page_info.page_size || null,
+			'startCursor': null,
+			'refreshCursor': null,
+			//Default to live data if we can't find a data source in the local config for some reason
+			'source': this.query_config.data_source || {
+				'ts': {
+					'maxWaitTime': maxWaitTime,
+					'expectedCount': expectedCount,
+					'excludeErrors': false,
+					'excludeNoResults': false
+				}
+			},
+			'filtersArray': (this.query_config.include_filter && this.query_config.filters) ? this.query_config.filters : []
+		};
+		
+		//Override data source if retrieving live data (source is ts) to use
+		// expectedCount/maxWaitTime.
+		if (queryConfig.source.hasOwnProperty('ts')) {
+			queryConfig.source.ts = {
+				'maxWaitTime': maxWaitTime,
+				'expectedCount': expectedCount
+			};
+		}
+		//If filtersArray is blank, then use serial matches ".*".
+		if (!queryConfig.filtersArray || queryConfig.filtersArray.length === 0) {
+			queryConfig.filtersArray = [
+				{
+					'path': 'serialNumber',
+					'op': 'MATCHES',
+					'value': '.*',
+					'negated': false,
+					'any': false
+				}
+			];
+		}
+		
+		return queryConfig;
+	},
+	
+	/**
+	 * @return {{ready: boolean, warnings: *[], has_warning: boolean, errors: *[], has_error:
+	 *     boolean}}
+	 * @private
+	 */
+	_isReadyToSend: function() {
+		this._initGatewayConfigIfEmpty();
+		var i, filterPath, filterOp;
+		var returnObj = {
+			'ready': true,
+			'has_error': false,
+			'has_warning': false,
+			'errors': [],
+			'warnings': []
+		};
+		var validFilterOperations = [
+			'EQ',
+			'LT',
+			'LTE',
+			'GT',
+			'GTE',
+			'CONTAINS',
+			'STARTS_WITH',
+			'ENDS_WITH',
+			'MATCHES'
+		];
+		var validFilterPaths = [
+			'serialNumber',
+			'id',
+			'name',
+			'computerID',
+			'domainName',
+			'manufacturer',
+			'model',
+			'ipAddress',
+			'isVirtual',
+			'os.name',
+			'os.platform',
+			'os.windows.name',
+			'os.windows.type',
+			'os.windows.majorVersion',
+			'os.windows.releaseId',
+			'installedApplications.name',
+			'installedApplications.version'
+		];
+		//Check if this.sensors_to_read is not empty
+		if (
+			!this.query_config.sensors_to_read ||
+			this.query_config.sensors_to_read.length === 0
+		) {
+			returnObj.ready = false;
+			returnObj.has_error = true;
+			returnObj.errors.push(
+				'No sensor to read from has been specified. Please call .addSensor() to add a ' +
+				'sensor to be read.'
+			);
+		}
+		//Check if filter is specified. If so, check that filter object is populated and valid.
+		if (this.query_config.include_filter) {
+			for (i = 0; i < this.query_config.filters.length; i++) {
+				if (
+					(!this.query_config.filters[i].path && !this.query_config.filters[i].sensor) ||
+					!this.query_config.filters[i].op ||
+					!this.query_config.filters[i].value
+				) {
+					returnObj.ready = false;
+					returnObj.has_error = true;
+					returnObj.errors.push(
+						'include_filter is true, meaning a filter was specified, but is malformed. Possibly the filter path, op, or value, were not specified. \nFilter object: \n' + JSON.stringify(
+							this.query_config.filter,
+							null,
+							2
+						));
+					//Abort this loop and go to the next one.
+					continue;
+				}
+				
+				if (this.query_config.filters[i] && this.query_config.filters[i].hasOwnProperty('path')) {
+					
+					//If the filter is a path-based filter (or rather, is not a sensor-based filter), then
+					// check that the filter path is specified, and is a valid path.
+					if (!this.query_config.filters[i].hasOwnProperty('sensor')) {
+						filterPath = this.query_config.filters[i].path || '';
+						if (validFilterPaths.indexOf(filterPath) < 0) {
+							returnObj.ready = false;
+							returnObj.has_error = true;
+							returnObj.errors.push(
+								'Filter path "' + filterPath + '" is not valid. Only the following ' +
+								'filter paths are valid: \n' + validFilterPaths.join(', ') + '\n\n' +
+								'Note: If you\'re trying to filter by a sensor, use a sensor-based filter ' +
+								'instead of a path-based filter by calling the .adddSensorFilter() method.'
+							);
+						}
+					}
+					
+					//Check that all filter operations are valid.
+					filterOp = this.query_config.filters[i].op;
+					if (validFilterOperations.indexOf(filterOp) < 0) {
+						returnObj.ready = false;
+						returnObj.has_error = true;
+						returnObj.errors.push(
+							'Filter operation "' + filterOp + '" is not valid. Only the following ' +
+							'filter paths are valid: \n' + validFilterOperations.join(', ')
+						);
+					}
+				}
+			}
+		}
+		return returnObj;
+	},
+	
+	/**
+	 * Used for edges.node.sensorReadings.sensors objects, and the data source object.
+	 * For the filters array, special parsing to handle enum rows is required; thus,
+	 *  use ._serializeFiltersForGQL() for that.
+	 * Note: This method does not work for functions, and will strip out any methods inside
+	 *  the passed object.
+	 * @param {Object} jsonObject - The JSON object (or array) to serialize for GQL.
+	 * @return {string|boolean} The serialized object without quotes around the object key names.
+	 * If an invalid JSON object (such as a function) is passed in, then the boolean false
+	 *  is returned.
+	 * @private
+	 */
+	_serializeObjectForGQL: function(jsonObject) {
+		var i, propName, strConvertedObject, workingString;
+		var arrConvertedObject = [];
+		if (typeof jsonObject === 'function') {
+			return false;
+		}
+		if (typeof jsonObject !== 'object') {
+			// not an object, stringify using native function
+			return JSON.stringify(jsonObject);
+		}
+		if (Array.isArray(jsonObject)) {
+			//workingString = '[';
+			for (i = 0; i < jsonObject.length; i++) {
+				workingString = this._serializeObjectForGQL(jsonObject[i]);
+				if (workingString) {
+					arrConvertedObject.push(workingString);
+				}
+			}
+			strConvertedObject = '[' + arrConvertedObject.join(',') + ']';
+			return strConvertedObject;
+		}
+		// Implements recursive object serialization according to JSON spec
+		// but without quotes around the keys.
+		for (propName in jsonObject) {
+			//Prevent iteration into non-own properties
+			if (!jsonObject.hasOwnProperty(propName)) {
+				continue;
+			}
+			workingString = this._serializeObjectForGQL(jsonObject[propName]);
+			if (workingString) {
+				arrConvertedObject.push(propName + ':' + workingString);
+			}
+		}
+		strConvertedObject = '{' + arrConvertedObject.join(',') + '}';
+		return strConvertedObject;
+	},
+	/**
+	 * @param filtersArr
+	 * @return {string}
+	 * @private
+	 */
+	_serializeFiltersForGQL: function(filtersArr) {
+		var i, filterObject;
+		var serializedFilterArr = [];
+		for (i = 0; i < filtersArr.length; i++) {
+			filterObject = filtersArr[i];
+			//upcoming_feature: Add "all" node?
+			serializedFilterArr.push('{path:"' + filterObject.path + '",op:' +
+				filterObject.op.toUpperCase() + ',value:"' + filterObject.value +
+				'",negated:' + !!filterObject.negated + '}');
+		}
+		return '[' + serializedFilterArr.join(',') + ']';
+	},
+	
+	/**
+	 * upcoming_feature: Update this method to support multi-row sensors mixed in with single-row sensors without breaking the entire response object (or returning multi-row sensors as though they were entirely separate records).
+	 * @param gQuestionResponse
+	 * @param {boolean} [removeNoResultRows=true] - If true, rows with "[no results]" will be removed.
+	 * @returns {{columns: *[], rows: *[]}}
+	 * @private
+	 */
+	_transformGatewayQueryResponse: function(gQuestionResponse, removeNoResultRows) {
+		var iColumn, columnName, iRow, responseColumns, responseRows;
+		var transformedData = {
+			'columns': [],
+			'rows': []
+		};
+		
+		removeNoResultRows = (typeof removeNoResultRows !== 'undefined') ? !!removeNoResultRows : true;
+		
+		//Check for incomplete response
+		if (
+			!gQuestionResponse.hasOwnProperty('data') ||
+			!gQuestionResponse.data.hasOwnProperty('endpoints') ||
+			!gQuestionResponse.data.endpoints.hasOwnProperty('edges') ||
+			!gQuestionResponse.data.endpoints.edges.length > 0 ||
+			!gQuestionResponse.data.endpoints.edges[0].hasOwnProperty('node') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.hasOwnProperty('sensorReadings') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.hasOwnProperty('columns') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.columns.length > 0
+		) {
+			return transformedData;
+		}
+		responseColumns = gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.columns;
+		for (iColumn = 0; iColumn < responseColumns.length; iColumn++) {
+			if (
+				!responseColumns[iColumn].hasOwnProperty('name') ||
+				!responseColumns[iColumn].name ||
+				!responseColumns[iColumn].hasOwnProperty('values') ||
+				!responseColumns[iColumn].values.length > 0
+			) {
+				//If data for this row/column isn't valid, then skip to the next one.
+				continue;
+			}
+			
+			columnName = responseColumns[iColumn].name;
+			responseRows = removeNoResultRows ?
+				this._removeNoResultRows(responseColumns[iColumn].values) :
+				responseColumns[iColumn].values;
+			
+			if (responseRows.length === 0) {
+				//If data for this row isn't available, then skip to the next one.
+				continue;
+			}
+			
+			transformedData.columns.push(columnName);
+			
+			for (iRow = 0; iRow < responseRows.length; iRow++) {
+				if (!transformedData.rows[iRow]) { //If row object hasn't been created, create it.
+					transformedData.rows[iRow] = {};
+				}
+				
+				transformedData.rows[iRow][columnName] = responseRows[iRow];
+			}
+		}
+		return transformedData;
+	},
+	
+	/**
+	 *
+	 * @param gQuestionResponse
+	 *
+	 * @param {boolean} [removeNoResultRows=true] - If true, rows with "[no results]" will be removed.
+	 *
+	 * @returns {{columns: *[], rows: *[]}}
+	 *
+	 * @private
+	 */
+	_transformGatewayQueryResponseV2: function(gQuestionResponse, removeNoResultRows) {
+		var iColumn, columnName, iRow, responseColumns, responseRows, currentRowObj;
+		var transformedData = {
+			'columns': [],
+			'rows': []
+		};
+		
+		removeNoResultRows = (typeof removeNoResultRows !== 'undefined') ? !!removeNoResultRows : true;
+		
+		//Check for incomplete response
+		if (
+			!gQuestionResponse.hasOwnProperty('data') ||
+			!gQuestionResponse.data.hasOwnProperty('endpoints') ||
+			!gQuestionResponse.data.endpoints.hasOwnProperty('edges') ||
+			!gQuestionResponse.data.endpoints.edges.length > 0 ||
+			!gQuestionResponse.data.endpoints.edges[0].hasOwnProperty('node') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.hasOwnProperty('sensorReadings') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.hasOwnProperty('columns') ||
+			!gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.columns.length > 0
+		) {
+			return transformedData;
+		}
+		responseColumns = gQuestionResponse.data.endpoints.edges[0].node.sensorReadings.columns;
+		for (iColumn = 0; iColumn < responseColumns.length; iColumn++) {
+			if (
+				!responseColumns[iColumn].hasOwnProperty('name') ||
+				!responseColumns[iColumn].name ||
+				!responseColumns[iColumn].hasOwnProperty('values') ||
+				!responseColumns[iColumn].values.length > 0
+			) {
+				//If data for this row/column isn't valid, then skip to the next one.
+				continue;
+			}
+			
+			columnName = responseColumns[iColumn].name;
+			responseRows = removeNoResultRows ?
+				this._removeNoResultRows(responseColumns[iColumn].values) :
+				responseColumns[iColumn].values;
+			
+			if (responseRows.length === 0) {
+				//If data for this row isn't available, then skip to the next one.
+				continue;
+			}
+			
+			transformedData.columns.push(columnName);
+			
+			currentRowObj = {};
+			//If there is only one row, then just add the value to the row object.
+			currentRowObj[columnName] = (responseRows.length === 1) ? responseRows[0] : responseRows;
+			transformedData.rows.push(currentRowObj);
+			
+			// transformedData.rows[iRow][columnName] = responseRows[iRow];
+			
+			// for (iRow = 0; iRow < responseRows.length; iRow++) {
+			// 	if (!transformedData.rows[iRow]) { //If row object hasn't been created, create it.
+			// 		transformedData.rows[iRow] = {};
+			// 	}
+			//
+			// 	//If there is only one row, then just add the value to the row object.
+			// 	if (responseRows.length === 1) {
+			// 		transformedData.rows[iRow][columnName] = responseRows[iRow];
+			// 		continue;
+			// 	}
+			// 	transformedData.rows[iRow][columnName] = responseRows[iRow];
+			// }
+		}
+		return transformedData;
+	},
+	
+	_isUsingLiveData: function() {
+		return this.query_config.data_source.hasOwnProperty('ts');
+	},
+	
+	_isUsingCachedData: function() {
+		return this.query_config.data_source.hasOwnProperty('tds');
+	},
+	
+	_removeNoResultRows: function(responseColumnValues) {
+		var iValue;
+		var cleanedResponseColumnValues = [];
+		//Remove rows with "[no results]".
+		for (iValue = 0; iValue < responseColumnValues.length; iValue++) {
+			if (responseColumnValues[iValue] !== '[no results]') {
+				cleanedResponseColumnValues.push(responseColumnValues[iValue]);
+			}
+		}
+		
+		return cleanedResponseColumnValues;
+	},
+	
+	/**
+	 * @param sensorName
+	 * @return {GatewayQueryUtil._Sensor}
+	 * @private
+	 */
+	_Sensor: function(sensorName) {
+		this.name = sensorName;
+		
+		this.addColumn = function(columnName) {
+			if (!this.hasOwnProperty('columns')) {
+				this.columns = [];
+			}
+			this.columns.push(columnName);
+			
+			return this;
+		};
+		
+		/**
+		 * Add a parameter to the current sensor by the specifying the parameter's name and value.
+		 * This is only necessary on sensors that require parameters.
+		 * @param {String} paramName - The name of the parameter, such as "Metric".
+		 * @param {String} paramValue - The value of the parameter with the specified name.
+		 * @return {GatewayQueryUtil._Sensor} - This instance of the _Sensor object, so you can
+		 *  chain-add multiple sensor parameters in a single statement.
+		 * @example
+		 * var tUtil = new x_taniu_tan_core.GatewayQueryUtil();
+		 * //Only wait for one live machine matching the filter before returning response.
+		 * tUtil.useLiveData(1);
+		 * tUtil.addFilter('serialNumber', 'CONTAINS', 'VMware')
+		 *    .addFilter('serialNumber', 'CONTAINS', '56')
+		 *    .addFilter('id', 'EQ', '4');
+		 * //Add several sensors, including one requiring multiple parameters.
+		 * tUtil.addSensor('OS Platform');
+		 * tUtil.addSensor('Computer Name');
+		 * tUtil.addSensor('Performance - Top Process Metric Analysis')
+		 *    .addParam('Number', '1')
+		 *    .addParam('Metric', 'CPU Total')
+		 *    .addParam('Analysis', 'Quantile')
+		 *    .addParam('Hours', '24')
+		 *    .addParam('Quantile', '0')
+		 *    .addParam('Normalize', '0');
+		 *
+		 * gs.debug(
+		 *    JSON.stringify(
+		 *       tUtil.getNextPage(), null, 2
+		 *    )
+		 * );
+		 */
+		this.addParam = function(paramName, paramValue) {
+			var i;
+			//If params array hasn't been created, create it.
+			if (!this.hasOwnProperty('params')) {
+				this.params = [];
+			}
+			//Check for duplicates
+			for (i = 0; i < this.params.length; i++) {
+				//If duplicate is found, log an error. Don't add the param. Return this scope.
+				if (paramName === this.params[i].name) {
+					gs.error(
+						'Attempted to add Tanium sensor Parameter "' + paramName +
+						'" to sensor "' + this.name + '". However, that sensor already ' +
+						'contains a parameter with that name.\n' +
+						'Skipping adding the parameter, and returning the original sensor object.'
+					);
+					return this;
+				}
+			}
+			//Add param
+			this.params.push({
+				'name': paramName,
+				'value': paramValue.toString() //.toString() added in v1.4.0 to ensure that all sensor parameters are strings to work around a bug in APIGW.
+			});
+			return this;
+		};
+		//Return this object for chaining .addParam() calls.
+		return this;
+	},
+	
+	
+	_initGatewayConfigIfEmpty: function() {
+		if (typeof this.query_config === 'undefined') {
+			this.query_config = {
+				'exclude_errors': false, //Default to false. Set by calling .excludeErrors(). Used when setting the data source.
+				'exclude_no_results': false, //Default to false. Set by calling .excludeNoResults(). Used when setting the data source.
+				'include_filter': false,
+				'filters': [],
+				'refresh_token': null,
+				'page_info': {
+					'page_size': null, //Default to null. Set by calling .setPageSize().
+					'previous_page_start_cursor': null,
+					'previous_page_end_cursor': null,
+					'has_next_page': true,
+					'has_previous_page': false
+				},
+				'sensors_to_read': [],
+				'expected_count': 0,
+				'data_source': {
+					'ts': {
+						'excludeErrors': false,
+						'excludeNoResults': false
+					} //ts: live data, tds: cached data
+				}
+			};
+		}
+	},
+	type: 'GatewayQueryUtil'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-03-14 22:07:31</sys_created_on>
+        <sys_id>1ffc0becdb5a0110495d70f33996198c</sys_id>
+        <sys_mod_count>121</sys_mod_count>
+        <sys_name>GatewayQueryUtil</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_include_1ffc0becdb5a0110495d70f33996198c</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-07-25 05:35:07</sys_updated_on>
+    </sys_script_include>
+</record_update>

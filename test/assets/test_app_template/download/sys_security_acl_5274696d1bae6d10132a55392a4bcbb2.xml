@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl">
+    <sys_security_acl action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <admin_overrides>true</admin_overrides>
+        <advanced>false</advanced>
+        <condition/>
+        <description>Default access control on x_taniu_tan_core_deploy_spkg</description>
+        <local_or_existing>Local</local_or_existing>
+        <name>x_taniu_tan_core_deploy_spkg</name>
+        <operation display_value="write">write</operation>
+        <script/>
+        <security_attribute/>
+        <sys_class_name>sys_security_acl</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2023-05-01 17:52:12</sys_created_on>
+        <sys_id>5274696d1bae6d10132a55392a4bcbb2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_taniu_tan_core_deploy_spkg</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_security_acl_5274696d1bae6d10132a55392a4bcbb2</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2023-05-01 17:52:12</sys_updated_on>
+        <type display_value="record">record</type>
+    </sys_security_acl>
+</record_update>

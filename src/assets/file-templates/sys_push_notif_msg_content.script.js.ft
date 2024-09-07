@@ -1,0 +1,9 @@
+(function buildJSON(/*GlideRecord*/ current, /*String*/ message, /*Object*/ attributes) {
+
+ var json = {};
+
+ // build JSON sent by push here
+
+ return json;
+
+})(current, message, attributes);
