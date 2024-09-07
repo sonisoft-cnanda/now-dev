@@ -2,6 +2,7 @@ import * as winston from "winston";
 const { combine, timestamp, json, metadata, label} = winston.format;
 const { format, transports } = winston;
 
+
 export class Logger{
 
 	static errorFilter = winston.format((info, opts) => {
@@ -42,6 +43,12 @@ export class Logger{
                 metadata({ fillExcept: ["message", "level", "timestamp", "label"] })
             ),
             transports: [
+              new transports.Console({
+              
+                format: format.combine(
+                    format.json()
+                  )
+              }),
               new transports.File({
                 filename: "logs/combined.log",
                 format: format.combine(
@@ -99,6 +106,10 @@ export class Logger{
 	public addWarnMessage ( message:string, metadata?:any) :void{
 		this._localLogger.warn(message, metadata);
 	}
+
+  public successful(message:string, metadata?:any){
+    this._localLogger.info(message, metadata);
+  }
 
 }
 

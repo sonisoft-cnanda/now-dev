@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category">
+    <sys_properties_category action="INSERT_OR_UPDATE">
+        <name>Tanium Integration Core</name>
+        <sys_class_name>sys_properties_category</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-09 13:45:10</sys_created_on>
+        <sys_id>7baf9ac52f40f8101ba85d492799b66c</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Tanium Integration Core</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_category_7baf9ac52f40f8101ba85d492799b66c</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-08-09 18:36:49</sys_updated_on>
+        <title><![CDATA[<p><strong>Tanium Integration Core</strong> application configuration. </p>
+<p>Additional settings may be found on the <a href="system_properties_ui.do?sysparm_category&#61;Tanium%20Patch%20Settings&amp;sysparm_title&#61;Tanium%20Patch%20Settings" rel="nofollow">Patch</a> and <a href="system_properties_ui.do?sysparm_title&#61;Properties&amp;sysparm_category&#61;Integration%20Core:%20Quarantine%20Settings&amp;sysparm_title&#61;Tanium%20Quarantine%20Settings" rel="nofollow">Quarantine</a> settings pages.</p>]]></title>
+    </sys_properties_category>
+    <sys_translated_text action="delete_multiple" query="documentkey=7baf9ac52f40f8101ba85d492799b66c"/>
+</record_update>

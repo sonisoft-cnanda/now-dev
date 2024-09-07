@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>&lt;hr /&gt;&#13;
+&lt;h3&gt;Quarantine Package Name for Linux machines&lt;/h3&gt;&#13;
+&lt;p&gt;Set this to the name of the package to be used to quarantine Linux endpoints using Tanium. &lt;br /&gt;&#13;
+As per the &lt;a href="https://docs.tanium.com/threat_response/threat_response/isolating_endpoints.html?#testquarantine" target="_blank"&gt;Tanium documentation&lt;/a&gt;, in order for this to work, you must have configured the "&lt;i&gt;taniumquarantine.dat&lt;/i&gt;" file that's associated with &lt;i&gt;each quarantine package&lt;/i&gt; (for Windows, Linux, and Mac) in your Tanium environment. &lt;/p&gt;&#13;
+&lt;p&gt;&lt;strong&gt;!IMPORTANT!&lt;/STRONG&gt;&lt;BR /&gt;&#13;
+The default value for this property is the out-of-box Tanium quarantine package for Linux endpoints. &lt;br /&gt;&#13;
+If you've created a custom action package by copying the out-of-box package (&lt;I&gt;which is recommended!&lt;/I&gt;), then you'll need to set this property to the name of that custom package.&lt;br /&gt;&#13;
+Quarantining endpoints requires the Tanium Threat Response module. &lt;/p&gt;&#13;
+&lt;strong&gt;Default&lt;/strong&gt;: &lt;i&gt;Apply Linux IPTables Quarantine&lt;/i&gt;</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_taniu_tan_core.linux_quarantine_package_name</name>
+        <read_roles/>
+        <suffix>linux_quarantine_package_name</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2022-09-09 18:39:27</sys_created_on>
+        <sys_id>b84be052db399510acc1ef92ca9619a8</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>x_taniu_tan_core.linux_quarantine_package_name</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_properties_b84be052db399510acc1ef92ca9619a8</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2022-10-21 00:05:20</sys_updated_on>
+        <type>string</type>
+        <value>Apply Linux IPTables Quarantine</value>
+        <write_roles>x_taniu_tan_core.core_admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=b84be052db399510acc1ef92ca9619a8"/>
+</record_update>

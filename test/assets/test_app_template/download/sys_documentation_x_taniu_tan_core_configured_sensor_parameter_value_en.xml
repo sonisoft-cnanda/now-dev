@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="value" label="Value" language="en" table="x_taniu_tan_core_configured_sensor_parameter">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>value</element>
+            <help/>
+            <hint/>
+            <label>Value</label>
+            <language>en</language>
+            <name>x_taniu_tan_core_configured_sensor_parameter</name>
+            <plural>Values</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-09-30 16:54:22</sys_created_on>
+            <sys_id>6a9c9481db1a1550acc1ef92ca9619d1</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Value</sys_name>
+            <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+            <sys_update_name>sys_documentation_x_taniu_tan_core_configured_sensor_parameter_value_en</sys_update_name>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-09-30 16:54:22</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

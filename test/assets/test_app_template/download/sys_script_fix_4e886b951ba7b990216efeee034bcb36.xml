@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <before>true</before>
+        <description>Resolve SN platform potential security issue. </description>
+        <name>De-customize non-roled ACL(s)</name>
+        <record_for_rollback>true</record_for_rollback>
+        <script><![CDATA[var writeAuditOOBACLList = ['308c2f231b5f6d10132a55392a4bcb1a'];
+fixEmptyACL(writeAuditOOBACLList);
+
+function fixEmptyACL(writeAuditOOBACLList) {
+	gs.info(
+		"*** Started deletion of ACL write audit customizations ***",
+		"Empty_ACL_customization_deletion_FS"
+	);
+	
+	new global.AccessControlUtils()
+		.deleteCustomerUpdatesForAuditedEmptyACLs(
+			writeAuditOOBACLList
+		);
+	
+	gs.info(
+		"*** Completed deletion of ACL write audit customizations ***",
+		"Empty_ACL_customization_deletion_FS"
+	);
+}]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>tim.woodruff</sys_created_by>
+        <sys_created_on>2024-01-05 18:09:49</sys_created_on>
+        <sys_id>4e886b951ba7b990216efeee034bcb36</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>De-customize non-roled ACL(s)</sys_name>
+        <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+        <sys_update_name>sys_script_fix_4e886b951ba7b990216efeee034bcb36</sys_update_name>
+        <sys_updated_by>tim.woodruff</sys_updated_by>
+        <sys_updated_on>2024-01-05 18:09:49</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>
