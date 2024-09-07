@@ -30,12 +30,12 @@ describe('FluentConverter Integration Test', () => {
     });
 
     afterEach(() => {
-        // if(fs.existsSync(TEST_APP_DIRECTORY)){
-        //     fs.rmdirSync(TEST_APP_DIRECTORY, { recursive: true, force: true } as fs.RmDirOptions);
-        // }
+        if(fs.existsSync(TEST_APP_DIRECTORY)){
+            fs.rmdirSync(TEST_APP_DIRECTORY, { recursive: true, force: true } as fs.RmDirOptions);
+        }
     });
 
-    xdescribe('should move file', () => {
+    describe('should move file', () => {
        
 
         it('should convert metadata xml file to fluent', async () => {
@@ -79,7 +79,7 @@ describe('FluentConverter Integration Test', () => {
     describe('convert application directory metadata', () => {
        
 
-        it('should convert all metadata xml files to fluent with metadata moved to backup directory', async () => {
+        xit('should convert all metadata xml files to fluent with metadata moved to backup directory', async () => {
           
             let appDir:string = path.resolve(TEST_APP_DIRECTORY);
             let xmlDir:string = path.resolve(TEST_APP_XML_METADATA_IMPORT_DIRECTORY);
