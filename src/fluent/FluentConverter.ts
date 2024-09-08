@@ -152,7 +152,7 @@ export class FluentConverter{
 
         let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
 
-        this._logger.debug("Returning conversion results.", conversionResult);
+        //this._logger.debug("Returning conversion results.", conversionResult);
 
         return conversionResult;
     }
@@ -175,7 +175,7 @@ export class FluentConverter{
       
         let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
 
-        this._logger.debug("Returning conversion results.", conversionResult);
+        //this._logger.debug("Returning conversion results.", conversionResult);
 
         return conversionResult;
     }
