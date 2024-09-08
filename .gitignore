@@ -39,3 +39,8 @@ dist/**/*
 
 # ignore yarn.lock
 yarn.lock
+
+junit.xml
+test/tmp
+
+tsconfig.tsbuildinfo
