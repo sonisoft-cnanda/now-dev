@@ -1,6 +1,6 @@
 {
   "name": "@sonisoft/now-sdk-ext-core",
-  "version": "2.0.0-alpha.0",
+  "version": "1.0.0-alpha.0",
   "description": "",
   "type": "module",
   "repository": {
@@ -10,7 +10,9 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "publish": "NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
+    "publish": "npm version prerelease && NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
+    "alpha": " npm version premajor --preid alpha",
+    "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./",
     "build": "npm run buildts && npm run lint",
     "clean": "rm -rf dist/*",
