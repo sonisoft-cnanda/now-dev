@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "declaration": true,
     "lib": ["ES2023", "es6"],
     "target": "ES2023",
@@ -18,7 +19,16 @@
     "outDir": "dist",
     "allowJs": true,
     "checkJs": false,
-    "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64", "@servicenow/glide",]
+    "types": [
+      "node",
+      "jest",
+      "crypto-js",
+      "crypto-js/enc-base64",
+      "@servicenow/glide"
+    ]
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["src/**/*"],
   "exclude": [

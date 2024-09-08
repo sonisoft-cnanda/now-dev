@@ -28,6 +28,12 @@ import os from 'os';
 //     sources:SourceFile[];
 // };
 
+export type MetadataConversionResult = {
+    transformResults:TransformResult[];
+    context:Context;
+};
+
+
 export class FluentConverter{
 
     private _debugSdk: boolean = true;
@@ -130,34 +136,48 @@ export class FluentConverter{
     }
 
 
-    public async convertMetadataFileToFluent(metadataFileName:string, saveGenerated:boolean=true) : Promise<Context> {
+    public async convertMetadataFileToFluent(metadataFileName:string, saveGenerated:boolean=true) : Promise<MetadataConversionResult> {
         const context = this.getContext();
         const options = this.getOptions();
         const entities = this.getEntities(context);
         const filePath = path.resolve(this._xmlImportDirectory, metadataFileName);
         let xmlFile = extractXmlFile(filePath, context, this._debugSdk);
-        await this.executeTransform(entities, xmlFile, context, options);
-        if(saveGenerated)
-            await this.saveGeneratedFiles(context, options as BuildOptions);
+        let transformResults:TransformResult[] = await this.executeTransform(entities, xmlFile, context, options);
+       
+        if(saveGenerated){
+            this._logger.debug('Saving files');
 
-        return context;
+            this.saveGeneratedFiles(context, options as BuildOptions);
+        }
+
+        let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
+
+        this._logger.debug("Returning conversion results.", conversionResult);
+
+        return conversionResult;
     }
 
-    public async convertApplicationMetadata(){
+    public async convertApplicationMetadata(saveGenerated:boolean=true){
        
-   
         const options:BuildOptions = this.getOptions();
         const context = this.getContext();
         const entities = this.getEntities(context);
     
         const xmlArr = extractXmlFiles(this._xmlImportDirectory, context, this._debugSdk);
     
-        await this.executeTransform(entities, xmlArr, context, options);
+        let transformResults:TransformResult[] = await this.executeTransform(entities, xmlArr, context, options);
    
-        
-       this._logger.debug('Saving files');
-        this.saveGeneratedFiles(context, options as BuildOptions);
+        if(saveGenerated){
+            this._logger.debug('Saving files');
+
+            this.saveGeneratedFiles(context, options as BuildOptions);
+        }
       
+        let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
+
+        this._logger.debug("Returning conversion results.", conversionResult);
+
+        return conversionResult;
     }
 
     private backupMetadataFileAfterFluentGeneration(metadataFilePath:string){
@@ -283,18 +303,23 @@ export class FluentConverter{
      * While xmlMetadataFiles can be an array, the sdk has some issues with processing these in bulk.  If one dies, the entire process dies.
      * We are breaking this up to handle one at a time, then it saves them all at the same time.
      */
-    private async executeTransform(entities:AstData[], xmlMetadataFiles:XmlData[], context:Context, options:BuildOptions){
-       
+    private async executeTransform(entities:AstData[], xmlMetadataFiles:XmlData[], context:Context, options:BuildOptions) : Promise<TransformResult[]>{
+       let results:TransformResult[] = [];
         if(xmlMetadataFiles.length > 1){
+            //One of the issues that the
             //for(var i=0; i < xmlMetadataFiles.length; i++){
                 //var xmlFile = xmlMetadataFiles.slice(i, i+1);
                 //this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
                 //Try bulk editing them.  
                 let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
+                results.push(result);
             //}
         }else if(xmlMetadataFiles.length == 1){
             let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
+            results.push(result);
         }
+
+        return results;
     }
 
     private async processFile(xmlFilesArr:XmlData[], entities:AstData[], context:Context, options:BuildOptions) : Promise<TransformResult>{

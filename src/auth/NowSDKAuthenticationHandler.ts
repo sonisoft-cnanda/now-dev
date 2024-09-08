@@ -43,7 +43,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
 
             result = await login(credentials, logger);
             //FIXME: This needs to be changed to be a variable host
-            if((await result.cookieJar.getCookies(ExtensionConfiguration.instance.getServiceNowInstanceURL())).length > 0){
+            if((await result.cookieJar.getCookies(host)).length > 0){
                 this.setLoggedIn(true);
             };
             this._logger.debug("Login Attempt Complete.", result);
