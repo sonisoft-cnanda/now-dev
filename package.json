@@ -17,7 +17,7 @@
     "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./",
     "build": "npm run buildts && npm run lint",
-    "clean": "rm -rf dist/*",
+    "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "copy-static-assets": "ts-node copyStaticAssets.ts",
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
