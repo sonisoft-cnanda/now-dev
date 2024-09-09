@@ -13,4 +13,3 @@ export * from './now/sdk/auth';
 export * from './project';
 export * from './sn';
 export * from './util';
-export * from './utils';
