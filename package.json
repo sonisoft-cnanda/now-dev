@@ -16,7 +16,7 @@
     "alpha": " npm version premajor --preid alpha",
     "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./",
-    "build": "npm run buildts && npm run lint",
+    "build": "npm run clean && npm run buildts && npm run lint",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "copy-static-assets": "ts-node copyStaticAssets.ts",
     "debug": "npm run build && npm run watch-debug",
