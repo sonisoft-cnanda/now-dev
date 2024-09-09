@@ -1,11 +1,12 @@
 import { ServiceNowInstance } from "./ServiceNowInstance";
-import { HTTPRequest, HttpResponse } from "../comm/http/HTTPRequestHandler";
+
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 //import { XMLParser } from "../utils";
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { BG_SCRIPT_ENDPOINT } from "../constants";
 import { Logger } from "../util/Logger";
 import { isNil } from "../amb/Helper";
+import { HTTPRequest, IHttpResponse } from "../comm";
 
 
 export class BackgroundScriptExecutor {
@@ -60,7 +61,7 @@ export class BackgroundScriptExecutor {
                 body: params
             };
             this._logger.debug("Execute Background Script Request.", {request:request, formData:fd})
-            const response: HttpResponse<string> = await this.snRequest.post<string>(request);
+            const response: IHttpResponse<string> = await this.snRequest.post<string>(request);
             if (response.status == 200) {
                 const resultObj = await this.parseScriptResult(response?.data);
                 return resultObj?.result;
@@ -110,7 +111,7 @@ export class BackgroundScriptExecutor {
             query: null,
             body: null
         };
-        const response: HttpResponse<string> = await this.snRequest.get<string>(request);
+        const response: IHttpResponse<string> = await this.snRequest.get<string>(request);
         let isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
         if(response.status == 200 && isLoggedIn && !isNil(response.data)){
             

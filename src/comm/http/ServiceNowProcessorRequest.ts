@@ -1,8 +1,9 @@
-import { HTTPRequest, HttpResponse } from "../../comm/http/HTTPRequestHandler";
 import { ServiceNowRequest } from "../../comm/http/ServiceNowRequest";
 import * as qs from 'qs';
 import { XMLHTTP_PROCESSOR_ENDPOINT } from '../../constants';
 import { Parser } from 'xml2js';
+import { HttpResponse } from "./HttpResponse";
+import { HTTPRequest } from "./HTTPRequest";
 
 export class ServiceNowProcessorRequest{
 

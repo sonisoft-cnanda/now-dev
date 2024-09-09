@@ -1,5 +1,3 @@
-import { HTTPRequest, HttpResponse } from "../comm/http/HTTPRequestHandler";
-import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 import { ReferenceLink } from "../model/types";
 
 export type Test = {

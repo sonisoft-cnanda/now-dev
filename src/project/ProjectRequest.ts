@@ -1,4 +1,4 @@
-import { HttpResponse } from "../comm/http/HTTPRequestHandler";
+import { HttpResponse } from "../comm";
 import { TableAPIRequest } from "../comm/http/TableAPIRequest";
 import { AppUtil } from "../util/AppUtil";
 import { Logger } from "../util/Logger";

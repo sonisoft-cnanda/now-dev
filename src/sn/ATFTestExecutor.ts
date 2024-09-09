@@ -1,8 +1,9 @@
-import { HTTPRequest, HttpResponse } from "../comm/http/HTTPRequestHandler";
+
 import { ServiceNowProcessorRequest } from "../comm/http/ServiceNowProcessorRequest";
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 import * as qs from 'qs';
 import { ReferenceLink, ServiceNowTableResponse } from "../model/types";
+import { HTTPRequest, HttpResponse } from "../comm";
 
 export class ATFTestExecutor{
 

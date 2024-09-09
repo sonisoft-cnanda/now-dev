@@ -1,21 +1,10 @@
 
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { ExtensionConfiguration } from '../../conf/ExtensionConfiguration';
+import { HTTPRequest } from './HTTPRequest';
+import { HttpResponse } from './HttpResponse';
 
 axios.defaults.withCredentials = true;
-
-export type HTTPRequest =  {
-    path:string;
-    headers:object | null;
-    body:any | null;
-    query:object | null;
-    method?:string | null;
-    
-}
-
-export interface HttpResponse<T> extends AxiosResponse {
-    bodyObject?: T;
-}
 
 export class HTTPRequestHandler{
     static #instance: HTTPRequestHandler;

@@ -1,8 +1,8 @@
 import { AuthenticationHandlerFactory } from "../../auth/AuthenticationHandlerFactory";
 import { IAuthenticationHandler } from "../../auth/IAuthenticationHandler";
-import { SNAuthentication } from "../../auth/SNAuthentication";
 import { ExtensionConfiguration } from "../../conf/ExtensionConfiguration";
-import { HTTPRequest, HTTPRequestHandler, HttpResponse } from "./HTTPRequestHandler";
+import { HTTPRequest } from "./HTTPRequest";
+import { HttpResponse } from "./HttpResponse";
 import { ICookieStore } from "./ICookieStore";
 import { IRequestHandler } from "./IRequestHandler";
 import { IUserSession } from "./IUserSession";

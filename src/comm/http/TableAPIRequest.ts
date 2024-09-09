@@ -1,4 +1,7 @@
-import { HTTPRequest, HttpResponse } from "./HTTPRequestHandler";
+
+
+import { HTTPRequest } from "./HTTPRequest";
+import { HttpResponse } from "./HttpResponse";
 import { ServiceNowRequest } from "./ServiceNowRequest";
 
 export class TableAPIRequest{

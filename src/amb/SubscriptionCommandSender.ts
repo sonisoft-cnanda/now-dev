@@ -255,4 +255,3 @@ export class SubscriptionCommandSender {
 		}
 	
 }
-export default SubscriptionCommandSender;

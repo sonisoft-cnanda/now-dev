@@ -1,7 +1,8 @@
 import { AxiosHeaderValue } from "axios";
-import { HTTPRequest, HTTPRequestHandler, HttpResponse } from "../comm/http/HTTPRequestHandler";
+import {  HTTPRequestHandler } from "../comm/http/HTTPRequestHandler";
 import * as qs from 'qs';
 import { ExtensionConfiguration } from "../conf/ExtensionConfiguration";
+import { HTTPRequest, HttpResponse } from "../comm";
 
 export class SNAuthentication{
     static #instance: SNAuthentication;

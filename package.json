@@ -11,7 +11,7 @@
   "license": "MIT",
   "scripts": {
     "pre-publish": "npm version prerelease",
-    "publish": "NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
+    "publish-registry": "NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
     "alpha": " npm version premajor --preid alpha",
     "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./",
@@ -111,6 +111,8 @@
     "@typescript-eslint/parser": "8.1.0",
     "chai": "5.1.1",
     "concurrently": "8.2.2",
+    "create-ts-index": "^1.14.0",
+    "ctix": "^2.6.4",
     "diff": "^5.1.0",
     "eslint": "9.9.0",
     "glob": "^11.0.0",
