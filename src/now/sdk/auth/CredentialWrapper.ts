@@ -1,9 +1,8 @@
 
 import { NowSDKError, Creds } from '@servicenow/sdk-cli-core'
-import * as sdk_auth from '@servicenow/sdk-cli/dist/auth';
+import * as sdk_auth from '@servicenow/sdk-cli/dist/auth/index.js';
 import { NowStringUtil } from '../../../util/NowStringUtil';
-import { KeyChain } from '@servicenow/sdk-cli/dist/auth/keychain'
- import { ArgumentsCamelCase } from 'yargs'
+import { KeyChain } from '@servicenow/sdk-cli/dist/auth/keychain/index.js'
 import { Logger } from '../../../util/Logger';
 
 interface Arguments {

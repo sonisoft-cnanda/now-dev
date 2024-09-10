@@ -1,13 +1,11 @@
-import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
+import { UISession } from "@servicenow/sdk-cli-core";
 import { IRequestHandler } from "../comm/http/IRequestHandler";
 import { Logger } from "../util/Logger";
 import { IAuthenticationHandler } from "./IAuthenticationHandler";
-import { Creds, login } from "@servicenow/sdk-cli-core/dist/command/login";
-import { logger } from "@servicenow/sdk-cli/dist/logger";
+import { Creds, login } from "@servicenow/sdk-cli-core";
 import { ICookieStore } from "../comm/http/ICookieStore";
 import { IUserSession } from "../comm/http/IUserSession";
 import { UserSession } from "../comm/http/UserSession";
-import { ExtensionConfiguration } from "../conf/ExtensionConfiguration";
 
 
 export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
@@ -41,7 +39,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
                 password: password,
             } as Creds;
 
-            result = await login(credentials, logger);
+            result = await login(credentials, this._logger);
             //FIXME: This needs to be changed to be a variable host
             if((await result.cookieJar.getCookies(host)).length > 0){
                 this.setLoggedIn(true);

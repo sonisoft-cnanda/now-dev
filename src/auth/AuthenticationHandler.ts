@@ -1,9 +1,9 @@
-import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
+import { UISession } from "@servicenow/sdk-cli-core";
 import { IAuthenticationHandler } from "./IAuthenticationHandler";
 import { Creds, login } from "@servicenow/sdk-cli-core";
 import { Logger } from '../util/Logger.js';
 import { IRequestHandler } from "../comm/http/IRequestHandler";
-import { logger } from "@servicenow/sdk-cli/dist/logger";
+
 import { ICookieStore } from "../comm/http/ICookieStore";
 
 
@@ -58,7 +58,7 @@ export class AuthenticationHandler implements IAuthenticationHandler{
                 password: password,
             } as Creds;
 
-            result = await login(credentials, logger)
+            result = await login(credentials, this._logger);
             this._logger.debug("Login Attempt Complete.", result);
         }catch(e){
             this._logger.error("Error during login.", e);

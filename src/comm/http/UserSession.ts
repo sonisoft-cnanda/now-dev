@@ -1,4 +1,4 @@
-import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
+import { UISession } from "@servicenow/sdk-cli-core";
 import { ICookieStore } from "./ICookieStore";
 import { CookieStoreFactory } from "./CookieStoreFactory";
 import { IUserSession } from "./IUserSession";

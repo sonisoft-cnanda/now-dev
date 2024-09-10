@@ -1,7 +1,6 @@
-import { Creds } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
-import { login } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
-import { UISession } from '@servicenow/sdk-cli-core/dist/util/UISession';
-import { logger } from '@servicenow/sdk-cli/dist/logger/index.js';
+import { Creds } from '@servicenow/sdk-cli-core';
+import { login } from '@servicenow/sdk-cli-core';
+import { UISession } from '@servicenow/sdk-cli-core';
 import { Logger } from '../util/Logger.js';
 export class SNAuthWrapper{
 
@@ -22,7 +21,7 @@ export class SNAuthWrapper{
                 password: "D$adP00l$G$$k0ut",
             } as Creds;
 
-            const session = await login(credentials, logger)
+            const session = await login(credentials, this._logger)
            
             if (!session) {
                 // throw new Error(
@@ -52,7 +51,7 @@ export class SNAuthWrapper{
                 password: password,
             } as Creds;
 
-            result = await login(credentials, logger)
+            result = await login(credentials, this._logger)
             this._logger.debug("Login Attempt Complete.", result);
         }catch(e){
             this._logger.error("Error during login.", e);
