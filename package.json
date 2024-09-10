@@ -13,6 +13,7 @@
     "build-index-export": "npx ctix build --config ./.ctirc",
     "pre-publish": "npm version prerelease",
     "publish-registry": "NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
+    "push": "npm run pre-publish && npm run publish-registry",
     "alpha": " npm version premajor --preid alpha",
     "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./",
