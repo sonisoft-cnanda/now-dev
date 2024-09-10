@@ -1,6 +1,6 @@
 import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
 import { IAuthenticationHandler } from "./IAuthenticationHandler";
-import { Creds, login } from "@servicenow/sdk-cli-core/dist/command/login";
+import { Creds, login } from "@servicenow/sdk-cli-core";
 import { Logger } from '../util/Logger.js';
 import { IRequestHandler } from "../comm/http/IRequestHandler";
 import { logger } from "@servicenow/sdk-cli/dist/logger";
