@@ -1,2 +1,2 @@
-export * from './CredentialStore';
-export * from './CredentialWrapper';
+export { CredentialStore } from './CredentialStore.js';
+export { type CredentialArg, type NowAuthArgument, CredentialWrapper } from './CredentialWrapper.js';

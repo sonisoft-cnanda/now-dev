@@ -1,3 +1,3 @@
-export * from './Extension';
-export * from './Files';
-export * from './ServiceNow';
+export { EXTENSION_NAME } from './Extension.js';
+export { FILE_TOKENS, FILE_APIS, FILE_CACHE } from './Files.js';
+export { XMLHTTP_PROCESSOR_ENDPOINT, BG_SCRIPT_ENDPOINT } from './ServiceNow.js';

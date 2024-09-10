@@ -1,1 +1,1 @@
-export * from './FileUtil';
+export { FileUtil } from './FileUtil.js';

@@ -1,1 +1,1 @@
-export * from './types';
+export { type ReferenceLink, type ServiceNowResponse, type ServiceNowTableResponse } from './types.js';

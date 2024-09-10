@@ -1,3 +1,3 @@
-export * from './Project';
-export * from './ProjectRequest';
-export * from './ProjectSync';
+export { Project } from './Project.js';
+export { type SysMetadata, ProjectRequest } from './ProjectRequest.js';
+export { ProjectSync } from './ProjectSync.js';

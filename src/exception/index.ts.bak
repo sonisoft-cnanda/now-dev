@@ -1,4 +1,4 @@
-export * from './FileException';
-export * from './FileExistsException';
-export * from './InvalidParameterException';
-export * from './PathException';
+export { FileException } from './FileException.js';
+export { FileExistsException } from './FileExistsException.js';
+export { InvalidParameterException } from './InvalidParameterException.js';
+export { PathException } from './PathException.js';

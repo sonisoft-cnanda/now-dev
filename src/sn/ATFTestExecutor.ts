@@ -3,8 +3,8 @@ import { ServiceNowProcessorRequest } from "../comm/http/ServiceNowProcessorRequ
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 import * as qs from 'qs';
 import { ReferenceLink, ServiceNowTableResponse } from "../model/types";
-import { HTTPRequest, HttpResponse } from "../comm";
-
+import { HTTPRequest } from "../comm/http/HTTPRequest";
+import { HttpResponse } from "../comm/http/HttpResponse";
 export class ATFTestExecutor{
 
     _req:ServiceNowRequest = new ServiceNowRequest();

@@ -1,5 +1,5 @@
-export * from './ATFTest';
-export * from './ATFTestExecutor';
-export * from './BackgroundScriptExecutor';
-export * from './ServiceNowInstance';
-export * from './TestFactory';
+export { type Test, ATFTest } from './ATFTest.js';
+export { ATFTestExecutor, type TestResult, type ProgressResultResponse, type ProgressLinks, type ProgressLink, type ProgressResult } from './ATFTestExecutor.js';
+export { BackgroundScriptExecutor, type BackgroundScriptExecutorOptions } from './BackgroundScriptExecutor.js';
+export { type ServiceNowSettingsInstance, ServiceNowInstance } from './ServiceNowInstance.js';
+export { TestFactory } from './TestFactory.js';

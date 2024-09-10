@@ -3,10 +3,11 @@ import { ServiceNowInstance } from "./ServiceNowInstance";
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 //import { XMLParser } from "../utils";
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
-import { BG_SCRIPT_ENDPOINT } from "../constants";
 import { Logger } from "../util/Logger";
 import { isNil } from "../amb/Helper";
-import { HTTPRequest, IHttpResponse } from "../comm";
+import { HTTPRequest } from "../comm/http/HTTPRequest";
+import { BG_SCRIPT_ENDPOINT } from "../constants/ServiceNow";
+import { IHttpResponse } from "../comm/http/IHttpResponse";
 
 
 export class BackgroundScriptExecutor {

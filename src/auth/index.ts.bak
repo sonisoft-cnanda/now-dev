@@ -1,6 +1,6 @@
-export * from './AuthenticationHandler';
-export * from './AuthenticationHandlerFactory';
-export * from './IAuthenticationHandler';
-export * from './NowSDKAuthenticationHandler';
-export * from './SNAuthentication';
-export * from './SNAuthWrapper';
+export { AuthenticationHandler } from './AuthenticationHandler.js';
+export { AuthenticationHandlerFactory } from './AuthenticationHandlerFactory.js';
+export { type IAuthenticationHandler } from './IAuthenticationHandler.js';
+export { NowSDKAuthenticationHandler } from './NowSDKAuthenticationHandler.js';
+export { SNAuthentication } from './SNAuthentication.js';
+export { SNAuthWrapper } from './SNAuthWrapper.js';

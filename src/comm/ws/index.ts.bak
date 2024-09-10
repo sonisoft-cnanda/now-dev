@@ -1,1 +1,1 @@
-export * from './ATFMessageHandler';
+export { ATFMessageHandler } from './ATFMessageHandler.js';

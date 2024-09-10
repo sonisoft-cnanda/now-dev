@@ -1,0 +1,20 @@
+{
+  "spinnerStream": "stdout",
+  "progressStream": "stdout",
+  "reasonerStream": "stderr",
+  "options": [
+    {
+      "mode": "bundle",
+      "project": "./tsconfig.json",
+      "exclude": [
+        "assets",
+        "types"
+      ],
+      "exportFilename": "index.ts",
+      "useSemicolon": true,
+      "fileExt": "to-js",
+      "overwrite": true,
+      "output": "./src"
+    }
+  ]
+}
