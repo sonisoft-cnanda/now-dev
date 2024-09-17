@@ -17,7 +17,7 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "./",
+    "rootDir": "./src",
    
     "allowJs": true,
     "checkJs": false,
@@ -42,7 +42,7 @@
   "ts-node": {
     "esm": true
   },
- "include": ["eslint.config.mjs"],
+ "include": ["./src/eslint.config.mjs", "./src"],
   "exclude": [
     "node_modules",
     "dist",
