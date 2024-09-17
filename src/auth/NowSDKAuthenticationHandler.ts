@@ -12,7 +12,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
 
     private _requestHandler:IRequestHandler;
   
-    private _isLoggedIn:Boolean = false;
+    private _isLoggedIn = false;
 
     private _session:IUserSession;
 
@@ -23,7 +23,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
     }
 
     public async doLogin(host:string, username:string, password:string) : Promise<IUserSession>{
-        let session:IUserSession =  await this.login(host, username, password);
+        const session:IUserSession =  await this.login(host, username, password);
         this._session = session;
 
         return session;
@@ -55,11 +55,11 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
         return this._requestHandler;
     }
 
-    public isLoggedIn():Boolean{
+    public isLoggedIn():boolean{
         return this._isLoggedIn;
     }
 
-    public setLoggedIn(loggedIn:Boolean){
+    public setLoggedIn(loggedIn:boolean){
         this._isLoggedIn = loggedIn;
     }
 

@@ -6,7 +6,7 @@ import { isNil } from "../amb/Helper";
 
 export class ServiceNowAppConfigProvider implements ConfigProvider{
     
-    public static CONFIG_FILE:string = "nowdev.app.config.json";
+    public static CONFIG_FILE = "nowdev.app.config.json";
     
     private _json5File:any;
 
@@ -20,7 +20,7 @@ export class ServiceNowAppConfigProvider implements ConfigProvider{
     }
 
     private loadConfigFile(){
-        let strFile:string = fs.readFileSync(ServiceNowAppConfigProvider.CONFIG_FILE, 'utf8');
+        const strFile:string = fs.readFileSync(ServiceNowAppConfigProvider.CONFIG_FILE, 'utf8');
         this._json5File = JSON5.parse(strFile);
 
         this._logger.debug("Loaded Config File", this._json5File);
@@ -49,7 +49,7 @@ export class ServiceNowAppConfigProvider implements ConfigProvider{
     has(key: string): boolean {
        
         try{
-            let val:string = this.get(key);
+            const val:string = this.get(key);
             if(!isNil(val)){
                 return true;
             }

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    "lib": ["ES2023", "es6"],
-    "target": "ES2023",
+    "lib": ["ES2022", "es6"],
+    "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "Node",
     "esModuleInterop": true,
@@ -17,8 +17,8 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDir": "./",
+   
     "allowJs": true,
     "checkJs": false,
     "types": [
@@ -26,20 +26,30 @@
       "jest",
       "crypto-js",
       "crypto-js/enc-base64",
-      "@servicenow/glide"
+      "@servicenow/glide",
+      "@servicenow/sdk-build"
+    ],
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths"
+      },
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
     ]
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["./src/**/*", "jest.config.ts"],
+ "include": ["eslint.config.mjs"],
   "exclude": [
     "node_modules",
     "dist",
     "logs",
     "build",
-    "./*.ts",
     "test/**/*",
-    "scratch_code"
+    "scratch_code",
+    "src/assets/**/*"
   ]
 }

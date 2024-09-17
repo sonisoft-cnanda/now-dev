@@ -12,9 +12,9 @@ export class AuthenticationHandler implements IAuthenticationHandler{
 
 
     private _requestHandler:IRequestHandler;
-    private _gck:string = "";
+    private _gck = "";
     private _cookies:any = [];
-    private _isLoggedIn:Boolean = false;
+    private _isLoggedIn = false;
 
     private _logger:any;
 
@@ -70,11 +70,11 @@ export class AuthenticationHandler implements IAuthenticationHandler{
         return this._requestHandler;
     }
 
-    public isLoggedIn():Boolean{
+    public isLoggedIn():boolean{
         return this._isLoggedIn;
     }
 
-    public setLoggedIn(loggedIn:Boolean){
+    public setLoggedIn(loggedIn:boolean){
         this._isLoggedIn = loggedIn;
     }
 

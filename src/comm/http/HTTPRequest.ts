@@ -1,6 +1,6 @@
 
 
-export type HTTPRequest =  {
+export interface HTTPRequest {
     path:string;
     headers:object | null;
     body:any | null;

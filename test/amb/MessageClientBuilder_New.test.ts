@@ -14,8 +14,8 @@ describe('MessageClientBuilder', () => {
        
 
         xit('should return client', async () => {
-            let builder:MessageClientBuilder = new MessageClientBuilder();
-            let client:AMBClient = builder.createClient();
+            const builder:MessageClientBuilder = new MessageClientBuilder();
+            const client:AMBClient = builder.createClient();
         })
     })
 })

@@ -1,13 +1,13 @@
-export type ReferenceLink = {
+export interface ReferenceLink {
     "link":string ;
     "value":string;
 }
 
 
-export type ServiceNowResponse<T> = {
+export interface ServiceNowResponse<T> {
     "result":T;
 }
 
-export type ServiceNowTableResponse<T> = {
+export interface ServiceNowTableResponse<T> {
     "result":T[];
 }

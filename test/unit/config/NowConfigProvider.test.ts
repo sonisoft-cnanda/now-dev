@@ -5,12 +5,12 @@ import JSON5 from 'json5';
 
 import { ConfigProvider } from 'typed-config';
 
-let jsConfig:any = {
+const jsConfig:any = {
     'fs':{
         rootDir:"src/script"
     }
 };
-let json:string = JSON5.stringify(jsConfig);
+const json:string = JSON5.stringify(jsConfig);
 
 
 
@@ -21,8 +21,8 @@ describe('NowConfigProvider', () => {
      
     describe('load', () => {
         it('can parse and get config', async () => {
-           let provider:NowConfigProvider = new NowConfigProvider();
-            let c:any = provider.getConfigFile();
+           const provider:NowConfigProvider = new NowConfigProvider();
+            const c:any = provider.getConfigFile();
             expect(c).not.toBeNull();
             
         });
@@ -30,8 +30,8 @@ describe('NowConfigProvider', () => {
 
     describe('get', () => {
         it('should return rootDir value', async () => {
-           let provider:NowConfigProvider = new NowConfigProvider();
-            let c:any = provider.getConfigFile();
+           const provider:NowConfigProvider = new NowConfigProvider();
+            const c:any = provider.getConfigFile();
             expect(c).not.toBeNull();
             expect(provider.get("fs")).not.toBeUndefined();
             expect(provider.get("fs")).not.toBeNull();
@@ -41,8 +41,8 @@ describe('NowConfigProvider', () => {
         });
 
         it('should not return non-existant value', async () => {
-            let provider:NowConfigProvider = new NowConfigProvider();
-             let c:any = provider.getConfigFile();
+            const provider:NowConfigProvider = new NowConfigProvider();
+             const c:any = provider.getConfigFile();
              expect(c).not.toBeNull();
              expect(provider.get("fsx")).toBeNull();
              expect(provider.get("fsx.rootDir")).toBeNull();
@@ -52,16 +52,16 @@ describe('NowConfigProvider', () => {
 
     describe('has', () => {
         it('should have fs and rootDir value', async () => {
-            let provider:NowConfigProvider = new NowConfigProvider();
-             let c:any = provider.getConfigFile();
+            const provider:NowConfigProvider = new NowConfigProvider();
+             const c:any = provider.getConfigFile();
              expect(c).not.toBeNull();
              expect(provider.has("fs")).toBe(true);
              expect(provider.has("fs.rootDir")).toBe(true);
          });
  
          it('non existent value should return null', async () => {
-             let provider:NowConfigProvider = new NowConfigProvider();
-              let c:any = provider.getConfigFile();
+             const provider:NowConfigProvider = new NowConfigProvider();
+              const c:any = provider.getConfigFile();
               expect(c).not.toBeNull();
               expect(provider.has("fsx")).toBe(false);
               expect(provider.has("fsx.rootDir")).toBe(false);

@@ -57,14 +57,14 @@ export class Project{
         }
 
          //Create ATF Test Directory
-        let atfPath:string = path.join(this._rootDir, this._testDir, this._atfDir);
+        const atfPath:string = path.join(this._rootDir, this._testDir, this._atfDir);
        
          if(! await FileUtil.isDirectory(atfPath)){
             await FileUtil.createFolder(atfPath);
         }
 
          //Create config directory for maintained metadata config
-         let configDataPath:string = path.join(this._rootDir, AppConfig.instance.configDataPath);
+         const configDataPath:string = path.join(this._rootDir, AppConfig.instance.configDataPath);
        
          if(! await FileUtil.isDirectory(configDataPath)){
             await FileUtil.createFolder(configDataPath);

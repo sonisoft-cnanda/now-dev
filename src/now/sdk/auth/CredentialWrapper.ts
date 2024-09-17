@@ -1,5 +1,5 @@
 
-import { NowSDKError, Creds } from '@servicenow/sdk-cli-core'
+import { Creds } from '@servicenow/sdk-cli-core'
 import * as sdk_auth from '@servicenow/sdk-cli/dist/auth/index.js';
 import { NowStringUtil } from '../../../util/NowStringUtil';
 import { KeyChain } from '@servicenow/sdk-cli/dist/auth/keychain/index.js'
@@ -16,7 +16,7 @@ export interface CredentialArg extends sdk_auth.StoredCredential {
     auth:string;
 }
 
-export type NowAuthArgument = {
+export interface NowAuthArgument {
     _:string | number[]; //Command syntax since we are calling something that is expected to be called from the command line 
      alias:string;
     auth: string;
@@ -32,7 +32,7 @@ export class CredentialWrapper{
 
     private keychain:KeyChain;
 
-    private DEFAULT_ALIAS:string = 'fluent-default';
+    private DEFAULT_ALIAS = 'fluent-default';
 
     public constructor(){
         this.keychain = new KeyChain(sdk_auth.SERVICE);
@@ -48,7 +48,7 @@ export class CredentialWrapper{
 
     public async getStoredCredentialsByAlias(alias?:string)  : Promise<Creds>{
         //let credArgs:ArgumentsCamelCase<Arguments> = {alias: alias};
-        let credentialArgs:NowAuthArgument = {_:[], alias:null, auth: null} as NowAuthArgument;
+        const credentialArgs:NowAuthArgument = {_:[], alias:null, auth: null} as NowAuthArgument;
         if(!NowStringUtil.isStringEmpty(alias)){
             credentialArgs.auth = alias;
             credentialArgs.alias = alias;
@@ -58,7 +58,7 @@ export class CredentialWrapper{
     }
 
     public async getCredentialsTestWrapper(username: null, password: null, host: null) : Promise<Creds>{
-        let credentialArgs = {command: "test", alias:null, auth: null, username: username, password: password, host: host, isDefault: false} as Creds;
+        const credentialArgs = {command: "test", alias:null, auth: null, username: username, password: password, host: host, isDefault: false} as Creds;
         return await sdk_auth.getCredentials(credentialArgs);
     }
 

@@ -24,7 +24,7 @@ export class CookieStore implements ICookieStore{
         return cookies;
     }
 
-    public async getCookieString(currentUrl:string):Promise<String>{
+    public async getCookieString(currentUrl:string):Promise<string>{
         return await this._cookieJar.getCookieString(currentUrl);
     }
 }

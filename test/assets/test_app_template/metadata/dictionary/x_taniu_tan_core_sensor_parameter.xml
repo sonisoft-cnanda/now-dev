@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="8fdfb140dbdedd10495d70f339961924" label="Sensor Parameter" max_length="40" name="x_taniu_tan_core_sensor_parameter" type="collection">
+        <element default="0" label="Max characters" max_length="20" name="max_characters" type="integer"/>
+        <element label="Prompt text" max_length="254" name="prompt_text" type="string"/>
+        <element label="Key" mandatory="true" max_length="40" name="key" type="string"/>
+        <element label="Default value" max_length="1000" name="default_value" type="string"/>
+        <element label="Validation expressions" max_length="4000" name="validation_expressions" type="string"/>
+        <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <element label="Help text" max_length="4000" name="help_text" type="string"/>
+        <element attributes="readonly_clickthrough=true" label="Sensor" mandatory="true" max_length="32" name="sensor" reference="x_taniu_tan_core_tan_sensor" reference_cascade_rule="delete" type="reference"/>
+        <element default="javascript:current.getValue('key')" display="true" label="Label" mandatory="true" max_length="120" name="label" type="string"/>
+        <index name="index">
+            <element name="key"/>
+        </index>
+        <index name="index2">
+            <element name="sensor"/>
+        </index>
+        <index name="index3">
+            <element name="sys_class_name"/>
+        </index>
+    </element>
+</database>

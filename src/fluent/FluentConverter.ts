@@ -1,42 +1,62 @@
 
 import * as fs from 'fs';
- import {createContext} from '@servicenow/sdk-build/dist/build/Context.js';
- import { extractSourceFiles } from '@servicenow/sdk-build/dist/build/stages/ExtractAst.js';
- import {  extractXmlFiles, extractXmlFile } from '@servicenow/sdk-build/dist/build/stages/ExtractXml.js';
- import { BuildOptions, parseBuildOptions } from '@servicenow/sdk-build/dist/build-core/BuildOptions.js'
- import { Keys } from '@servicenow/sdk-build/dist/build-core/Keys.js'
- import { formatSourceFile } from '@servicenow/sdk-build/dist/build/stages/util/FormatSourceFile.js'
+ 
  import * as path from 'path';
- import { transform, TransformResult } from '@servicenow/sdk-build/dist/build/stages/Transform.js';
-import {  BUILT_INS, PLUGINS }  from '@servicenow/sdk-build/dist/build/index.js';
-import { Logger } from '../util/Logger.js';
-import { Context } from '@servicenow/sdk-build/dist/build-core/plugins/Context.js';
-import { AstData, XmlData } from '@servicenow/sdk-build/dist/build-core/index.js';
+ 
+
+
 import { NowStringUtil } from '../util/NowStringUtil.js';
 import { InvalidParameterException } from '../exception/InvalidParameterException.js';
 import { FileExistsException } from '../exception/FileExistsException.js';
 import { FileException } from '../exception/FileException.js';
 import { PathException } from '../exception/PathException.js';
+import { Logger } from '../util/Logger.js';
 import { SourceFile } from 'ts-morph';
-import {  Diagnostic } from '@servicenow/sdk-project';
-import {  FluentDiagnostic } from '@servicenow/sdk-build/dist/build-core/plugins/Diagnostic.js'
-import { TypeScriptDiagnostic } from '@servicenow/sdk-project';
+
 import os from 'os';
+import { BUILT_INS, PLUGINS } from '@servicenow/sdk-build';
+import { Diagnostic, FileSystem } from '@servicenow/sdk-project';
+import {  Context } from '@servicenow/sdk-build';
+import  { XmlData, Plugin, BuildOptions, Keys } from '@servicenow/sdk-build-core';
+import { createProjectContext } from '@servicenow/sdk-project';
+import * as stages_1 from '@servicenow/sdk-build/dist/stages/index.js';
+import { extractEntities } from '@servicenow/sdk-build/dist/stages/ExtractAst.js';
+const { extractXmlFile, extractXmlFiles, formatSourceFile, transform, getAstDiagnostics, getTypeScriptDiagnostics } = stages_1;
 
-// export type TransformResult = {
-//     handledXmls:string[];
-//     sources:SourceFile[];
-// };
+import { TransformResult } from '@servicenow/sdk-build/dist/stages/index.js';
+import { EntityData } from '@servicenow/sdk-build-core';
 
-export type MetadataConversionResult = {
+export function createContext(
+    rootDir: string,
+    entityPlugins: Plugin[],
+    builtInPlugins: Plugin[],
+    debug: boolean,
+    mode: 'serialize' | 'transform',
+    fs: FileSystem,
+    logger?: Logger
+): Context {
+    const projectContext = createProjectContext(rootDir, fs, logger)
+    return new Context(
+        projectContext.app,
+        projectContext.compiler,
+        projectContext.fs,
+        projectContext.logger,
+        entityPlugins,
+        builtInPlugins,
+        debug,
+        mode
+    )
+}
+
+export interface MetadataConversionResult {
     transformResults:TransformResult[];
     context:Context;
-};
+}
 
 
 export class FluentConverter{
 
-    private _debugSdk: boolean = true;
+    private _debugSdk = true;
     public get debugSdk(): boolean {
         return this._debugSdk;
     }
@@ -44,11 +64,11 @@ export class FluentConverter{
         this._debugSdk = value;
     }
 
-    private _logger;
+    private _logger:Logger;
     public get logger() {
         return this._logger;
     }
-    public set logger(value) {
+    public set logger(value:Logger) {
         this._logger = value;
     }
 
@@ -91,7 +111,7 @@ export class FluentConverter{
     }
 
 
-    private _backupMetadata: boolean = false;
+    private _backupMetadata = false;
     public get backupMetadata(): boolean {
         return this._backupMetadata;
     }
@@ -99,7 +119,7 @@ export class FluentConverter{
         this._backupMetadata = value;
     }
 
-    private _deleteMetadataAfterFluentConversion: boolean = true;
+    private _deleteMetadataAfterFluentConversion = true;
     public get deleteMetadataAfterFluentConversion(): boolean {
         return this._deleteMetadataAfterFluentConversion;
     }
@@ -136,28 +156,28 @@ export class FluentConverter{
     }
 
 
-    public async convertMetadataFileToFluent(metadataFileName:string, saveGenerated:boolean=true) : Promise<MetadataConversionResult> {
+    public async convertMetadataFileToFluent(metadataFileName:string, saveGenerated=true) : Promise<MetadataConversionResult> {
         const context = this.getContext();
         const options = this.getOptions();
         const entities = this.getEntities(context);
         const filePath = path.resolve(this._xmlImportDirectory, metadataFileName);
-        let xmlFile = extractXmlFile(filePath, context, this._debugSdk);
-        let transformResults:TransformResult[] = await this.executeTransform(entities, xmlFile, context, options);
+        const xmlFile = extractXmlFile(filePath, context, this._debugSdk);
+        const transformResults:TransformResult[] = await this.executeTransform(entities, xmlFile, context, options);
        
         if(saveGenerated){
             this._logger.debug('Saving files');
 
-            this.saveGeneratedFiles(context, options as BuildOptions);
+            await this.saveGeneratedFiles(context, options);
         }
 
-        let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
+        const conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
 
         //this._logger.debug("Returning conversion results.", conversionResult);
 
         return conversionResult;
     }
 
-    public async convertApplicationMetadata(saveGenerated:boolean=true){
+    public async convertApplicationMetadata(saveGenerated=true){
        
         const options:BuildOptions = this.getOptions();
         const context = this.getContext();
@@ -165,33 +185,33 @@ export class FluentConverter{
     
         const xmlArr = extractXmlFiles(this._xmlImportDirectory, context, this._debugSdk);
     
-        let transformResults:TransformResult[] = await this.executeTransform(entities, xmlArr, context, options);
+        const transformResults:TransformResult[] = await this.executeTransform(entities, xmlArr, context, options);
    
         if(saveGenerated){
             this._logger.debug('Saving files');
 
-            this.saveGeneratedFiles(context, options as BuildOptions);
+            await this.saveGeneratedFiles(context, options);
         }
       
-        let conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
+        const conversionResult:MetadataConversionResult = { transformResults:transformResults, context:context} as MetadataConversionResult;
 
         //this._logger.debug("Returning conversion results.", conversionResult);
 
         return conversionResult;
     }
 
-    private backupMetadataFileAfterFluentGeneration(metadataFilePath:string){
-        //After saving the file, mv the original metadata file to a backup directory
-        if(this.backupMetadata){
-            //get xml file that is associated with the source file
-            // const transformResult:TransformResult = this.getTransformResultByFluentSourceFilePath(metadataFilePath);
-            // if(!NowStringUtil.isStringEmpty(xmlFilePath)){
-            //     this.moveFile(xmlFilePath, this.metadataBackupDirectory);
-            // }
+    // private backupMetadataFileAfterFluentGeneration(metadataFilePath:string){
+    //     //After saving the file, mv the original metadata file to a backup directory
+    //     if(this.backupMetadata){
+    //        // get xml file that is associated with the source file
+    //         const transformResult:TransformResult = this.getTransformResultByFluentSourceFilePath(metadataFilePath);
+    //         if(!NowStringUtil.isStringEmpty(xmlFilePath)){
+    //             this.moveFile(xmlFilePath, this.metadataBackupDirectory);
+    //         }
 
             
-        }
-    }
+    //     }
+    // }
 
     // private getTransformResultByFluentSourceFilePath(fluentSourceFilePath:string) : TransformResult{
     //     let result:string = null;
@@ -218,7 +238,7 @@ export class FluentConverter{
         if(NowStringUtil.isStringEmpty(metadataBackupDirectory))
             throw new InvalidParameterException("metadataBackupDirectory null or empty.", {metadataBackupDirectory:metadataBackupDirectory} );
         
-        let dirPath:string = path.resolve(metadataBackupDirectory);
+        const dirPath:string = path.resolve(metadataBackupDirectory);
         this._logger.debug("verifyMetadataBackupDirectory: metadataBackupDirectory resolved path: " + dirPath, {metadataBackupDirectory:metadataBackupDirectory});
 
         if(!fs.existsSync(dirPath)){
@@ -233,36 +253,38 @@ export class FluentConverter{
     
 
     public moveFile(fromFilePath:string, toDirectory:string) : boolean{
-        let isSuccess:boolean = false;
+        let isSuccess = false;
 
         try{
             //Get Absolute File and Directory Paths
-            let abFilePath:string = path.resolve(fromFilePath);
-            let abDirPath:string = path.resolve(toDirectory);
+            const abFilePath:string = path.resolve(fromFilePath);
+            const abDirPath:string = path.resolve(toDirectory);
 
             //Verify fromFilePath is a file path
-            let fileInfo:fs.Stats = fs.statSync(fromFilePath);
-            let dirInfo:fs.Stats = fs.statSync(toDirectory);
+            const fileInfo:fs.Stats = fs.statSync(fromFilePath);
+            const dirInfo:fs.Stats = fs.statSync(toDirectory);
             if(fileInfo.isFile() && dirInfo.isDirectory()){
-                let targetFilePath:string = path.resolve(abDirPath, path.basename(abFilePath));
+                const targetFilePath:string = path.resolve(abDirPath, path.basename(abFilePath));
                 //Check if file of same name exists in target already
                 if(!(fs.existsSync(targetFilePath))){
                     try{
                         fs.copyFileSync(abFilePath, targetFilePath);
-                    }catch(ex){
+                    }catch(ex:unknown){
+                        const err = ex as Error;
                         isSuccess = false;
-                        throw new FileException("Error copying file.", ex);
+                        throw new FileException("Error copying file.", err);
                     }
 
                     try{
                         fs.rmSync(abFilePath); 
-                    }catch(ex){
+                    }catch(ex:unknown){
+                        const err = ex as Error;
                         isSuccess = false;
-                        throw new FileException("Unable to remove file from existing directory, but file copied successfully.", ex);
+                        throw new FileException("Unable to remove file from existing directory, but file copied successfully.", err);
                     }
                     
                     const copiedFileExists:boolean = fs.existsSync(path.resolve(abDirPath, path.basename(abFilePath)));
-                    const initialFileRemoved:boolean = !fs.existsSync(abFilePath);
+                    const initialFileRemoved = !fs.existsSync(abFilePath);
                    
                     this._logger.debug("New File Exists: " + copiedFileExists + ", Old File Removed: " + initialFileRemoved, {abFilePath:abFilePath, abDirPath:abDirPath});
 
@@ -274,13 +296,13 @@ export class FluentConverter{
                     throw new FileExistsException("File already exists in target path. Not moving file.");
                 
             }else{
-                let errMessage:string = "File or Directory are not correct types.  File: " + fromFilePath + " - Is File: " + fileInfo.isFile() + ", Directory: " + toDirectory + " - Is Directory:" + dirInfo.isDirectory();
+                const errMessage:string = "File or Directory are not correct types.  File: " + fromFilePath + " - Is File: " + fileInfo.isFile() + ", Directory: " + toDirectory + " - Is Directory:" + dirInfo.isDirectory();
                 this._logger.error(errMessage, {fileInfo:fileInfo, dirInfo:dirInfo, fromFilePath:fromFilePath, toDirectory:toDirectory});
                 throw new PathException(errMessage);
             }
 
            
-        }catch(e){
+        }catch(e:unknown){
 
             if (e instanceof FileException) {
                 isSuccess = false;
@@ -289,8 +311,9 @@ export class FluentConverter{
                 isSuccess = false;
               
               } else {
-                // everything else  
-                this._logger.error(e);
+                // everything else 
+                const err = e as Error; 
+                this._logger.error(err.message, err);
               }
         }
         
@@ -303,30 +326,32 @@ export class FluentConverter{
      * While xmlMetadataFiles can be an array, the sdk has some issues with processing these in bulk.  If one dies, the entire process dies.
      * We are breaking this up to handle one at a time, then it saves them all at the same time.
      */
-    private async executeTransform(entities:AstData[], xmlMetadataFiles:XmlData[], context:Context, options:BuildOptions) : Promise<TransformResult[]>{
-       let results:TransformResult[] = [];
+    private async executeTransform(entities:EntityData[], xmlMetadataFiles:XmlData[], context:Context, options:BuildOptions) : Promise<TransformResult[]>{
+       const results:TransformResult[] = [];
         if(xmlMetadataFiles.length > 1){
             //One of the issues that the
             //for(var i=0; i < xmlMetadataFiles.length; i++){
                 //var xmlFile = xmlMetadataFiles.slice(i, i+1);
                 //this._logger.debug(xmlFile[0].filePath, xmlFile[0]);
                 //Try bulk editing them.  
-                let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
-                results.push(result);
+                const result:TransformResult | null = await this.processFile(xmlMetadataFiles, entities, context, options);
+                if(result != null)
+                    results.push(result);
             //}
         }else if(xmlMetadataFiles.length == 1){
-            let result:TransformResult = await this.processFile(xmlMetadataFiles, entities, context, options);
-            results.push(result);
+            const result:TransformResult | null = await this.processFile(xmlMetadataFiles, entities, context, options);
+            if(result != null)
+                results.push(result);
         }
 
         return results;
     }
 
-    private async processFile(xmlFilesArr:XmlData[], entities:AstData[], context:Context, options:BuildOptions) : Promise<TransformResult>{
-        let result:TransformResult = null;
+    private async processFile(xmlFilesArr:XmlData[], entities:EntityData[], context:Context, options:BuildOptions) : Promise<TransformResult | null>{
+        let result:TransformResult | null = null;
         try{
              this._logger.debug("Attempting transform of " + xmlFilesArr.length + " files.", xmlFilesArr);
-             result = await transform(entities, xmlFilesArr, context, options as BuildOptions);
+             result = await transform(entities, xmlFilesArr, context, options);
              this._logger.debug("Transform Result.", result);
              //Store the processed file from this run.  The TransformResult maps the xml file to the now.ts file that was generated so we can backup the xml metadata file once the now.ts file
              //has been written to the filesystem.
@@ -334,14 +359,15 @@ export class FluentConverter{
                 this.processedFiles.push(result);
 
              
-         }catch(ex){
-             this._logger.error("Error transforming file: " + xmlFilesArr[0].filePath + ". \n" + ex.message, {error:ex,   options: options});
+         }catch(ex:unknown){
+            const err = ex as Error;
+             this._logger.error("Error transforming file: " + xmlFilesArr[0].filePath + ". \n" + err.message, {error:err,   options: options});
          }
          return result;
     }
 
     private getOptions() : BuildOptions{
-        let options = {
+        const options = {
             debug: this._debugSdk,
             mode: 'transform',
             clean: true,
@@ -382,13 +408,13 @@ export class FluentConverter{
                 await sourceFile.save();
 
                 //After saving the file, mv the original metadata file to a backup directory
-                this.backupMetadataFileAfterFluentGeneration(sourceFile.getFilePath());
+                //this.backupMetadataFileAfterFluentGeneration(sourceFile.getFilePath());
             })
         );
     }
 
-    private getEntities(context:Context) : AstData[]{
-        let options:BuildOptions = this.getOptions();
+    private getEntities(context:Context) : EntityData[]{
+        //const options:BuildOptions = this.getOptions();
         if (context.app.package.devDependencies) {
             context.logger.info(`@servicenow/sdk version: ${context.app.package.devDependencies['@servicenow/sdk']}`)
         }
@@ -396,9 +422,9 @@ export class FluentConverter{
         context.logger.info(`Output: ${context.app.config.appOutputDir}`)
     
         // Check TypeScript diagnostics before extraction to avoid futile attempt to parse invalid code
-        this.checkDiagnosticErrors([...this.getAstDiagnostics(context), ...this.getTypeScriptDiagnostics(context)] as unknown as Diagnostic[], context)
+        this.checkDiagnosticErrors([...getAstDiagnostics(context), ...getTypeScriptDiagnostics(context)] as unknown as Diagnostic[], context)
 
-        const extractionResult = extractSourceFiles(this._fluentDirectory, context, this._debugSdk);
+        const extractionResult = extractEntities(this._fluentDirectory, context, this._debugSdk);
         this._logger.debug("Extraction Result: ", extractionResult);
         const { data: entities, diagnostics  } = extractionResult.handled ? extractionResult : { data: [], diagnostics: [] };
         this._logger.debug("Entities: ", entities);
@@ -416,8 +442,6 @@ export class FluentConverter{
 
     private createFluentContext() : Context{
 
-        let options = this.getOptions();
-        const parsedOptions = options;
         const context = createContext(this._applicationRootDirectory, PLUGINS, BUILT_INS, this._debugSdk, "transform", fs, this._logger);
         return context;
     }
@@ -465,24 +489,24 @@ export class FluentConverter{
 
 
 
-    getAstDiagnostics(context: Context) : FluentDiagnostic[] {
-        const diagnostics: FluentDiagnostic[] = []
+    // getAstDiagnostics(context: Context) : FluentDiagnostic[] {
+    //     const diagnostics: FluentDiagnostic[] = []
 
-        context.compiler
-            .getFluentSourceFilesFromDirectory(path.join(context.app.rootDir, context.app.config.fluentDir))
-            .forEach((file) => {
-                context.compiler.visitNodeTree(file, (node) => {
-                    diagnostics.push(...context.getAstDiagnostics(node, context))
-                })
-            })
+    //     context.compiler
+    //         .getFluentSourceFilesFromDirectory(path.join(context.app.rootDir, context.app.config.fluentDir))
+    //         .forEach((file) => {
+    //             context.compiler.visitNodeTree(file, (node) => {
+    //                 diagnostics.push(...context.getAstDiagnostics(node, context))
+    //             })
+    //         })
 
-        return diagnostics
-    }
+    //     return diagnostics
+    // }
 
-    getTypeScriptDiagnostics(context: Context) : TypeScriptDiagnostic[] {
-        return context.compiler
-            .getFluentSourceFilesFromDirectory(path.join(context.app.rootDir, context.app.config.fluentDir))
-            .flatMap((file) => context.compiler.getDiagnosticsForSourceFile(file))
-    }
+    // getTypeScriptDiagnostics(context: Context) : TypeScriptDiagnostic[] {
+    //     return context.compiler
+    //         .getFluentSourceFilesFromDirectory(path.join(context.app.rootDir, context.app.config.fluentDir))
+    //         .flatMap((file) => context.compiler.getDiagnosticsForSourceFile(file))
+    // }
 
 }

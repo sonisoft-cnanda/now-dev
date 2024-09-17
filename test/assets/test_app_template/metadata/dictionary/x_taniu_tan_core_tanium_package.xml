@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="a1cbe35fdbbd4d10495d70f33996190f" label="Action Package" max_length="40" name="x_taniu_tan_core_tanium_package" type="collection">
+        <element label="Content set name" max_length="120" name="content_set_name" type="string"/>
+        <element label="Command" max_length="1024" name="command" type="string"/>
+        <element display="true" label="Name" mandatory="true" max_length="180" name="name" text_index="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Package ID" mandatory="true" max_length="10" name="package_id" text_index="true" type="integer" unique="true"/>
+        <element attributes="edge_encryption_enabled=true" label="Content set ID" max_length="10" name="content_set_id" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <index name="index">
+            <element name="name"/>
+        </index>
+        <index name="index2" unique="true">
+            <element name="package_id"/>
+        </index>
+        <index name="index3">
+            <element name="sys_class_name"/>
+        </index>
+    </element>
+</database>

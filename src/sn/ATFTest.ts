@@ -1,6 +1,6 @@
 import { ReferenceLink } from "../model/types";
 
-export type Test = {
+export interface Test {
     
         "sys_mod_count": string;
         "active": string;

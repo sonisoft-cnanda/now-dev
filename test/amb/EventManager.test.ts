@@ -12,7 +12,7 @@ describe('EventManager', () => {
 		SESSION_INVALIDATED: 'session.invalidated'
 	};
 
-	type Callback = {
+	interface Callback {
 		callback1:Function,
 		callback2:Function
 	}

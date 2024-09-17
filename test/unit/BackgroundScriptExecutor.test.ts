@@ -30,7 +30,7 @@ describe('BackgroundScriptExecutor', () => {
     describe('getBackgroundScriptCSRFToken', () => {
 
         it('should return csrf token', async () => {
-           let result:string = await executor.getBackgroundScriptCSRFToken();
+           const result:string = await executor.getBackgroundScriptCSRFToken();
             expect(result).not.toBeNull();
             
         }, 100000);
@@ -62,7 +62,7 @@ describe('BackgroundScriptExecutor', () => {
         })
 
         it('should execute script with given scope', async () => {
-            let sVal:string = "TESTING SN-ATF";
+            const sVal = "TESTING SN-ATF";
             const script = `gs.info("`+sVal+`")`;
             const scope = TEST_SCOPE;
             const result = await executor.executeScript({ script, scope, instance });

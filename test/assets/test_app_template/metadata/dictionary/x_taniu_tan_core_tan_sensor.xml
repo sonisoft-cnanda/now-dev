@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="834a790cdb9edd10495d70f3399619b3" label="Tanium Sensor" max_length="40" name="x_taniu_tan_core_tan_sensor" type="collection">
+        <element label="Content set" max_length="80" name="content_set" type="string"/>
+        <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <element label="Content set ID" max_length="10" name="content_set_id" type="integer"/>
+        <element display="true" label="Name" mandatory="true" max_length="120" name="name" type="string" unique="true"/>
+        <element label="Category" max_length="80" name="category" type="string"/>
+        <element label="Description" max_length="4000" name="description" type="string"/>
+        <index name="index" unique="true">
+            <element name="name"/>
+        </index>
+        <index name="index2">
+            <element name="sys_class_name"/>
+        </index>
+    </element>
+</database>

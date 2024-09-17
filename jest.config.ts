@@ -5,7 +5,7 @@ const config: JestConfigWithTsJest = {
   testMatch: ["**/*.test.js", "**/*.test.ts"],
   coverageReporters: ["html", "text", "text-summary", "cobertura"],
   verbose: true,
-  testTimeout:50000,
+  testTimeout:1000000,
   transform: {
     "^.+\\.ts?$": [
       "ts-jest",

@@ -12,7 +12,7 @@ export interface IRequestHandler{
     delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> ;
 
     //request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>;
-    setRequestToken(token:String);
+    setRequestToken(token:string);
 
     getCookies() : Promise<Cookie[]> ;
 

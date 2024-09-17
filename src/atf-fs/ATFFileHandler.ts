@@ -1,6 +1,6 @@
 
-let fs = require('fs');
-let getDirName = require('path').dirname;
+const fs = require('fs');
+const getDirName = require('path').dirname;
 const nodePath = require('path');
 
 export class ATFFileHandler{

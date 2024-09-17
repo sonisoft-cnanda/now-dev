@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="39cbe35fdbbd4d10495d70f339961959" label="Action Package Parameter" max_length="40" name="x_taniu_tan_core_tanium_package_parameter" type="collection">
+        <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <element label="Parameter key" mandatory="true" max_length="80" name="key" text_index="true" type="string"/>
+        <element display="true" label="Label" mandatory="true" max_length="1024" name="label" type="string"/>
+        <element label="Default value" max_length="1024" name="default_value" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="0" label="Max characters" max_length="10" name="max_characters" type="integer"/>
+        <element label="Description" max_length="1024" name="description" type="string"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false,readonly_clickthrough=true" label="Package" mandatory="true" max_length="32" name="package" reference="x_taniu_tan_core_tanium_package" reference_cascade_rule="delete" text_index="true" type="reference"/>
+        <index name="index">
+            <element name="key"/>
+        </index>
+        <index name="index2">
+            <element name="package"/>
+        </index>
+        <index name="index3">
+            <element name="sys_class_name"/>
+        </index>
+    </element>
+</database>

@@ -29,7 +29,7 @@ export class HTTPRequestHandler{
                 response => response,
                 error => {
                   if (error.response && [301, 302].includes(error.response.status)) {
-                    let cookies = error.response.headers["set-cookie"];
+                    const cookies = error.response.headers["set-cookie"];
                     this.setCookies(cookies);
                     const redirectUrl = error.response.headers.location;
                     return this.httpClient.get(redirectUrl, { withCredentials: true, headers: {"cookie": cookies}});
@@ -69,7 +69,7 @@ export class HTTPRequestHandler{
 
     public async request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>{
 
-        for(var prop in this._defaultHeaders){
+        for(const prop in this._defaultHeaders){
             if(typeof this._defaultHeaders[prop] !='undefined' && this._defaultHeaders[prop])
                 config.headers[prop] = this._defaultHeaders[prop];
         }
@@ -80,14 +80,14 @@ export class HTTPRequestHandler{
 
     public async post<T>(request: HTTPRequest) : Promise<HttpResponse<T>> {
 
-        let {config, url} = this.getRequestConfig(request);
+        const {config, url} = this.getRequestConfig(request);
             
        try{
         const response: HttpResponse<T> = await this.httpClient.post(url, request.body , config);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -107,14 +107,14 @@ export class HTTPRequestHandler{
 
     public async put<T>(request: HTTPRequest) : Promise<HttpResponse<T>> {
 
-        let {config, url} = this.getRequestConfig(request);
+        const {config, url} = this.getRequestConfig(request);
             
        try{
         const response: HttpResponse<T> = await this.httpClient.put(url, request.body , config);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -134,14 +134,14 @@ export class HTTPRequestHandler{
 
     public async get<T>(request: HTTPRequest) : Promise<HttpResponse<T>> {
 
-        let {config, url} = this.getRequestConfig(request);
+        const {config, url} = this.getRequestConfig(request);
             
        try{
         const response: HttpResponse<T> = await this.httpClient.get(url , config);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -160,14 +160,14 @@ export class HTTPRequestHandler{
 
     public async delete<T>(request: HTTPRequest) : Promise<HttpResponse<T>> {
 
-        let {config, url} = this.getRequestConfig(request);
+        const {config, url} = this.getRequestConfig(request);
             
        try{
         const response: HttpResponse<T> = await this.httpClient.delete(url , config);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -193,13 +193,13 @@ export class HTTPRequestHandler{
         let url:string = request.path;
        
         if(request.headers != null){
-            for(let prop in request.headers){
+            for(const prop in request.headers){
                 config.headers[prop] = request.headers[prop];
             }
         }
         config.headers["Cookie"] = this._cookies;
         if(request.query != null){
-            let strQuery = this.getQueryString(request.query);
+            const strQuery = this.getQueryString(request.query);
             if(url.indexOf("?") == -1){
                 url += "?" + strQuery;
             }else{
@@ -212,7 +212,7 @@ export class HTTPRequestHandler{
 
     private getQueryString(queryObj:object):string{
         let queryStr = "";
-        for(var prop in queryObj){
+        for(const prop in queryObj){
             if(queryStr != "")
                 queryStr += "&";
             queryStr += prop + "=" + encodeURIComponent(queryObj[prop]);

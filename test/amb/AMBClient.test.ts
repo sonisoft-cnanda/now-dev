@@ -19,18 +19,18 @@ describe('AMBClient', () => {
 
         it('can run client', async () => {
             const logger = new Logger('AMBClient.test');
-            let window:any = adapt();
+            const window:any = adapt();
             global.window = window;
           
             const mb:MessageClientBuilder = new MessageClientBuilder();
 
             const clientSubscriptions = mb.buildClientSubscriptions();
-            let client:AMBClient =  new AMBClient (clientSubscriptions);
+            const client:AMBClient =  new AMBClient (clientSubscriptions);
 
             client.connect();
 
 
-            let subConfig:SubscriptionConfig = {};
+            const subConfig:SubscriptionConfig = {};
             subConfig.subscriptionCallback = function(message:any){
                 logger.debug("subscriptionCallback", message);
             }
@@ -41,7 +41,7 @@ describe('AMBClient', () => {
 
 
 
-            let rwChannel = client.getRecordWatcherChannel("sys_metadata", "sys_scope=c4134c50db6ec910495d70f339961931", null, subConfig);
+            const rwChannel = client.getRecordWatcherChannel("sys_metadata", "sys_scope=c4134c50db6ec910495d70f339961931", null, subConfig);
             console.log(rwChannel);
 
             // rwChannel.subscribe(function(message){

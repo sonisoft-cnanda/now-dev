@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="platform" table="x_taniu_tan_core_deploy_spkg" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>platform</element>
+            <name>x_taniu_tan_core_deploy_spkg</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-08-12 14:11:16</sys_created_on>
+            <sys_id>2b51e38ddb999510495d70f3399619c9</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>platform</sys_name>
+            <sys_package display_value="Tanium Integration Core" source="x_taniu_tan_core">c4134c50db6ec910495d70f339961931</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Tanium Integration Core">c4134c50db6ec910495d70f339961931</sys_scope>
+            <sys_update_name>sys_choice_x_taniu_tan_core_deploy_spkg_platform</sys_update_name>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-08-12 14:11:16</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>platform</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Windows</label>
+            <language>en</language>
+            <name>x_taniu_tan_core_deploy_spkg</name>
+            <sequence>100</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-08-12 14:11:16</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>2851e74ddb999510495d70f3399619d9</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-08-12 14:11:21</sys_updated_on>
+            <value>windows</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>platform</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>MacOS</label>
+            <language>en</language>
+            <name>x_taniu_tan_core_deploy_spkg</name>
+            <sequence>200</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-08-12 14:11:26</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>2351a34ddb999510495d70f339961942</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-08-12 14:11:29</sys_updated_on>
+            <value>macos</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>platform</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Linux</label>
+            <language>en</language>
+            <name>x_taniu_tan_core_deploy_spkg</name>
+            <sequence>300</sequence>
+            <synonyms/>
+            <sys_created_by>tim.woodruff</sys_created_by>
+            <sys_created_on>2022-08-12 14:11:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b161ab4ddb999510495d70f3399619a6</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>tim.woodruff</sys_updated_by>
+            <sys_updated_on>2022-08-12 14:11:37</sys_updated_on>
+            <value>linux</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

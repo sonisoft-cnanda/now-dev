@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="f14cf3aadbbb0d50495d70f3399619e0" label="Tanium Action History" max_length="40" name="x_taniu_tan_core_tan_action_history" type="collection">
+        <element label="Action ID" max_length="20" name="action_id" type="string"/>
+        <element display="true" label="Action name" mandatory="true" max_length="254" name="action_name" type="string"/>
+        <element label="Endpoint serial" max_length="254" name="endpoint_serial" type="string"/>
+        <element choice="1" default="unknown" label="Status" max_length="20" name="action_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Waiting to retry" sequence="400" value="waitingToRetry"/>
+                <element inactive_on_update="false" label="Failed" sequence="700" value="failed"/>
+                <element inactive_on_update="false" label="Running" sequence="300" value="running"/>
+                <element inactive_on_update="false" label="Verified" sequence="900" value="verified"/>
+                <element inactive_on_update="false" label="Unknown" sequence="0" value="unknown"/>
+                <element inactive_on_update="false" label="Failed verification" sequence="1000" value="failedVerification"/>
+                <element inactive_on_update="false" label="Pending verification" sequence="800" value="pendingVerification"/>
+                <element inactive_on_update="false" label="Downloading" sequence="200" value="downloading"/>
+                <element inactive_on_update="false" label="Expired" sequence="600" value="expired"/>
+                <element inactive_on_update="false" label="Completed" sequence="500" value="completed"/>
+                <element inactive_on_update="false" label="Waiting" sequence="100" value="waiting"/>
+            </choice>
+        </element>
+        <element label="Tanium endpoint ID" max_length="20" name="endpoint_id" type="integer"/>
+        <element label="Details" max_length="2000" name="action_details" type="string"/>
+        <index name="index">
+            <element name="action_id"/>
+        </index>
+        <index name="index2">
+            <element name="endpoint_serial"/>
+        </index>
+    </element>
+</database>

@@ -15,7 +15,7 @@ export class ServiceNowRequest{
     auth:IAuthenticationHandler;
 
     constructor(){
-        let self:ServiceNowRequest = this;
+        const self:ServiceNowRequest = this;
 
         this.auth = AuthenticationHandlerFactory.createAuthHandler();
         this._requestHandler = RequestHandlerFactory.createRequestHandler( this.auth);
@@ -89,7 +89,7 @@ export class ServiceNowRequest{
     private async ensureLoggedIn(){
        //if(!this.isLoggedIn()){
             
-                let session:IUserSession = await this.auth.doLogin(
+                const session:IUserSession = await this.auth.doLogin(
                     ExtensionConfiguration.instance.getServiceNowInstanceURL(),
                     ExtensionConfiguration.instance.getServiceNowUserName(), 
                     ExtensionConfiguration.instance.getServiceNowPassword()
@@ -106,7 +106,7 @@ export class ServiceNowRequest{
         //}
     }
 
-    isLoggedIn():Boolean{
+    isLoggedIn():boolean{
         return this.getAuth().isLoggedIn();
     }
 

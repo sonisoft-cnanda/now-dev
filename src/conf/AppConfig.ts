@@ -7,7 +7,7 @@ export class AppConfig{
 
     private static _instance:AppConfig | null = null;
 
-    private _isReady:boolean = false;
+    private _isReady = false;
 
     public static get instance() : AppConfig{
 
@@ -27,7 +27,7 @@ export class AppConfig{
     }
 
     public async init() : Promise<void>{
-        let provider:ConfigProvider = new NowConfigProvider();
+        const provider:ConfigProvider = new NowConfigProvider();
         await loadConfiguration(AppConfig._instance, provider);
         this._isReady = true;
     }

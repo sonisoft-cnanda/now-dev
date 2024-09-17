@@ -15,8 +15,8 @@ describe("NowSDKAuthenticationHandler", () => {
 	
 
 	it("login should return session", async () => {
-		let auth:IAuthenticationHandler = new NowSDKAuthenticationHandler();
-        let session:IUserSession =  await auth.doLogin(ExtensionConfiguration.instance.getServiceNowInstanceURL(), "chris.nanda", "D$adP00l$G$$k0ut");
+		const auth:IAuthenticationHandler = new NowSDKAuthenticationHandler();
+        const session:IUserSession =  await auth.doLogin(ExtensionConfiguration.instance.getServiceNowInstanceURL(), "chris.nanda", "D$adP00l$G$$k0ut");
 
         expect(session).not.toBeNull();
         expect(session.getCookies()).not.toBeNull();

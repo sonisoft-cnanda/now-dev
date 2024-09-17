@@ -1,8 +1,8 @@
 import {Logger} from"../util/Logger.js";
 
 export class GraphQLSubscriptionExtension {
-	static RW_GRAPHQL_CHANNEL:string = '/rw/graphql';
-	 static META_SUBSCRIBE:string = '/meta/subscribe';
+	static RW_GRAPHQL_CHANNEL = '/rw/graphql';
+	 static META_SUBSCRIBE = '/meta/subscribe';
 
 	 _logger:Logger = new Logger('GraphQLSubscriptionExtension');
 	graphQLSubscriptions:any = {};

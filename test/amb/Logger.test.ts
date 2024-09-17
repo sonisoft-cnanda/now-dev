@@ -4,7 +4,7 @@ import {Logger} from '../../src/util/Logger.js';
 import { Mock, mock } from 'ts-jest-mocker';
 
 describe('Logger', () => {
-	let outputMessage:String = '';
+	const outputMessage = '';
 	let mockLogger:any; 
 	// beforeEach(() => {
 	// 	outputMessage = "";

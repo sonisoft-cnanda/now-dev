@@ -1,10 +1,10 @@
 
 import { ServiceNowSettingsInstance } from '../sn/ServiceNowInstance';
 
-const ATFCONFIG_NAME:string = "sn-atf";
-const TEST_HOST:string = "ven01280.service-now.com";//"dev271900.service-now.com";
-const TEST_USER:string = "chris.nanda";
-const TEST_PASSWORD:string ="D$adP00l$G$$k0ut";
+const ATFCONFIG_NAME = "sn-atf";
+const TEST_HOST = "ven01280.service-now.com";//"dev271900.service-now.com";
+const TEST_USER = "chris.nanda";
+const TEST_PASSWORD ="D$adP00l$G$$k0ut";
 
 export class ExtensionConfiguration{
     static #instance: ExtensionConfiguration;
@@ -40,7 +40,7 @@ export class ExtensionConfiguration{
     }
 
     initSettings(){
-        let strRoot = this.getRootTestFolder();
+        const strRoot = this.getRootTestFolder();
         if(strRoot == null){
             
         }
@@ -71,7 +71,7 @@ export class ExtensionConfiguration{
     }
 
     getRootTestFolder():string | null {
-        let strRootFolder:string | null | undefined =  this.settings.get('rootTestFolder');
+        const strRootFolder:string | null | undefined =  this.settings.get('rootTestFolder');
 
        if(strRootFolder != null && strRootFolder != undefined){
             this.rootTestFolder = strRootFolder;
@@ -88,8 +88,8 @@ export class ExtensionConfiguration{
        if(instanceSetting == null)
         instanceSetting = {} as ServiceNowInstanceSettings;
 
-       let alias:string = instance.alias;
-       let password:string = instance.password;
+       const alias:string = instance.alias;
+       const password:string = instance.password;
        instance.password = null;
        if(alias != null && typeof instanceSetting[alias] == 'undefined'){
         instanceSetting[alias] = instance;
@@ -105,12 +105,12 @@ export class ExtensionConfiguration{
     }
 
     public async getInstances():Promise<ServiceNowInstanceSettings>{
-        let wsSettings:any = this.getSettings();
+        const wsSettings:any = this.getSettings();
         try{
-            let json:string = wsSettings.get("instances");
+            const json:string = wsSettings.get("instances");
             console.log(json);
             if(json){
-                let instances:ServiceNowInstanceSettings =  JSON.parse(json) as ServiceNowInstanceSettings;
+                const instances:ServiceNowInstanceSettings =  JSON.parse(json) as ServiceNowInstanceSettings;
         
                 console.log(instances);
                 return instances;
@@ -126,7 +126,4 @@ export class ExtensionConfiguration{
 
 }
 
-type ServiceNowInstanceSettings = {
-    [key: string]: ServiceNowSettingsInstance
-
-}
+type ServiceNowInstanceSettings = Record<string, ServiceNowSettingsInstance>;

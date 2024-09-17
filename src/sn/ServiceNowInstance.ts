@@ -1,5 +1,5 @@
 
-export type ServiceNowSettingsInstance = {
+export interface ServiceNowSettingsInstance {
     host?:string;
     username?:string;
     alias?:string;

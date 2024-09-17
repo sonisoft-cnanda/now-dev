@@ -7,7 +7,7 @@ import JSON5 from 'json5';
 import { ConfigProvider } from 'typed-config';
 import path from 'path';
 
-let jsConfig:any = {
+const jsConfig:any = {
     'fs':{
         rootDir:"./tmp",
         scriptSrc:"src/server"
@@ -15,7 +15,7 @@ let jsConfig:any = {
     logLevel: "warn",
     metaDataTypes:"sys_script_include,sys_script,sys_script_client"
 };
-let json:string = JSON5.stringify(jsConfig);
+const json:string = JSON5.stringify(jsConfig);
 
 describe('AppConfig', () => {
     beforeEach(() => {
@@ -32,7 +32,7 @@ describe('AppConfig', () => {
         it('should load values from config file', async () => {
             await AppConfig.instance.init();
 
-            let scriptPath:string = path.join(jsConfig.fs.rootDir, jsConfig.fs.scriptSrc)
+            const scriptPath:string = path.join(jsConfig.fs.rootDir, jsConfig.fs.scriptSrc)
 
             expect(AppConfig.instance.isReady).toBe(true);
             expect(AppConfig.instance.logLevel).toBe('warn');

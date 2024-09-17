@@ -340,7 +340,7 @@ describe("Channel", () => {
 
 		
 			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			let subRet:any = testChannel.subscribe(mockChannelListener1);
+			const subRet:any = testChannel.subscribe(mockChannelListener1);
 
 			testChannel.unsubscribe(mockChannelListener1);
 
@@ -436,8 +436,8 @@ describe("Channel", () => {
 	describe("_handleResponse", () => {
 		it("calls registered listener callbacks", () => {
 			const mockCometD = getMockCometD();
-			let isCalled:Boolean = false;
-			let sentMessage:string = "";
+			let isCalled = false;
+			let sentMessage = "";
 			const mockChannelListener1 = mock(ChannelListener);
 			mockChannelListener1.getCallback.mockReturnValue((m) => {
 				isCalled = true;

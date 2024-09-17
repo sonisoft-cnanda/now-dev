@@ -8,7 +8,7 @@ export class ServiceNowAppConfig {
 
     private static _instance:ServiceNowAppConfig | null = null;
 
-    private _isReady:boolean = false;
+    private _isReady = false;
 
     public static get instance() : ServiceNowAppConfig{
 
@@ -28,7 +28,7 @@ export class ServiceNowAppConfig {
     }
 
     public async init() : Promise<void>{
-        let provider:ConfigProvider = new ServiceNowAppConfigProvider();
+        const provider:ConfigProvider = new ServiceNowAppConfigProvider();
         await loadConfiguration(ServiceNowAppConfig._instance, provider);
         this._isReady = true;
     }

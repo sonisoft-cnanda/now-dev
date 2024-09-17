@@ -11,7 +11,7 @@ export class ATFTestExecutor{
 
     async executeTest(testId:string):Promise<TestResult>{
 
-        let dataObj = {
+        const dataObj = {
            
             'sysparm_want_session_messages':'true',
             'sysparm_ajax_processor_ut_test_id':testId,
@@ -24,14 +24,14 @@ export class ATFTestExecutor{
             'x_referer':'sys_atf_test.do%3Fsys_id%3D817a3214835b4210a9f8aec0deaad3f4%26sysparm_view%3D%26sysparm_domain%3Dnull%26sysparm_domain_scope%3Dnull'
         };
 
-        let proc:ServiceNowProcessorRequest = new ServiceNowProcessorRequest();
-        let result:string =  await proc.execute("TestExecutorAjax", "start", "global", dataObj);
+        const proc:ServiceNowProcessorRequest = new ServiceNowProcessorRequest();
+        const result:string =  await proc.execute("TestExecutorAjax", "start", "global", dataObj);
 
         //In this case, result is the progress worker id.
         if(result != null){
-          let resultId:string =  await this.waitForTestCompletion(result);
+          const resultId:string =  await this.waitForTestCompletion(result);
           if(resultId){
-            let testResult:TestResult = await this.getTestResult(resultId);
+            const testResult:TestResult = await this.getTestResult(resultId);
             if(testResult)
                 return testResult;
           }
@@ -59,7 +59,7 @@ export class ATFTestExecutor{
     }
 
    private async  doGetTestProgress(progressId:string):Promise<ProgressResult>{
-        let data:ProgressResultResponse = await this.getTestProgress(progressId);
+        const data:ProgressResultResponse = await this.getTestProgress(progressId);
       
         try{
             if(data.result ){
@@ -79,8 +79,8 @@ export class ATFTestExecutor{
     private async getTestProgress(progressId:string):Promise<ProgressResultResponse>{
        
  
-        let request:HTTPRequest = { path: "/api/sn_cicd/progress/"+progressId, headers: null, query: null, body:null};
-        let resp:HttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
+        const request:HTTPRequest = { path: "/api/sn_cicd/progress/"+progressId, headers: null, query: null, body:null};
+        const resp:HttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
         if(resp.status == 200){
             return resp.bodyObject;
         }
@@ -91,10 +91,10 @@ export class ATFTestExecutor{
     private async getTestResult(testResultId:string):Promise<TestResult>{
        
  
-        let request:HTTPRequest = { path: "/api/now/table/sys_atf_test_result?sysparm_query=sys_id="+testResultId, headers: null, query: null, body:null};
-        let resp:HttpResponse<ServiceNowTableResponse<TestResult>> = await this._req.get<ServiceNowTableResponse<TestResult>>(request);
+        const request:HTTPRequest = { path: "/api/now/table/sys_atf_test_result?sysparm_query=sys_id="+testResultId, headers: null, query: null, body:null};
+        const resp:HttpResponse<ServiceNowTableResponse<TestResult>> = await this._req.get<ServiceNowTableResponse<TestResult>>(request);
         if(resp.status == 200){
-            let tableResp:ServiceNowTableResponse<TestResult> =  resp.bodyObject;
+            const tableResp:ServiceNowTableResponse<TestResult> =  resp.bodyObject;
             if(tableResp.result && tableResp.result.length > 0){
                 return tableResp.result[0];
             }
@@ -110,7 +110,7 @@ export class ATFTestExecutor{
 
 }
 
-export type TestResult = {
+export interface TestResult {
     "end_time_millis":string;
     "execution_tracker":ReferenceLink;
     "test_name":string;
@@ -126,21 +126,21 @@ export type TestResult = {
 
 
 
-export type ProgressResultResponse = {
+export interface ProgressResultResponse {
     "result":ProgressResult;
 }
 
-export type ProgressLinks = {
+export interface ProgressLinks {
     "progress": ProgressLink;
     "results":ProgressLink;
 }
 
-export type ProgressLink = {
+export interface ProgressLink {
     "id":string ;
     "url":string;
 }
 
-export type ProgressResult = {
+export interface ProgressResult {
         "links": ProgressLinks ;
         "status":string;
         "status_label": string;

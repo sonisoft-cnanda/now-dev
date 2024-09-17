@@ -1,5 +1,5 @@
 
-type ContextMock = {
+interface ContextMock {
     secrets?:SecretsMock;
     subscriptions?:any;
     workspaceState?:any;
@@ -9,7 +9,7 @@ type ContextMock = {
 
 }
 
-type SecretsMock = {
+interface SecretsMock {
     store();
     get():any;
 }

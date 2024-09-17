@@ -81,7 +81,7 @@ export class FileUtil{
     }
 
     public static deleteFolderContentSync(dirPath:string) : void {
-        let folderContents:string[] = fs.readdirSync(dirPath);
+        const folderContents:string[] = fs.readdirSync(dirPath);
         for (let n = 0; n < folderContents.length; n++) {
             try {
                 const filePath:string = folderContents[n];
@@ -94,7 +94,7 @@ export class FileUtil{
     }
 
     public static async deleteFolderContent(dirPath:string) : Promise<void> {
-        let folderContents:string[] = await fs.readdir(dirPath);
+        const folderContents:string[] = await fs.readdir(dirPath);
         for (let n = 0; n < folderContents.length; n++) {
             try {
                 const filePath:string = folderContents[n];
@@ -134,7 +134,7 @@ export class FileUtil{
         try {
             if (fs.existsSync(dirPath)) {
                 fs.readdirSync(dirPath).forEach( (val, index) => {
-                    var curPath = join(dirPath, val);
+                    const curPath = join(dirPath, val);
                     if (FileUtil.isDirectorySync(curPath)) {
                         FileUtil.deleteFolderRecursiveSync(curPath);
                     }
@@ -155,7 +155,7 @@ export class FileUtil{
         try {
             if (fs.existsSync(dirPath)) {
                 fs.readdirSync(dirPath).forEach( async (val, index) => {
-                    var curPath = join(dirPath, val);
+                    const curPath = join(dirPath, val);
                     if (await FileUtil.isDirectory(curPath)) {
                         await FileUtil.deleteFolderRecursive(curPath);
                     }

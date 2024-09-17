@@ -793,18 +793,18 @@ interface gs {
     /** Queues an event for the event manager */
     eventQueue(name: string, record: GlideRecord, parm1: string, parm2: string, queue: string): void;
     /** Retrieves a message from UI messages */
-    getProperty(key: string, alt: Object): string;
+    getProperty(key: string, alt: object): string;
     urlDecode(url: string): string;
     urlEncode(url: string): string;
     base64Decode(s: string): string;
     base64Encode(s: string): string;
-    xmlToJSON(xmlString: string): Object;
+    xmlToJSON(xmlString: string): object;
     /** Gets the name of the current scope */
     getCurrentScopeName(): string;
     /** Gets the caller scope name, or returns null if there is no caller */
     getCallerScopeName(): string;
     /** Queries an object and returns true if the object is null, undefined, or contains an empty string */
-    nil(o: Object): boolean;
+    nil(o: object): boolean;
     /** Retrieves a message from UI messages. args is an optional paramter */
     getMessage(id: string, args: any): string;
     /** Determines if the current user has the specified role */
@@ -818,7 +818,7 @@ interface gs {
     /** Gets a string representing the cache version for a CSS file */
     getCssCacheVersionString(): string;
     /** Generates a GUID that can be used when a unique identifier is required */
-    generateGUID(obj: Object): string;
+    generateGUID(obj: object): string;
     getNewAppScopeCompanyPrefix(): string;
     getMaxSchemaNameLength(): number;
     /** Adds an error message for the current session */
@@ -850,9 +850,9 @@ interface gs {
     /** Returns the (UTC) end of the day that was the specified number of days ago adjusted for the timezone of the server */
     daysAgoEnd(daysAgo: number): string;
     /** Returns the (UTC) beginning of the specified week adjusted for the timezone of the current session */
-    beginningOfWeek(o: Object): string;
+    beginningOfWeek(o: object): string;
     /** Returns the (UTC) end of the specified week adjusted for the timezone of the current session */
-    endOfWeek(o: Object): string;
+    endOfWeek(o: object): string;
     /** Returns the (UTC) end of next week adjusted for the timezone of the server */
     endOfNextWeek(): string;
     /** Gets the date and time for the beginning of next week in UTC, adjusted for the timezone of the server */
@@ -918,13 +918,13 @@ interface gs {
     /** Returns a String of the form :interval,value,operator */
     datePart(interval: string, value: string, operator: string): string;
     /** Uses the error level to log a message to the system log */
-    error(message: string, parm1: Object, parm2: Object, parm3: Object, parm4: Object, parm5: Object): void;
+    error(message: string, parm1: object, parm2: object, parm3: object, parm4: object, parm5: object): void;
     /** Uses the warn level to log a message to the system log */
-    warn(message: string, parm1: Object, parm2: Object, parm3: Object, parm4: Object, parm5: Object): void;
+    warn(message: string, parm1: object, parm2: object, parm3: object, parm4: object, parm5: object): void;
     /** Uses the info level to log a message to the system log */
-    info(message: string, parm1: Object, parm2: Object, parm3: Object, parm4: Object, parm5: Object): void;
+    info(message: string, parm1: object, parm2: object, parm3: object, parm4: object, parm5: object): void;
     /** Uses the debug level to log a message to the system log */
-    debug(message: string, parm1: Object, parm2: Object, parm3: Object, parm4: Object, parm5: Object): void;
+    debug(message: string, parm1: object, parm2: object, parm3: object, parm4: object, parm5: object): void;
     /** Determines if debugging is active for a specific scope */
     isDebugging(): boolean;
 }
@@ -1091,7 +1091,7 @@ interface RESTMessageV2_proto {
     /** Get the value for an HTTP header specified by the REST client */
     getRequestHeader(headerName: string): string;
     /** Get name and value for all HTTP headers specified by the REST client */
-    getRequestHeaders(): Object;
+    getRequestHeaders(): object;
 }
 /** The RESTResponseV2 API allows you to use the data returned by an outbound REST message in JavaScript code. A RESTResponseV2 object is returned by the RESTMessageV2 functions execute() and executeAsync() */
 interface RESTResponseV2 {
@@ -1106,7 +1106,7 @@ interface RESTResponseV2_proto {
     /** Get the value for a specified header */
     getHeader(name: string): string;
     /** Deprecated -- use getAllHeaders instead */
-    getHeaders(): Object;
+    getHeaders(): object;
     /** Get all headers returned in the REST response and the associated values */
     getAllHeaders(): GlideHTTPHeader[];
     /** Get the content of the REST response body */
@@ -1163,7 +1163,7 @@ interface SOAPMessageV2_proto {
     /** Get the value for an HTTP header specified by the SOAP client */
     getRequestHeader(headerName: string): string;
     /** Get name and value for all HTTP headers specified by the SOAP client */
-    getRequestHeaders(): Object;
+    getRequestHeaders(): object;
     /** Set WS-Security Username token */
     setWSSecurityUsernameToken(username: string, password: string): void;
     /** Set WS-Security X.509 token */
@@ -1182,7 +1182,7 @@ interface SOAPResponseV2_proto {
     /** Get the value for a specified HTTP header */
     getHeader(name: string): string;
     /** Deprecated -- use getAllHeaders instead */
-    getHeaders(): Object;
+    getHeaders(): object;
     /** Get all HTTP headers returned in the SOAP response and the associated values */
     getAllHeaders(): GlideHTTPHeader[];
     /** Get the content of the SOAP response body */
@@ -1231,7 +1231,7 @@ interface RESTAPIRequest_proto {
     /** The entire query string from the request URI */
     queryString: string;
     /** Obtain a set of media types that are common between what the client request accepts and what this service is able to produce */
-    getSupportedResponseContentTypes(): Object;
+    getSupportedResponseContentTypes(): object;
     /** Get the query category (i.e. read replica category) from query parameter 'sysparm_query_category' */
     getRequestedQueryCategory(): string;
 }
@@ -1246,7 +1246,7 @@ interface RESTAPIRequestBody_proto {
     /** The request body as a string -- be careful to consider impact to memory */
     dataString: string;
     /** Returns the next entry from the request body as an object if request is array. If not an array then returns entire request body as an object */
-    nextEntry(): Object;
+    nextEntry(): object;
     /** Return true if request has more entries. Use this in conjunction with nextEntry */
     hasNext(): boolean;
 }
@@ -1282,7 +1282,7 @@ interface RESTAPIResponseStream_proto {
     /** Write a string directly to the response stream. Can be called multiple times. Caller responsible for response format and setting proper Content-Type and status code prior to calling */
     writeString(stringToWrite: string): void;
     /** Write an InputStream directly to the response stream. Can be called multiple times. Caller responsible for response format and setting proper Content-Type and status code prior to calling */
-    writeStream(inputStream: Object): void;
+    writeStream(inputStream: object): void;
 }
 /** Provides access to request input parameters */
 interface WSRequest {
@@ -1391,7 +1391,7 @@ interface TransformPart_proto {
     /** Produces a set of new series by specified condition */
     where(condition: Condition): TransformPart;
     /** Populates missing (NaN) values with two-point linear regression using the specified tolerance for maximum range of missing data */
-    interpolate(countOrDuration: Object): TransformPart;
+    interpolate(countOrDuration: object): TransformPart;
     /** Produces a set of series with the top 'count' (specified) largest values at each timestamp */
     top(count: number): TransformPart;
     /** Produces a set of series with the bottom 'count' (specified) smallest values at each timestamp */
@@ -1407,7 +1407,7 @@ interface TransformPart_proto {
     /** Produces a new series with the values filtered (AVG, MAX, MIN or LAST) by sliding windows */
     filter(_aggregator: string, _window: string): TransformPart;
     /** Fits the series to the specified model using the specified parameters */
-    fit(_params: Object): TransformPart;
+    fit(_params: object): TransformPart;
     /** Produces a new series with the values filtered (AVG, MAX, MIN or LAST) by non-overlapping windows */
     partition(_aggregator: string, _window: string, _base: string): TransformPart;
     /** Produces a set of series where each is one of the specified percentiles of all of the data */
@@ -1474,7 +1474,7 @@ interface Client_proto {
     /** Uses the specified DataBuilder to put data into MetricBase */
     put(dataBuilder: DataBuilder): void;
     /** Performs the specified transform(s) over the specified range */
-    transform(o1: Object, o2: GlideDateTime, o3: GlideDateTime): Object;
+    transform(o1: object, o2: GlideDateTime, o3: GlideDateTime): object;
 }
 /** Builds data to put into MetricBase */
 interface DataBuilder {

@@ -52,17 +52,17 @@ export class RequestHandler implements IRequestHandler{
         return await this._authHandler.getCookies().getCookies(ExtensionConfiguration.instance.getServiceNowInstanceURL());
     }
 
-    public async getCookieString():Promise<String>{
+    public async getCookieString():Promise<string>{
         return await this._authHandler.getCookies().getCookieString(ExtensionConfiguration.instance.getServiceNowInstanceURL());
     }
 
-    public setRequestToken(token:String){
+    public setRequestToken(token:string){
         this._defaultHeaders["X-Usertoken"]  = token as AxiosHeaderValue;
     }
 
     public async request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>{
 
-        for(var prop in this._defaultHeaders){
+        for(const prop in this._defaultHeaders){
             if(typeof this._defaultHeaders[prop] !='undefined' && this._defaultHeaders[prop])
                 config.headers[prop] = this._defaultHeaders[prop];
         }
@@ -73,7 +73,7 @@ export class RequestHandler implements IRequestHandler{
 
     public async post<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
 
-        let {config, url} = await this.getRequestConfig(request);
+        const {config, url} = await this.getRequestConfig(request);
         this._logger.debug("Retrieved Configuration", {config:config, url:url});
         let response:IHttpResponse<T> = null;
        try{
@@ -81,7 +81,7 @@ export class RequestHandler implements IRequestHandler{
          this._logger.debug("Http  POST Response Received", response);
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -101,7 +101,7 @@ export class RequestHandler implements IRequestHandler{
 
     public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
 
-        let {config, url} = await this.getRequestConfig(request);
+        const {config, url} = await this.getRequestConfig(request);
         this._logger.debug("Retrieved Configuration", {config:config, url:url});
         let response:IHttpResponse<T> = null;
        try{
@@ -109,7 +109,7 @@ export class RequestHandler implements IRequestHandler{
             this._logger.debug("Http PUT Response Received", response);
             try{
                 if(!((response.data) instanceof String) ){
-                    let rpObj: T | null = response.data as T;
+                    const rpObj: T | null = response.data as T;
                     response.bodyObject = response.data;
                 }
             }catch(ex){
@@ -130,7 +130,7 @@ export class RequestHandler implements IRequestHandler{
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
         this._logger.debug("get", request);
 
-        let {config, url} =  await this.getRequestConfig(request);
+        const {config, url} =  await this.getRequestConfig(request);
 
         this._logger.debug("Retrieved Configuration", {config:config, url:url});
         let response:IHttpResponse<T> = null;
@@ -140,7 +140,7 @@ export class RequestHandler implements IRequestHandler{
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -157,14 +157,14 @@ export class RequestHandler implements IRequestHandler{
 
     public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
 
-        let {config, url} = await this.getRequestConfig(request);
+        const {config, url} = await this.getRequestConfig(request);
             
        try{
         const response: IHttpResponse<T> = await this.httpClient.delete(url , config);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data as T;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -190,13 +190,13 @@ export class RequestHandler implements IRequestHandler{
         let url:string = request.path;
        
         if(request.headers != null){
-            for(let prop in request.headers){
+            for(const prop in request.headers){
                 config.headers[prop] = request.headers[prop];
             }
         }
         config.headers["Cookie"] = await this.getCookieString();
         if(request.query != null){
-            let strQuery = this.getQueryString(request.query);
+            const strQuery = this.getQueryString(request.query);
             if(url.indexOf("?") == -1){
                 url += "?" + strQuery;
             }else{
@@ -212,7 +212,7 @@ export class RequestHandler implements IRequestHandler{
         const params = new URLSearchParams();
       
       
-        for(var prop in queryObj){
+        for(const prop in queryObj){
             params.set(prop, queryObj[prop]);
         }
 

@@ -8,20 +8,20 @@ import JSON5 from 'json5';
 import { NowConfigProvider } from '../../../src/conf/NowConfigProvider';
 import path from 'path';
 
-let jsConfig:any = {
+const jsConfig:any = {
     'fs':{
         rootDir:"./tmp",
         scriptSrc:"src/script"
     },
     logLevel: "debug"
 };
-let json:string = JSON5.stringify(jsConfig);
+const json:string = JSON5.stringify(jsConfig);
 
 
 
 describe('Project', () => {
-    let rootDir:string = "";
-    let scriptDir:string = "";
+    let rootDir = "";
+    let scriptDir = "";
 
 
     beforeEach(async () => {
@@ -35,13 +35,13 @@ describe('Project', () => {
      
     describe('should generate default project structure', () => {
         it('can create project structure', async () => {
-            let p:Project = new Project(
+            const p:Project = new Project(
                 AppConfig.instance.rootDirectory, 
                 AppConfig.instance.scriptSourceDirectory, 
                 AppConfig.instance.testDirectory, 
                 AppConfig.instance.atfTestDirectory);
             await p.generateProjectStructure();
-            let configDataPath:string = path.join(AppConfig.instance.rootDirectory, AppConfig.instance.configDataPath);
+            const configDataPath:string = path.join(AppConfig.instance.rootDirectory, AppConfig.instance.configDataPath);
             expect(FileUtil.isDirectorySync(jsConfig.fs.rootDir)).toBe(true);
             expect(FileUtil.isDirectorySync(path.join(AppConfig.instance.rootDirectory,AppConfig.instance.scriptSourceDirectory))).toBe(true);
             expect(FileUtil.isDirectorySync(path.join(AppConfig.instance.rootDirectory,AppConfig.instance.testDirectory))).toBe(true);

@@ -8,9 +8,9 @@ export interface IAuthenticationHandler{
 
     getRequestHandler():IRequestHandler;
 
-    isLoggedIn():Boolean;
+    isLoggedIn():boolean;
 
-    setLoggedIn(loggedIn:Boolean);
+    setLoggedIn(loggedIn:boolean);
 
     getToken():string;
 

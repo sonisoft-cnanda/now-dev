@@ -5,15 +5,15 @@ const { format, transports } = winston;
 
 export class Logger{
 
-	static errorFilter = winston.format((info, opts) => {
+	static errorFilter = winston.format((info) => {
 		return info.level === "error" ? info : false;
 	  });
 
-	  static infoFilter = winston.format((info, opts) => {
+	  static infoFilter = winston.format((info) => {
 		return info.level === "info" ? info : false;
 	  });
 
-	  static  debugFilter = winston.format((info, opts) => {
+	  static  debugFilter = winston.format((info) => {
 		return info.level === "debug" ? info : false;
 	  });
 
@@ -79,35 +79,35 @@ export class Logger{
         return new Logger(labelName);
     }
 
-	public debug(message:string, metadata?:any):void {
+	public debug(message:string, metadata?:unknown):void {
 		this._localLogger.debug(message, metadata);
 	}
 
-    public info ( message:string, metadata?:any) :void{
+    public info ( message:string, metadata?:unknown) :void{
 		this._localLogger.info(message, metadata);
 	}
 
-	public error ( message:string, metadata?:any) :void{
+	public error ( message:string, metadata?:unknown) :void{
 		this._localLogger.error(message, metadata);
 	}
 
-	public warn ( message:string, metadata?:any) :void{
+	public warn ( message:string, metadata?:unknown) :void{
 		this._localLogger.warn(message, metadata);
 	}
 
-	public addInfoMessage ( message:string, metadata?:any) :void{
+	public addInfoMessage ( message:string, metadata?:unknown) :void{
 		this._localLogger.info(message, metadata);
 	}
 
-	public addErrorMessage ( message:string, metadata?:any) :void{
+	public addErrorMessage ( message:string, metadata?:unknown) :void{
 		this._localLogger.error(message, metadata);
 	}
 
-	public addWarnMessage ( message:string, metadata?:any) :void{
+	public addWarnMessage ( message:string, metadata?:unknown) :void{
 		this._localLogger.warn(message, metadata);
 	}
 
-  public successful(message:string, metadata?:any){
+  public successful(message:string, metadata?:unknown){
     this._localLogger.info(message, metadata);
   }
 

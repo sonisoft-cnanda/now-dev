@@ -10,7 +10,7 @@ describe('FunctionQueue', () => {
 	});
 
 	it('test bad ctor argument', () => {
-		let funQueue = new FunctionQueue(0);
+		const funQueue = new FunctionQueue(0);
 		expect(funQueue.getSize()).toBe(0);
 		expect(funQueue.getCapacity()).toBe(1);
 	});
@@ -68,7 +68,7 @@ describe('FunctionQueue', () => {
 	it('test singular forms near boundaries', () => {
 		const queueCapacity = 4;
 		const funQueue = new FunctionQueue(queueCapacity);
-		let inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
+		const inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
 		let idx;
 		for (idx = 0; idx < queueCapacity; ++idx)
 			expect(funQueue.enqueue(inputItems[idx])).toBe(true);
@@ -85,7 +85,7 @@ describe('FunctionQueue', () => {
 	it('test multiple forms near boundaries', () => {
 		const queueCapacity = 4;
 		const funQueue = new FunctionQueue(queueCapacity);
-		let inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
+		const inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
 		expect(funQueue.enqueueMultiple(inputItems)).toBe(false);
 		while (queueCapacity < inputItems.length)
 			inputItems.pop();

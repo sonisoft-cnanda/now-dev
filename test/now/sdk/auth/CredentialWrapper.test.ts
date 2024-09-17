@@ -17,7 +17,7 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
 
     describe('storeCredentials', () => {
         beforeEach(async () => {
-            let generatedAlias:string = generateRandomString(10);
+            const generatedAlias:string = generateRandomString(10);
             if(generatedAlias){
                 aliasList.push(generatedAlias);
             }
@@ -26,15 +26,15 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
     
 
         it('should get credential from credential store by alias', async () => {
-            let generatedAlias:string = aliasList[aliasList.length-1];
+            const generatedAlias:string = aliasList[aliasList.length-1];
            if(!generatedAlias)
             throw new Error("Alias cannot be null for test.");
 
-           let wrapper:CredentialWrapper = new CredentialWrapper();
+           const wrapper:CredentialWrapper = new CredentialWrapper();
         
            //Note: Invalid credentials will cause the credential to not be added
            await wrapper.storeCredentials(generatedAlias, false, "https://ven01280.service-now.com", "chris.nanda", "D$adP00l$G$$k0ut");
-           let credential:Creds = await wrapper.getStoredCredentialsByAlias(generatedAlias);
+           const credential:Creds = await wrapper.getStoredCredentialsByAlias(generatedAlias);
 
            expect(credential).not.toBeNull();
            
@@ -45,8 +45,8 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
             let generatedAlias:string | undefined;
             while((generatedAlias= aliasList.pop()) != undefined){
                 if(generatedAlias){
-                    let wrapper:CredentialWrapper = new CredentialWrapper();
-                    let credential:Creds = await wrapper.getStoredCredentialsByAlias(generatedAlias);
+                    const wrapper:CredentialWrapper = new CredentialWrapper();
+                    const credential:Creds = await wrapper.getStoredCredentialsByAlias(generatedAlias);
                     if(credential){
                         await wrapper.removeCredentials(generatedAlias);
                     }
@@ -61,9 +61,9 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
        
 
         it('should get credential from credential store by alias', async () => {
-           let wrapper:CredentialWrapper = new CredentialWrapper();
+           const wrapper:CredentialWrapper = new CredentialWrapper();
         
-           let credential:Creds = await wrapper.getStoredCredentialsByAlias("fluent-default");
+           const credential:Creds = await wrapper.getStoredCredentialsByAlias("fluent-default");
 
            expect(credential).not.toBeNull();
            
@@ -76,9 +76,9 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
        
 
         it('should get credential from credential store by alias', async () => {
-           let wrapper:CredentialWrapper = new CredentialWrapper();
+           const wrapper:CredentialWrapper = new CredentialWrapper();
         
-           let credential:Creds = await wrapper.getStoredCredentialsByAlias("fluent-default");
+           const credential:Creds = await wrapper.getStoredCredentialsByAlias("fluent-default");
 
            expect(credential).not.toBeNull();
            

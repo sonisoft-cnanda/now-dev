@@ -14,7 +14,7 @@ import {TokenManagementExtension} from "./TokenManagementExtension.js";
 import { AMBConstants } from "./AMBConstants.js";
 import { Logger } from"../util/Logger.js";
 
-export type SubscriptionConfig = {
+export interface SubscriptionConfig {
 	subscriptionCallback?:Function;
 	serializedGraphQLSubscription?:any;
 	subscribeOptionsCallback?:Function;

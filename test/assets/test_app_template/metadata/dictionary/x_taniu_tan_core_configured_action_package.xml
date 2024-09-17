@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="update_synch=true" audit="true" db_object_id="de114d63dbb99110acc1ef92ca961963" extends="sys_metadata" label="Configured Action" max_length="40" name="x_taniu_tan_core_configured_action_package" type="collection">
+        <element label="Description" max_length="2000" name="description" type="string"/>
+        <element display="true" label="Name" mandatory="true" max_length="254" name="name" type="string" unique="true"/>
+        <element attributes="readonly_clickthrough=true" label="Action package" mandatory="true" max_length="32" name="action_package" reference="x_taniu_tan_core_tanium_package" reference_cascade_rule="clear" type="reference"/>
+        <element label="Comments" max_length="4000" name="comments" type="journal"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" default="x_taniu_tan_core.configured_action_read" label="Requires role" max_length="255" name="requires_role" type="user_roles"/>
+        <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <index name="index">
+            <element name="action_package"/>
+        </index>
+        <index name="index2" unique="true">
+            <element name="name"/>
+        </index>
+    </element>
+</database>

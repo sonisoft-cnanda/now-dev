@@ -45,8 +45,8 @@ export class BackgroundScriptExecutor {
        
         try {
 
-           let gck:string =  await this.getBackgroundScriptCSRFToken();
-           let fd:FormData = new FormData();
+           const gck:string =  await this.getBackgroundScriptCSRFToken();
+           const fd:FormData = new FormData();
            fd.append("script", script);
            fd.append("sysparm_ck", gck);
            fd.append("runscript",  "Run script");
@@ -54,7 +54,7 @@ export class BackgroundScriptExecutor {
            fd.append("record_for_rollback", "off");
            fd.append("quota_managed_transaction", "off");
         
-            let params:URLSearchParams = new URLSearchParams(fd as any);
+            const params:URLSearchParams = new URLSearchParams(fd as any);
             const request: HTTPRequest = {
                 path: BG_SCRIPT_ENDPOINT,
                 headers: {"Content-Type":"application/x-www-form-urlencoded"},
@@ -76,7 +76,7 @@ export class BackgroundScriptExecutor {
 
     public async parseScriptResult(responseXML: string) {
         const parser = new XMLParser();
-        let jObj = parser.parse(responseXML);
+        const jObj = parser.parse(responseXML);
         // const parser = new XMLParser({
         //     explicitArray: false,
         //     ignoreAttrs: true,
@@ -92,7 +92,7 @@ export class BackgroundScriptExecutor {
         //     })
 
 
-        let scriptResult:any = {
+        const scriptResult:any = {
             raw: responseXML,
             result: this._parseBGScriptResult(jObj),
             affectedRecords: this._parseAffectedRecords(jObj)
@@ -113,13 +113,13 @@ export class BackgroundScriptExecutor {
             body: null
         };
         const response: IHttpResponse<string> = await this.snRequest.get<string>(request);
-        let isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
+        const isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
         if(response.status == 200 && isLoggedIn && !isNil(response.data)){
             
-            const e =  response.data as String;
-            let t = "<input name=\"sysparm_ck\" type=\"hidden\" value=\"";
+            const e =  response.data as string;
+            const t = "<input name=\"sysparm_ck\" type=\"hidden\" value=\"";
            
-            let n = e.substring(e.indexOf(t));
+            const n = e.substring(e.indexOf(t));
             csrfToken =  n.substring(0, n.indexOf("\">")).replace(t, "");
             this._logger.debug("CSRF Token Received: " + csrfToken, {csrfToken:csrfToken});
         }else{

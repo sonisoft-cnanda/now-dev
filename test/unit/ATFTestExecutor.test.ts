@@ -14,8 +14,8 @@ describe('ATFTestExecutor', () => {
        
 
         xit('defined test', async () => {
-            let testExec:ATFTestExecutor = new ATFTestExecutor();
-           let resp:TestResult =  await testExec.executeTest('817a3214835b4210a9f8aec0deaad3f4');
+            const testExec:ATFTestExecutor = new ATFTestExecutor();
+           const resp:TestResult =  await testExec.executeTest('817a3214835b4210a9f8aec0deaad3f4');
            
            expect(resp).not.toBeNull();
             expect(resp.status).toBe("success");

@@ -28,7 +28,7 @@ describe('ChannelRedirect', () => {
 		mockChannel = mock(Channel);
 		//mockChannel.getClientId.mockReturnValue('cometDClientId');
 		mockChannel.getChannelListeners.mockImplementation(() => {
-			let arr:any = [
+			const arr:any = [
 				 mockChannelListener, mockChannelListener
 			];
 			return arr; //[new ChannelListener(null, null, null)];
@@ -45,7 +45,7 @@ describe('ChannelRedirect', () => {
 	});
 
 	function getMockChannelListener(){
-		let mockL:any = mock(ChannelListener);
+		const mockL:any = mock(ChannelListener);
 		mockL.setNewChannel.mockImplementation((newChannel) => {});
 		mockL.subscribe.mockImplementation(() => {
 
@@ -55,7 +55,7 @@ describe('ChannelRedirect', () => {
 	}
 
 	function getMockServerConnection(){
-		let mockSrvConn = mock(ServerConnection);
+		const mockSrvConn = mock(ServerConnection);
 
 	 	
 		mockSrvConn.getChannel.mockImplementation((channelName) => {
@@ -74,7 +74,7 @@ describe('ChannelRedirect', () => {
 	}
 
 	function getMockChannel(channelName){
-		let channelMock = mock(Channel);
+		const channelMock = mock(Channel);
 		channelMock.getName.mockReturnValue(channelName);
 
 
@@ -115,13 +115,13 @@ describe('ChannelRedirect', () => {
 		
 		it('initializes again if new redirect channel', () => {
 			let clientID = "firstClientId";
-			let firstClientChannelName = "/sn/meta/channel_redirect/firstClientId";
-			let secondClientChannelName = "/sn/meta/channel_redirect/secondClientId";
+			const firstClientChannelName = "/sn/meta/channel_redirect/firstClientId";
+			const secondClientChannelName = "/sn/meta/channel_redirect/secondClientId";
 
 			const firstChannel = getMockChannel(firstClientChannelName);
 			const secondChannel =  getMockChannel(secondClientChannelName); 
 
-			let mockCometDWithDifferentClientIDs = mock(CometD);
+			const mockCometDWithDifferentClientIDs = mock(CometD);
 			mockCometDWithDifferentClientIDs.getClientId.mockImplementation(() => {
 				return clientID;
 			})
@@ -148,7 +148,7 @@ describe('ChannelRedirect', () => {
 		it('triggers channel redirect event', () => {
 			let channelResult:any = null;
 			mockServerConnection = getMockServerConnection();
-			let mockListener = getMockChannelListener();
+			const mockListener = getMockChannelListener();
 			mockListener.setNewChannel.mockImplementation((channel) => {
 				channelResult = channel;
 			});

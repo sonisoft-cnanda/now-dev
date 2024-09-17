@@ -6,12 +6,12 @@ import { AMBClient } from "./AMBClient.js";
 
 "use strict";
 
-export type SubscriptionCollection = {
+export interface SubscriptionCollection {
 	add:Function;
 	remove:Function;
 }
 
-export type Context = {
+export interface Context {
 	onUnload:Function,
 	unloading:boolean,
 	subscriptions:any[]

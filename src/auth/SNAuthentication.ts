@@ -9,9 +9,9 @@ import { HttpResponse } from "../comm/http/HttpResponse";
 export class SNAuthentication{
     static #instance: SNAuthentication;
     _requestHandler:HTTPRequestHandler;
-    private _gck:string = "";
+    private _gck = "";
     private _cookies:any = [];
-    private _isLoggedIn:Boolean = false;
+    private _isLoggedIn = false;
 
     private constructor(requestHandler:HTTPRequestHandler){
        this._requestHandler = requestHandler;
@@ -34,13 +34,13 @@ export class SNAuthentication{
 
     public async doLogin(username:string, password:string){
       
-        let data = qs.stringify({
+        const data = qs.stringify({
             'user_name': username,
             'sys_action': 'sysverb_login',
             'user_password': password 
             });
 
-        let request:HTTPRequest = { path: "/login.do", 
+        const request:HTTPRequest = { path: "/login.do", 
                                     headers: {"Content-Type":"application/x-www-form-urlencoded", "Host":ExtensionConfiguration.instance.getServiceNowHost(),  'Accept':'*/*'}, 
                                     query: null, 
                                     body:data};
@@ -48,11 +48,11 @@ export class SNAuthentication{
         try{
             //Since we are re-logging in, clear the cookies in the request handler.  It will fill it's cookies and we will add the additional cookies needed.
             this._requestHandler.clearCookies();
-           let response: HttpResponse<unknown> =  await this._requestHandler.post(request);
+           const response: HttpResponse<unknown> =  await this._requestHandler.post(request);
            if(response.status == 200){
                 if(response.headers["x-is-logged-in"] && response.headers["x-is-logged-in"] === "true"){
                     this._isLoggedIn = true;
-                    let gck:string = this.parseToken(response.data);
+                    const gck:string = this.parseToken(response.data);
                     this._gck = gck;
                     this._cookies = response.headers["set-cookie"];
                     this._requestHandler.setCookies(this._cookies);
@@ -68,11 +68,11 @@ export class SNAuthentication{
         return this._requestHandler;
     }
 
-    public isLoggedIn():Boolean{
+    public isLoggedIn():boolean{
         return this._isLoggedIn;
     }
 
-    public setLoggedIn(loggedIn:Boolean){
+    public setLoggedIn(loggedIn:boolean){
         this._isLoggedIn = loggedIn;
     }
 

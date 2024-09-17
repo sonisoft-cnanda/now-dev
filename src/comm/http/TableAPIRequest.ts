@@ -11,18 +11,18 @@ export class TableAPIRequest{
         "Accept": "application/json"
     };
 
-    private _apiBase:string = "/api/now/table/{table_name}";
+    private _apiBase = "/api/now/table/{table_name}";
 
     public async get<T>(tableName:string, query:object): Promise<HttpResponse<T>>{
        
-        let uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
+        const uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "get", query, null);
     }
 
     public async post<T>(tableName:string, query:object, body:object): Promise<HttpResponse<T>>{
        
-        let uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
+        const uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "post", query, body);
     }
@@ -31,9 +31,9 @@ export class TableAPIRequest{
         let resp:HttpResponse<T> = null;
 
         try{
-            let req:ServiceNowRequest = new ServiceNowRequest();
+            const req:ServiceNowRequest = new ServiceNowRequest();
 
-            let request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body:bodyData};
+            const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body:bodyData};
             resp = await req.executeRequest<T>(request);
         }catch(err){
             console.log(err);
@@ -45,7 +45,7 @@ export class TableAPIRequest{
 
     private replaceVar(strBaseString:string, variables:object):string{
        let strNewString:string = strBaseString;
-        for(let prop in variables){
+        for(const prop in variables){
             strNewString = strNewString.replace("{"+prop+"}", variables[prop]);
         }
 

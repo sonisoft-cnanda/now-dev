@@ -210,7 +210,7 @@ interface GlideAjax_proto {
     /** Makes an asynchronous call to the server. On completion, invokes callback function with response object as an argument */
     getXML(callBackFunction: string): void;
     /** Makes an asynchronous call to the server. On completion, invokes callback function with 'answer' value extracted from response object as an argument */
-    getXMLAnswer(callbackFunction: string, additionalParams: Object, responseParams: Object): void;
+    getXMLAnswer(callbackFunction: string, additionalParams: object, responseParams: object): void;
 }
 /** Constructor to create a new dialog window object in the current window and frame. id is the name of the UI page to load into the dialog window */
 declare const GlideDialogWindow: GlideDialogWindow;

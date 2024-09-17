@@ -5,7 +5,7 @@ import { Logger } from "../util/Logger";
 import { isNil } from "../amb/Helper";
 export class NowConfigProvider implements ConfigProvider{
     
-    public static CONFIG_FILE:string = "./nowdev.config.json";
+    public static CONFIG_FILE = "./nowdev.config.json";
     
     private _json5File:any;
 
@@ -19,7 +19,7 @@ export class NowConfigProvider implements ConfigProvider{
     }
 
     private loadConfigFile(){
-        let strFile:string = fs.readFileSync(NowConfigProvider.CONFIG_FILE, 'utf8');
+        const strFile:string = fs.readFileSync(NowConfigProvider.CONFIG_FILE, 'utf8');
         this._json5File = JSON5.parse(strFile);
 
         this._logger.debug("Loaded Config File", this._json5File);
@@ -48,7 +48,7 @@ export class NowConfigProvider implements ConfigProvider{
     has(key: string): boolean {
        
         try{
-            let val:string = this.get(key);
+            const val:string = this.get(key);
             if(!isNil(val)){
                 return true;
             }
