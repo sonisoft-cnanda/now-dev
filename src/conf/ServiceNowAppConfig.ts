@@ -1,8 +1,7 @@
 
-import { key, optional, asNumber, loadConfiguration, ConfigProvider, split, map } from 'typed-config';
-import { NowConfigProvider } from './NowConfigProvider';
+import { key, optional,  loadConfiguration, ConfigProvider, split, map } from 'typed-config';
 import { ServiceNowAppConfigProvider } from './ServiceNowAppConfigProvider';
-import { trim } from 'typed-config/dist/src/transforms';
+import { trim } from 'typed-config/dist/src/transforms.js';
 
 export class ServiceNowAppConfig {
 
