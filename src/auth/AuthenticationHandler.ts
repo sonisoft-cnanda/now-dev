@@ -1,10 +1,10 @@
 import { UISession } from "@servicenow/sdk-cli-core";
-import { IAuthenticationHandler } from "./IAuthenticationHandler";
+import { IAuthenticationHandler } from "./IAuthenticationHandler.js";
 import { Creds, login } from "@servicenow/sdk-cli-core";
 import { Logger } from '../util/Logger.js';
-import { IRequestHandler } from "../comm/http/IRequestHandler";
+import { IRequestHandler } from "../comm/http/IRequestHandler.js";
 
-import { ICookieStore } from "../comm/http/ICookieStore";
+import { ICookieStore } from "../comm/http/ICookieStore.js";
 
 
 
@@ -13,10 +13,10 @@ export class AuthenticationHandler implements IAuthenticationHandler{
 
     private _requestHandler:IRequestHandler;
     private _gck = "";
-    private _cookies:any = [];
+    private _cookies:ICookieStore;
     private _isLoggedIn = false;
 
-    private _logger:any;
+    private _logger:Logger;
 
     public constructor(){
         this._logger = new Logger("SNAuthWrapper");
@@ -43,7 +43,7 @@ export class AuthenticationHandler implements IAuthenticationHandler{
     }
 
     public async doLogin(host:string, username:string, password:string){
-        this.login(host, username, password);
+        await this.login(host, username, password);
       
     }
 

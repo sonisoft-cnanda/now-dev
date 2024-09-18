@@ -1,5 +1,5 @@
-import { ICookieStore } from "../comm/http/ICookieStore";
-import { IRequestHandler } from "../comm/http/IRequestHandler";
+import { ICookieStore } from "../comm/http/ICookieStore.js";
+import { IRequestHandler } from "../comm/http/IRequestHandler.js";
 
 
 export interface IAuthenticationHandler{
