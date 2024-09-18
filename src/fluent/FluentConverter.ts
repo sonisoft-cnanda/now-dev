@@ -145,7 +145,7 @@ export class FluentConverter{
         this.logger = new Logger("FluentConverter");
         this._applicationRootDirectory = appRootDirectory;
         this._xmlImportDirectory = xmlImportDirectory;
-        if(metadataBackupDirectory){
+        if(!NowStringUtil.isStringEmpty(metadataBackupDirectory )){
             this.metadataBackupDirectory = metadataBackupDirectory;
             this.backupMetadata = true;
         }
@@ -396,10 +396,12 @@ export class FluentConverter{
         const changedFiles:SourceFile[] = context.compiler.getSourceFiles().filter((s) => {
             return (
                 !s.isSaved() &&
-                s.getFilePath() !== Keys.getKeysFilePath(context) &&
-                !context.compiler.isDerivedSourceFile(s.getFilePath())
+                path.normalize(s.getFilePath()) !== Keys.getKeysFilePath(context) &&
+                !context.compiler.isDerivedSourceFile(path.normalize(s.getFilePath())) &&
+                !context.compiler.isGeneratedTableFile(path.normalize(s.getFilePath()))
             )
-        });
+        })
+    
         this._logger.debug("Changed FIles: ", {changedFiles:changedFiles, context:context, options:options});
         await Promise.all(
             changedFiles.map(async (sourceFile: SourceFile) => {
