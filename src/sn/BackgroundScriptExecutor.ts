@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { ServiceNowInstance } from "./ServiceNowInstance";
 
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 //import { XMLParser } from "../utils";
-import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import { Logger } from "../util/Logger";
 import { isNil } from "../amb/Helper";
 import { HTTPRequest } from "../comm/http/HTTPRequest";
@@ -17,20 +19,13 @@ export class BackgroundScriptExecutor {
 
     _logger:Logger = new Logger("BackgroundScriptExecutor");
 
-    public constructor({ instance, scope }: BackgroundScriptExecutorOptions = {}) {
-        if (instance && instance instanceof ServiceNowInstance) {
+    public constructor( instance:ServiceNowInstance, scope:string  ) {
+       
             this.instance = instance;
-        }
-        if (typeof scope == "string") {
             this.scope = scope;
-        }
     }
 
-    public async executeScript({
-        script,
-        scope = this.scope,
-        instance = this.instance
-    }: { script: string, scope: string, instance: ServiceNowInstance }): Promise<any> {
+    public async executeScript(script: string, scope: string = this.scope, instance:ServiceNowInstance = this.instance): Promise<BackgroundScriptExecutionResult> {
         if (!instance || !(instance instanceof ServiceNowInstance)) {
             throw new Error("instance must be a ServiceNowInstance");
         }
@@ -40,7 +35,6 @@ export class BackgroundScriptExecutor {
         if (!script || typeof script != "string") {
             throw new Error("script must be a string");
         }
-        const endpoint = "/sys.scripts.do";
 
        
         try {
@@ -54,7 +48,10 @@ export class BackgroundScriptExecutor {
            fd.append("record_for_rollback", "off");
            fd.append("quota_managed_transaction", "off");
         
-            const params:URLSearchParams = new URLSearchParams(fd as any);
+
+           
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            const params:URLSearchParams = new URLSearchParams(fd as any );
             const request: HTTPRequest = {
                 path: BG_SCRIPT_ENDPOINT,
                 headers: {"Content-Type":"application/x-www-form-urlencoded"},
@@ -64,24 +61,32 @@ export class BackgroundScriptExecutor {
             this._logger.debug("Execute Background Script Request.", {request:request, formData:fd})
             const response: IHttpResponse<string> = await this.snRequest.post<string>(request);
             if (response.status == 200) {
-                const resultObj = await this.parseScriptResult(response?.data);
-                return resultObj?.result;
+                const bodyXml:string = response?.data as string;
+                if(bodyXml){
+                    const resultObj:BackgroundScriptExecutionResult = this.parseScriptResult(bodyXml);
+                    return resultObj;
+                }else{
+                    throw new Error("Body not XML String");
+                }
+               
             } else {
                 throw new Error(`Script Execution Request resulted in ${response.status}`);
             }
         } catch (error) {
-            throw new Error(`Error executing script: ${error.message}`);
+            const err:Error = error as Error;
+            throw new Error(`Error executing script: ${err.message}`);
         }
     }
 
-    public async parseScriptResult(responseXML: string) {
+    public parseScriptResult(responseXML: string) : BackgroundScriptExecutionResult {
         const parser = new XMLParser();
-        const jObj = parser.parse(responseXML);
+        const strippedResponseXML:string = responseXML.replace(/^\[[0-9:.]+\]/g, "");
+        const jObj:ScriptExecutionXMLResult = parser.parse(strippedResponseXML) as ScriptExecutionXMLResult;
         // const parser = new XMLParser({
         //     explicitArray: false,
         //     ignoreAttrs: true,
         // });
-         const strippedResponseXML = responseXML.replace(/^\[[0-9:.]+\]/g, "");
+         
         // return await parser.parseStringPromise(strippedResponseXML)
         //     .then((result) => {
         //         return {
@@ -92,9 +97,10 @@ export class BackgroundScriptExecutor {
         //     })
 
 
-        const scriptResult:any = {
+        const scriptResult:BackgroundScriptExecutionResult = {
             raw: responseXML,
             result: this._parseBGScriptResult(jObj),
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             affectedRecords: this._parseAffectedRecords(jObj)
         };
 
@@ -130,16 +136,34 @@ export class BackgroundScriptExecutor {
         return csrfToken;
       }
 
-    private _parseBGScriptResult(parsedXMLObj: any) {
+    private _parseBGScriptResult(parsedXMLObj: ScriptExecutionXMLResult) : string {
         this._logger.debug("_parseBGScriptResult enter", parsedXMLObj);
-        let result:string = parsedXMLObj.HTML.BODY.PRE["#text"];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        let result:string = parsedXMLObj.HTML.BODY.PRE["#text"] as string;
         result =  result.replace("<BR/>", "\n")
         return result?.replace("*** Script: ", "").trim()
     }
-    private _parseAffectedRecords(parsedXMLObj: any) {
+    private _parseAffectedRecords(parsedXMLObj: ScriptExecutionXMLResult) {
         return parsedXMLObj?.HTML?.BODY?.div
     }
 }
+
+interface ScriptExecutionXMLResult{
+    HTML:{
+        BODY: {
+            PRE: {
+                "#text";
+            },
+            div:string;
+        }
+    }
+}
+
+export type BackgroundScriptExecutionResult = {
+    raw: string;
+    result: string;
+    affectedRecords: string;
+};
 
 export interface BackgroundScriptExecutorOptions {
     instance?: ServiceNowInstance;
