@@ -1,13 +1,12 @@
+import * as fs from 'fs-extra';
 
-const fs = require('fs');
-const getDirName = require('path').dirname;
-const nodePath = require('path');
 
 export class ATFFileHandler{
 
-    getFileAsJson(path: string) {
+    getFileAsJson(path: string) : unknown {
         try {
-            return JSON.parse(fs.readFileSync(path)) || {};
+            
+            return fs.readJSONSync(path) || {};
         }
         catch(ex){
             console.log(ex);
