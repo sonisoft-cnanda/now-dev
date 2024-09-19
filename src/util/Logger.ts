@@ -43,17 +43,9 @@ export class Logger{
                 metadata({ fillExcept: ["message", "level", "timestamp", "label"] })
             ),
             transports: [
-              new transports.Console({
-              
-                format: format.combine(
-                    format.json()
-                  )
-              }),
               new transports.File({
                 filename: "logs/combined.log",
-                format: format.combine(
-                    format.json()
-                  )
+                format: format.combine(timestamp(),format.json())
               }),
               new transports.File({
                 filename: "logs/app-error.log",
