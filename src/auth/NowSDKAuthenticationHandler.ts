@@ -16,7 +16,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
 
     private _session:IUserSession;
 
-    private _logger:any;
+    private _logger:Logger;
 
     public constructor(){
         this._logger = new Logger("NowSDKAuthenticationHandler");

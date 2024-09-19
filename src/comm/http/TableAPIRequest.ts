@@ -1,5 +1,6 @@
 
 
+import { IServiceNowInstance } from "../../sn/IServiceNowInstance";
 import { HTTPRequest } from "./HTTPRequest";
 import { HttpResponse } from "./HttpResponse";
 import { ServiceNowRequest } from "./ServiceNowRequest";
@@ -12,6 +13,18 @@ export class TableAPIRequest{
     };
 
     private _apiBase = "/api/now/table/{table_name}";
+
+    private _snInstance: IServiceNowInstance;
+    public get snInstance(): IServiceNowInstance {
+        return this._snInstance;
+    }
+    public set snInstance(value: IServiceNowInstance) {
+        this._snInstance = value;
+    }
+
+    public constructor(instance:IServiceNowInstance){
+        this.snInstance = instance;
+    }
 
     public async get<T>(tableName:string, query:object): Promise<HttpResponse<T>>{
        
@@ -31,7 +44,7 @@ export class TableAPIRequest{
         let resp:HttpResponse<T> = null;
 
         try{
-            const req:ServiceNowRequest = new ServiceNowRequest();
+            const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance);
 
             const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body:bodyData};
             resp = await req.executeRequest<T>(request);
@@ -46,7 +59,7 @@ export class TableAPIRequest{
     private replaceVar(strBaseString:string, variables:object):string{
        let strNewString:string = strBaseString;
         for(const prop in variables){
-            strNewString = strNewString.replace("{"+prop+"}", variables[prop]);
+            strNewString = strNewString.replace("{"+prop+"}", variables[prop] as string);
         }
 
         return strNewString;

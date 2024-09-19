@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders, AxiosHeaderValue } from 'axios';
-import { ExtensionConfiguration } from '../../conf/ExtensionConfiguration';
+
 import { HTTPRequest } from './HTTPRequest';
 import { IHttpResponse } from './IHttpResponse';
 import { IRequestHandler } from './IRequestHandler';
 import { Cookie } from 'tough-cookie';
-import { isNil } from '../../amb/Helper';
 import { ICookieStore } from './ICookieStore';
 import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
 import { Logger } from '../../util/Logger';
+import { IServiceNowInstance } from '../../sn/IServiceNowInstance';
+import { isNil } from "../../amb/Helper";
 
 
 axios.defaults.withCredentials = true;
@@ -23,11 +25,20 @@ export class RequestHandler implements IRequestHandler{
     _cookieStore:ICookieStore;
     _authHandler:IAuthenticationHandler;
 
+    private _snInstance: IServiceNowInstance;
+    public get snInstance(): IServiceNowInstance {
+        return this._snInstance;
+    }
+    public set snInstance(value: IServiceNowInstance) {
+        this._snInstance = value;
+    }
+
     /**
      * The Singleton's constructor should always be private to prevent direct
      * construction calls with the `new` operator.
      */
-    public constructor(authHandler:IAuthenticationHandler) {
+    public constructor(snInstance:IServiceNowInstance, authHandler:IAuthenticationHandler) {
+        this.snInstance = snInstance;
         this._defaultHeaders = {} as RawAxiosRequestHeaders;
        this._authHandler = authHandler;
         
@@ -36,7 +47,7 @@ export class RequestHandler implements IRequestHandler{
         //todo: Updated with settings config
         this.httpClient = axios.create({
             withCredentials: true,
-            baseURL: ExtensionConfiguration.instance.getServiceNowInstanceURL(),
+            baseURL: this.snInstance.getHost(),
           });
 
         this.httpClient.defaults.maxRedirects = 0;
@@ -49,11 +60,11 @@ export class RequestHandler implements IRequestHandler{
 
     //FIXME: This should pull a more variable instance url
     public async getCookies() : Promise<Cookie[]> {
-        return await this._authHandler.getCookies().getCookies(ExtensionConfiguration.instance.getServiceNowInstanceURL());
+        return await this._authHandler.getCookies().getCookies( this.snInstance.getHost());
     }
 
     public async getCookieString():Promise<string>{
-        return await this._authHandler.getCookies().getCookieString(ExtensionConfiguration.instance.getServiceNowInstanceURL());
+        return await this._authHandler.getCookies().getCookieString(this.snInstance.getHost());
     }
 
     public setRequestToken(token:string){
@@ -77,22 +88,22 @@ export class RequestHandler implements IRequestHandler{
         this._logger.debug("Retrieved Configuration", {config:config, url:url});
         let response:IHttpResponse<T> = null;
        try{
-         response = await this.httpClient.post(url, request.body , config);
-         this._logger.debug("Http  POST Response Received", response);
-        try{
-            if(!((response.data) instanceof String) ){
-                const rpObj: T | null = response.data as T;
-                response.bodyObject = response.data;
+            response = await this.httpClient.post(url, request.body , config);
+            this._logger.debug("Http  POST Response Received", response);
+            try{
+                if(!((response.data) instanceof String) ){
+                    const rpObj: T | null = response.data as T;
+                    response.bodyObject = rpObj;
+                }
+            }catch(ex){
+                this._logger.error("Error setting response.bodyObject.", {error:ex as Error, response: response, request: request});
             }
-        }catch(ex){
-            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
-        }
-        
-        return response;
+            
+            return response;
        }catch(ex){
-       
-        this._logger.error("Error during POST request.", {error:ex, response: response, request: request});
-        throw new Error(ex);
+            const err:Error = ex as Error;
+            this._logger.error("Error during POST request.", {error:err, response: response, request: request});
+            throw err;
        }
         
 
@@ -110,21 +121,23 @@ export class RequestHandler implements IRequestHandler{
             try{
                 if(!((response.data) instanceof String) ){
                     const rpObj: T | null = response.data as T;
-                    response.bodyObject = response.data;
+                    response.bodyObject = rpObj;
                 }
             }catch(ex){
+                const err:Error = ex as Error;
+                this._logger.error("Error during PUT request.", {err, request});
+                throw err;
                 //console.log(ex);
             }
             
             return response;
        }catch(ex){
-        //log error
-        //console.log(ex);
-        throw new Error(ex);
+            const err:Error = ex as Error;
+            this._logger.error("Error during PUT request.", {err, request});
+            throw err;
        }
         
 
-        return null;
     }
 
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
@@ -141,18 +154,21 @@ export class RequestHandler implements IRequestHandler{
         try{
             if(!((response.data) instanceof String) ){
                 const rpObj: T | null = response.data as T;
-                response.bodyObject = response.data;
+                response.bodyObject = rpObj;
             }
         }catch(ex){
-            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
+            const err:Error = ex as Error;
+            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
+            throw err;
         }
 
         return response;
        }catch(ex){
-            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
+            const err:Error = ex as Error;
+            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
+            throw err;
        }
         
-        return null;
     }
 
     public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
@@ -165,20 +181,22 @@ export class RequestHandler implements IRequestHandler{
         try{
             if(!((response.data) instanceof String) ){
                 const rpObj: T | null = response.data as T;
-                response.bodyObject = response.data;
+                response.bodyObject = rpObj;
             }
         }catch(ex){
-            console.log(ex);
+            const err:Error = ex as Error;
+            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
+            throw err;
         }
 
         return response;
        }catch(ex){
-        //log error
-        console.log(ex);
+            const err:Error = ex as Error;
+            this._logger.error("Error setting response.bodyObject.", {error:err, request: request});
+            throw err;
        }
         
 
-        return null;
     }
 
     private async getRequestConfig(request: HTTPRequest):Promise<{ config: AxiosRequestConfig; url: string; }>{
@@ -191,7 +209,11 @@ export class RequestHandler implements IRequestHandler{
        
         if(request.headers != null){
             for(const prop in request.headers){
-                config.headers[prop] = request.headers[prop];
+                if(!isNil(request.headers[prop])){
+                    const val:string = request.headers[prop] as string;
+                    config.headers[prop] = val;
+                }
+                    
             }
         }
         config.headers["Cookie"] = await this.getCookieString();
@@ -213,7 +235,7 @@ export class RequestHandler implements IRequestHandler{
       
       
         for(const prop in queryObj){
-            params.set(prop, queryObj[prop]);
+            params.set(prop, queryObj[prop] as string);
         }
 
         return params.toString();;

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ServiceNowSettingsInstance } from '../sn/ServiceNowInstance';
 
@@ -41,9 +46,9 @@ export class ExtensionConfiguration{
 
     initSettings(){
         const strRoot = this.getRootTestFolder();
-        if(strRoot == null){
+        // if(strRoot == null){
             
-        }
+        // }
     }
 
     getSettings() : any{
@@ -81,10 +86,10 @@ export class ExtensionConfiguration{
         return null;
     }
 
-    public async addInstanceConfiguration(instance:ServiceNowSettingsInstance){
+    public addInstanceConfiguration(instance:ServiceNowSettingsInstance){
         
         //add instance to settings
-       let instanceSetting:ServiceNowInstanceSettings = await this.getInstances();
+       let instanceSetting:ServiceNowInstanceSettings = this.getInstances();
        if(instanceSetting == null)
         instanceSetting = {} as ServiceNowInstanceSettings;
 
@@ -93,18 +98,18 @@ export class ExtensionConfiguration{
        instance.password = null;
        if(alias != null && typeof instanceSetting[alias] == 'undefined'){
         instanceSetting[alias] = instance;
-        await this.setInstances(instanceSetting);
+        this.setInstances(instanceSetting);
        } 
     }
     
     //FIXME: Fix this
-    public async setInstances(instancesObj:ServiceNowInstanceSettings){
+    public setInstances(instancesObj:ServiceNowInstanceSettings){
         throw new Error("Not Implemented");
         // var wsSettings:vscode.WorkspaceConfiguration = this.getSettings();
         // await wsSettings.update("instances", JSON.stringify(instancesObj), vscode.ConfigurationTarget.Workspace);
     }
 
-    public async getInstances():Promise<ServiceNowInstanceSettings>{
+    public getInstances():ServiceNowInstanceSettings{
         const wsSettings:any = this.getSettings();
         try{
             const json:string = wsSettings.get("instances");

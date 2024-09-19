@@ -1,9 +1,8 @@
 import { AuthenticationHandlerFactory } from "../../auth/AuthenticationHandlerFactory";
 import { IAuthenticationHandler } from "../../auth/IAuthenticationHandler";
-import { ExtensionConfiguration } from "../../conf/ExtensionConfiguration";
+import { IServiceNowInstance } from "../../sn/IServiceNowInstance";
 import { HTTPRequest } from "./HTTPRequest";
 import { HttpResponse } from "./HttpResponse";
-import { ICookieStore } from "./ICookieStore";
 import { IRequestHandler } from "./IRequestHandler";
 import { IUserSession } from "./IUserSession";
 import { RequestHandlerFactory } from "./RequestHandlerFactory";
@@ -11,16 +10,17 @@ import { RequestHandlerFactory } from "./RequestHandlerFactory";
 
 export class ServiceNowRequest{
    
+    _instance:IServiceNowInstance;
     _requestHandler:IRequestHandler;
     auth:IAuthenticationHandler;
 
-    constructor(){
-        const self:ServiceNowRequest = this;
+    _session:IUserSession = null;
 
+    public constructor(instance:IServiceNowInstance){
         this.auth = AuthenticationHandlerFactory.createAuthHandler();
-        this._requestHandler = RequestHandlerFactory.createRequestHandler( this.auth);
+        this._requestHandler = RequestHandlerFactory.createRequestHandler(instance,  this.auth);
 
-        
+        this._instance = instance;
     }
 
     public async executeRequest<T>(request: HTTPRequest) : Promise<HttpResponse<T>>{
@@ -89,10 +89,10 @@ export class ServiceNowRequest{
     private async ensureLoggedIn(){
        //if(!this.isLoggedIn()){
             
-                const session:IUserSession = await this.auth.doLogin(
-                    ExtensionConfiguration.instance.getServiceNowInstanceURL(),
-                    ExtensionConfiguration.instance.getServiceNowUserName(), 
-                    ExtensionConfiguration.instance.getServiceNowPassword()
+                this._session = await this.auth.doLogin(
+                    this._instance.getHost(),
+                    this._instance.getUserName(), 
+                   this._instance.getPassword()
                 );
 
                 if(!this.auth.isLoggedIn()){

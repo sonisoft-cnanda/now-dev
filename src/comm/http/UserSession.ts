@@ -7,7 +7,13 @@ import { isNil } from "../../amb/Helper";
 
 export class UserSession implements IUserSession{
     
-    private _nowSession:UISession;
+    private _nowSession: UISession;
+    public get nowSession(): UISession {
+        return this._nowSession;
+    }
+    public set nowSession(value: UISession) {
+        this._nowSession = value;
+    }
 
 
     public constructor(session:UISession){

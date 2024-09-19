@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 import { FileUtil } from './../../../src/fs/util/FileUtil';
 import { Project } from './../../../src/project/Project';
 import { AppConfig } from './../../../src/conf/AppConfig';
-import fs, { RmDirOptions } from 'fs';
+import fs from 'fs';
 import JSON5 from 'json5';
 import { NowConfigProvider } from '../../../src/conf/NowConfigProvider';
 import path from 'path';
@@ -20,8 +21,8 @@ const json:string = JSON5.stringify(jsConfig);
 
 
 describe('Project', () => {
-    let rootDir = "";
-    let scriptDir = "";
+    // let rootDir:string = "";
+    // let scriptDir:string = "";
 
 
     beforeEach(async () => {
@@ -29,8 +30,8 @@ describe('Project', () => {
 
         await AppConfig.instance.init();
 
-        rootDir = AppConfig.instance.rootDirectory;
-        scriptDir = AppConfig.instance.scriptSourceDirectory;
+        // rootDir = AppConfig.instance.rootDirectory;
+        // scriptDir = AppConfig.instance.scriptSourceDirectory;
     });
      
     describe('should generate default project structure', () => {

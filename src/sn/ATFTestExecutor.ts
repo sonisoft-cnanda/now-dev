@@ -1,13 +1,24 @@
 
 import { ServiceNowProcessorRequest } from "../comm/http/ServiceNowProcessorRequest";
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
-import * as qs from 'qs';
+
 import { ReferenceLink, ServiceNowTableResponse } from "../model/types";
 import { HTTPRequest } from "../comm/http/HTTPRequest";
 import { HttpResponse } from "../comm/http/HttpResponse";
+import { Logger } from "../util/Logger";
+import { IServiceNowInstance } from "./IServiceNowInstance";
 export class ATFTestExecutor{
 
-    _req:ServiceNowRequest = new ServiceNowRequest();
+    _req:ServiceNowRequest;
+
+    private _snInstance:IServiceNowInstance;
+
+    _logger:Logger = new Logger("ATFTestExecutor");
+
+    public constructor(instance:IServiceNowInstance){
+        this._snInstance = instance;
+        this._req  = new ServiceNowRequest(this._snInstance);
+    }
 
     async executeTest(testId:string):Promise<TestResult>{
 
@@ -24,7 +35,7 @@ export class ATFTestExecutor{
             'x_referer':'sys_atf_test.do%3Fsys_id%3D817a3214835b4210a9f8aec0deaad3f4%26sysparm_view%3D%26sysparm_domain%3Dnull%26sysparm_domain_scope%3Dnull'
         };
 
-        const proc:ServiceNowProcessorRequest = new ServiceNowProcessorRequest();
+        const proc:ServiceNowProcessorRequest = new ServiceNowProcessorRequest( this._snInstance);
         const result:string =  await proc.execute("TestExecutorAjax", "start", "global", dataObj);
 
         //In this case, result is the progress worker id.
@@ -68,6 +79,7 @@ export class ATFTestExecutor{
             }
                 
         }catch(err){
+            this._logger.error("Error occurred while getting progress", err);
             return null;
         }
       

@@ -1,9 +1,12 @@
-import { ServiceNowInstance } from '../../src/sn/ServiceNowInstance';
+import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
 import { BackgroundScriptExecutor } from '../../src/sn/BackgroundScriptExecutor';
+import { Creds } from '@servicenow/sdk-cli-core';
+import { CredentialWrapper } from '../../src/now/sdk/auth/CredentialWrapper';
+
 
 describe('BackgroundScriptExecutor', () => {
     let instance: ServiceNowInstance;
-    let executor: BackgroundScriptExecutor;
+    let executor: BackgroundScriptExecutor | null = null;
     const TEST_SCOPE = 'global';
     
     // it('should allow construction with or without specified options', ()=>{
@@ -22,15 +25,32 @@ describe('BackgroundScriptExecutor', () => {
     //     expect(executor).toBeDefined();
     // })
 
-    beforeEach(() => {
-        instance = new ServiceNowInstance();
-        executor = new BackgroundScriptExecutor( instance,TEST_SCOPE );
+    beforeEach(async () => {
+        const wrapper:CredentialWrapper = new CredentialWrapper();
+        const alias:string = 'fluent-default';
+        const credential:Creds = await wrapper.getStoredCredentialsByAlias( alias);
+        
+         if(credential){
+            const snSettings:ServiceNowSettingsInstance = {
+            alias: alias,
+            host: credential.host,
+            password: credential.password,
+            username: credential.username,
+            }
+            instance = new ServiceNowInstance(snSettings);
+            executor = new BackgroundScriptExecutor( instance,TEST_SCOPE );
+        }
+         
+        if(executor == null)
+            throw new Error("Could not get credentials.");
+        
     });
 
     describe('getBackgroundScriptCSRFToken', () => {
 
         it('should return csrf token', async () => {
-           const result:string = await executor.getBackgroundScriptCSRFToken();
+           const result:string | undefined = await executor?.getBackgroundScriptCSRFToken();
+           expect(result).toBeDefined();
             expect(result).not.toBeNull();
             
         }, 100000);
@@ -65,11 +85,12 @@ describe('BackgroundScriptExecutor', () => {
             const sVal = "TESTING SN-ATF";
             const script = `gs.info("`+sVal+`")`;
             const scope = TEST_SCOPE;
-            const result = await executor.executeScript(script, scope, instance );
+            const result = await executor?.executeScript(script, scope, instance );
             expect(result).toBeDefined();
-            expect(result.result).toBeDefined();
-            expect(result.result.indexOf(sVal)).not.toBe(-1);
-            expect(result.result).toBe(sVal);
+            expect(result).not.toBeNull();
+            expect(result?.result).toBeDefined();
+            expect(result?.result.indexOf(sVal)).not.toBe(-1);
+            expect(result?.result).toBe(sVal);
         }, 100000);
 
     })
@@ -88,9 +109,9 @@ describe('BackgroundScriptExecutor', () => {
                         <HR/>
                     </BODY>
                 </HTML>`;
-            const resultObj = await executor.parseScriptResult(xmlBody);
+            const resultObj = await executor?.parseScriptResult(xmlBody);
             expect(resultObj).toBeDefined();
-            expect(resultObj.result).toBe("testResult");
+            expect(resultObj?.result).toBe("testResult");
         })
     })
 

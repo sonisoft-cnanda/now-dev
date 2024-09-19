@@ -13,7 +13,7 @@ import { IHttpResponse } from "../comm/http/IHttpResponse";
 
 
 export class BackgroundScriptExecutor {
-    snRequest: ServiceNowRequest = new ServiceNowRequest();
+    snRequest: ServiceNowRequest;
     instance: ServiceNowInstance;
     scope: string;
 
@@ -23,6 +23,7 @@ export class BackgroundScriptExecutor {
        
             this.instance = instance;
             this.scope = scope;
+            this.snRequest = new ServiceNowRequest(this.instance);
     }
 
     public async executeScript(script: string, scope: string = this.scope, instance:ServiceNowInstance = this.instance): Promise<BackgroundScriptExecutionResult> {

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { HttpResponse } from "../comm/http/HttpResponse";
 import { TableAPIRequest } from "../comm/http/TableAPIRequest";
+import { IServiceNowInstance } from "../sn/IServiceNowInstance";
 import { AppUtil } from "../util/AppUtil";
 import { Logger } from "../util/Logger";
 
@@ -12,12 +15,24 @@ export class ProjectRequest{
 
     private _logger:Logger = new Logger("ProjectRequest");
 
-    public getUrlSearchParamsForMetadata(app_sys_id, classNames,  addtFields="") : URLSearchParams{
+    private _snInstance: IServiceNowInstance;
+    public get snInstance(): IServiceNowInstance {
+        return this._snInstance;
+    }
+    public set snInstance(value: IServiceNowInstance) {
+        this._snInstance = value;
+    }
+
+    public constructor(instance:IServiceNowInstance){
+        this.snInstance = instance;
+    }
+
+    public getUrlSearchParamsForMetadata(app_sys_id:string, classNames:string[],  addtFields:string="") : URLSearchParams{
         const packageType = AppUtil.isGlobalApp() ? "sys_package" : "sys_scope";
         const params = new URLSearchParams();
         params.set("sysparm_fields", "sys_id,sys_name,sys_class_name,sys_package,sys_package.name,sys_scope,sys_scope.name," + addtFields);
         params.set("sysparm_transaction_scope", app_sys_id);
-        params.set("sysparm_query", packageType + "=" + app_sys_id + "^sys_class_nameIN" + classNames);
+        params.set("sysparm_query", packageType + "=" + app_sys_id + "^sys_class_nameIN" + classNames.join(","));
         params.set(packageType, app_sys_id);
         //e = APP_SYS_ID
         return params;
@@ -43,7 +58,7 @@ export class ProjectRequest{
 
     public async getSysMetadataObjectsForApplication(appSysId:string, classNames:string[], addtFields = "") : Promise<HttpResponse<SysMetadata>>{
        
-        const request:TableAPIRequest = new TableAPIRequest();
+        const request:TableAPIRequest = new TableAPIRequest( this.snInstance);
         const params:object = this.getMetadataRequestParams(appSysId, classNames, addtFields);
 
         this._logger.debug("Url Search Params", params);

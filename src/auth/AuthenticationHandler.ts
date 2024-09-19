@@ -5,6 +5,8 @@ import { Logger } from '../util/Logger.js';
 import { IRequestHandler } from "../comm/http/IRequestHandler.js";
 
 import { ICookieStore } from "../comm/http/ICookieStore.js";
+import { IUserSession } from "../comm/http/IUserSession.js";
+import { UserSession } from "../comm/http/UserSession.js";
 
 
 
@@ -42,13 +44,13 @@ export class AuthenticationHandler implements IAuthenticationHandler{
         //   );
     }
 
-    public async doLogin(host:string, username:string, password:string){
-        await this.login(host, username, password);
+    public async doLogin(host:string, username:string, password:string) : Promise<IUserSession>{
+        return await this.login(host, username, password);
       
     }
 
 
-    private async login(host:string, username:string, password:string) : Promise<UISession>{
+    private async login(host:string, username:string, password:string) : Promise<IUserSession>{
 
         let result:UISession | null = null;
         try{
@@ -62,8 +64,13 @@ export class AuthenticationHandler implements IAuthenticationHandler{
             this._logger.debug("Login Attempt Complete.", result);
         }catch(e){
             this._logger.error("Error during login.", e);
+            throw e;
         }
-        return result;
+        if(result){
+            return new UserSession(result);
+        }
+        
+        return null;
     }
 
     public getRequestHandler():IRequestHandler{
