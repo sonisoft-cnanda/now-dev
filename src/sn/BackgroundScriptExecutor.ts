@@ -109,6 +109,7 @@ export class BackgroundScriptExecutor {
             result: compositeResult.rawResult,
             consoleResult: compositeResult.consoleResult,
             rawResult: compositeResult.rawResult,
+            scriptResults: compositeResult.scriptResults,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             affectedRecords: affectedRecords
         };
@@ -147,19 +148,38 @@ export class BackgroundScriptExecutor {
 
     private _parseBGScriptResult(parsedXMLObj: ScriptExecutionXMLResult) : CompositeScriptExecutionResult {
         this._logger.debug("_parseBGScriptResult enter", parsedXMLObj);
+    
+       const scriptResults:ScriptExecutionOutputLine[] = [];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const result:string = parsedXMLObj.HTML.BODY.PRE["#text"] as string;
         const spl:string[] = result.split("\n");
         spl.forEach((line: string, index:number   ) => {
-            if(line.trim().length == 0)
+            if(isNil(line) )
                 spl[index] = null;
-            else
-                spl[index] = line.replace("*** Script: ", "").trim();
+            else{
+                line = line.trim();
+                //If the output does not have a "*** Script: " before it, then it is system output
+                if(line.indexOf("*** Script: ") == -1){
+                  
+                    scriptResults.push(new ScriptExecutionOutputLine(line).asSystemLine());
+                //If the output does have a  "*** Script: " prefixing it, it is output from this script or a script being called   
+                }else if(line.indexOf("*** Script: ") !== -1){
+                    if(line.indexOf("[DEBUG]") !== -1){
+                        scriptResults.push(new ScriptExecutionOutputLine(line).asDebugLine());
+                    }else{
+                        line = line.replace("*** Script: ", "");
+                        scriptResults.push(new ScriptExecutionOutputLine(line).asScriptLine());
+                    }
+                }
+                //Keep the original array intact in order to preserve the order with system outputs.
+                spl[index] = line;
+            }
+                
         });
 
         const filteredSpl = spl.filter(line => line !== null);
         
-        return {rawResult: result, consoleResult: filteredSpl} as CompositeScriptExecutionResult;
+        return {rawResult: result, consoleResult: filteredSpl, scriptResults:scriptResults} as CompositeScriptExecutionResult;
     }
     private _parseAffectedRecords(parsedXMLObj: ScriptExecutionXMLResult) {
         return parsedXMLObj?.HTML?.BODY?.div
@@ -180,6 +200,7 @@ interface ScriptExecutionXMLResult{
 export type CompositeScriptExecutionResult = {
     consoleResult: string[];
     rawResult: string;
+    scriptResults:ScriptExecutionOutputLine[];
 }
 
 export type BackgroundScriptExecutionResult = {
@@ -188,7 +209,44 @@ export type BackgroundScriptExecutionResult = {
     affectedRecords: string;
     consoleResult: string[];
     rawResult:string;
+    scriptResults:ScriptExecutionOutputLine[];
 };
+
+export class ScriptExecutionOutputLine{
+    _line:string;
+    _isDebug:boolean = false;
+    _isSystem:boolean = false;
+    _isScript:boolean = false;
+
+    public constructor(line:string){
+        this._line = line;
+    }
+
+    public asDebugLine(isDebugLine:boolean = true):ScriptExecutionOutputLine{
+        this._isDebug = isDebugLine;
+
+        return this;
+    }
+
+    public asSystemLine(isSystemLine:boolean = true):ScriptExecutionOutputLine{
+        this._isDebug = isSystemLine;
+
+        return this;
+    }
+
+    public asScriptLine(isScriptLine:boolean = true):ScriptExecutionOutputLine{
+        this._isDebug = isScriptLine;
+
+        return this;
+    }
+}
+
+// export type ScriptExecutionOutputLine = {
+//     line:string;
+//     isDebug:boolean;
+//     isSystem:boolean;
+//     isScript:boolean;
+// };
 
 export interface BackgroundScriptExecutorOptions {
     instance?: ServiceNowInstance;
