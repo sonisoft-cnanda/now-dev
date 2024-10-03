@@ -213,13 +213,21 @@ export type BackgroundScriptExecutionResult = {
 };
 
 export class ScriptExecutionOutputLine{
-    _line:string;
-    _isDebug:boolean = false;
-    _isSystem:boolean = false;
-    _isScript:boolean = false;
+    private _line:string;
+    private _isDebug:boolean = false;
+    private _isSystem:boolean = false;
+    private _isScript:boolean = false;
 
     public constructor(line:string){
         this._line = line;
+    }
+
+    public get line():string{
+        return this._line;
+    }
+
+    public set line(val:string){
+        this._line = val;
     }
 
     public asDebugLine(isDebugLine:boolean = true):ScriptExecutionOutputLine{
