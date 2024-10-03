@@ -1,5 +1,0 @@
-(function runAction(/*Optional GlideRecord*/ current) {
-
- // Implement action script here
-
-})(current);

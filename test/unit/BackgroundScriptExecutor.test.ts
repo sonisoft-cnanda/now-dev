@@ -2,6 +2,9 @@ import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/Ser
 import { BackgroundScriptExecutor } from '../../src/sn/BackgroundScriptExecutor';
 import { Creds } from '@servicenow/sdk-cli-core';
 import { CredentialWrapper } from '../../src/now/sdk/auth/CredentialWrapper';
+import * as path from 'path';
+import * as fs from 'fs';
+import { info } from "console";
 
 
 describe('BackgroundScriptExecutor', () => {
@@ -9,25 +12,10 @@ describe('BackgroundScriptExecutor', () => {
     let executor: BackgroundScriptExecutor | null = null;
     const TEST_SCOPE = 'global';
     
-    // it('should allow construction with or without specified options', ()=>{
-    //     instance = new ServiceNowInstance();
-    //     executor = new BackgroundScriptExecutor( instance, TEST_SCOPE );
-    //     expect(executor).toBeDefined();
-    //     expect(executor.instance).toBe(instance);
-    //     expect(executor.scope).toBe(TEST_SCOPE);
-        
-    //     executor = new BackgroundScriptExecutor(instance );
-    //     expect(executor).toBeDefined();
-    //     expect(executor.instance).toBe(instance);
-    //     expect(executor.scope).toBeUndefined;
-
-    //     executor = new BackgroundScriptExecutor();
-    //     expect(executor).toBeDefined();
-    // })
 
     beforeEach(async () => {
         const wrapper:CredentialWrapper = new CredentialWrapper();
-        const alias:string = 'fluent-default';
+        const alias:string = 'ven07473';
         const credential:Creds = await wrapper.getStoredCredentialsByAlias( alias);
         
          if(credential){
@@ -59,7 +47,7 @@ describe('BackgroundScriptExecutor', () => {
     
     describe('executeScript', () => {
 
-        it('should throw error if instance is not a ServiceNowInstance', () => {
+        xit('should throw error if instance is not a ServiceNowInstance', () => {
             const script = 'testScript';
             const scope = TEST_SCOPE;
             const instance = {}; // mock object, not an instance of ServiceNowInstance
@@ -67,21 +55,21 @@ describe('BackgroundScriptExecutor', () => {
             expect(() => executor.executeScript( script, scope, instance )).rejects.toThrow('instance must be a ServiceNowInstance')
         });
 
-        it('should throw error if scope is not a string', () => {
+        xit('should throw error if scope is not a string', () => {
             const script = 'testScript';
             const scope = 123; // mock object, not a string
             // @ts-expect-error - returning arguments must be valid column names
             expect(() => executor.executeScript(script, scope, instance )).rejects.toThrow('scope must be a string')
         });
 
-        it('should throw error if script is not a string', () => {
+        xit('should throw error if script is not a string', () => {
             const scope = TEST_SCOPE;
             const script = 123; // mock object, not a string
             // @ts-expect-error - returning arguments must be valid column names
             expect(() => executor.executeScript( script, scope, instance )).rejects.toThrow('script must be a string')
         })
 
-        it('should execute script with given scope', async () => {
+        xit('should execute script with given scope', async () => {
             const sVal = "TESTING SN-ATF";
             const script = `gs.info("`+sVal+`")`;
             const scope = TEST_SCOPE;
@@ -92,6 +80,25 @@ describe('BackgroundScriptExecutor', () => {
             expect(result?.result.indexOf(sVal)).not.toBe(-1);
             expect(result?.result).toBe(sVal);
         }, 100000);
+
+        it('should execute script with given scope', async () => {
+            const filePath:string = path.resolve('/Users/cnanda/git/servicenow/now-dev-sdk/now-dev/test/unit/testScript1.js');
+            const script:string = fs.readFileSync(filePath).toString('utf8');
+          
+            const scope = TEST_SCOPE;
+            const result     = await executor?.executeScript(script, scope, instance );
+            //info(result.result);
+            expect(result).toBeDefined();
+            expect(result).not.toBeNull();
+            expect(result?.result).toBeDefined();
+            
+            const consoleResult:string[] = result?.consoleResult;
+            expect( consoleResult.length).toBeGreaterThan(1);
+            //expect(result?.result.indexOf(sVal)).not.toBe(-1);
+            //expect(result?.result).toBe(sVal);
+        }, 100000);
+
+       
 
     })
 

@@ -1,15 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { ServiceNowInstance } from "./ServiceNowInstance";
 
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 //import { XMLParser } from "../utils";
-import { XMLParser } from 'fast-xml-parser';
+import { X2jOptions, XMLParser } from 'fast-xml-parser';
 import { Logger } from "../util/Logger";
-import { isNil } from "../amb/Helper";
+
 import { HTTPRequest } from "../comm/http/HTTPRequest";
 import { BG_SCRIPT_ENDPOINT } from "../constants/ServiceNow";
 import { IHttpResponse } from "../comm/http/IHttpResponse";
+import { isNil } from "../util/utils";
 
 
 export class BackgroundScriptExecutor {
@@ -80,29 +84,33 @@ export class BackgroundScriptExecutor {
     }
 
     public parseScriptResult(responseXML: string) : BackgroundScriptExecutionResult {
-        const parser = new XMLParser();
+        const options: X2jOptions = {
+            ignoreAttributes: false,
+            unpairedTags: ["hr", "br", "link", "meta"],
+            stopNodes: ["*.pre", "*.script"],
+            processEntities: true,
+            htmlEntities: true,
+            tagValueProcessor: (tagName: string, tagValue: any) => {
+                if (tagName === "PRE") {
+                    return tagValue + "\n";
+                }
+                return tagValue;
+            }
+        };
+        const parser: XMLParser = new XMLParser(options);
         const strippedResponseXML:string = responseXML.replace(/^\[[0-9:.]+\]/g, "");
         const jObj:ScriptExecutionXMLResult = parser.parse(strippedResponseXML) as ScriptExecutionXMLResult;
-        // const parser = new XMLParser({
-        //     explicitArray: false,
-        //     ignoreAttrs: true,
-        // });
-         
-        // return await parser.parseStringPromise(strippedResponseXML)
-        //     .then((result) => {
-        //         return {
-        //             raw: responseXML,
-        //             result: this._parseBGScriptResult(result),
-        //             affectedRecords: this._parseAffectedRecords(result)
-        //         }
-        //     })
-
+        
+        const compositeResult:CompositeScriptExecutionResult =  this._parseBGScriptResult(jObj);
+        const affectedRecords = this._parseAffectedRecords(jObj);
 
         const scriptResult:BackgroundScriptExecutionResult = {
             raw: responseXML,
-            result: this._parseBGScriptResult(jObj),
+            result: compositeResult.rawResult,
+            consoleResult: compositeResult.consoleResult,
+            rawResult: compositeResult.rawResult,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            affectedRecords: this._parseAffectedRecords(jObj)
+            affectedRecords: affectedRecords
         };
 
         this._logger.debug("parseScriptResult return value.", scriptResult);
@@ -137,12 +145,21 @@ export class BackgroundScriptExecutor {
         return csrfToken;
       }
 
-    private _parseBGScriptResult(parsedXMLObj: ScriptExecutionXMLResult) : string {
+    private _parseBGScriptResult(parsedXMLObj: ScriptExecutionXMLResult) : CompositeScriptExecutionResult {
         this._logger.debug("_parseBGScriptResult enter", parsedXMLObj);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        let result:string = parsedXMLObj.HTML.BODY.PRE["#text"] as string;
-        result =  result.replace("<BR/>", "\n")
-        return result?.replace("*** Script: ", "").trim()
+        const result:string = parsedXMLObj.HTML.BODY.PRE["#text"] as string;
+        const spl:string[] = result.split("\n");
+        spl.forEach((line: string, index:number   ) => {
+            if(line.trim().length == 0)
+                spl[index] = null;
+            else
+                spl[index] = line.replace("*** Script: ", "").trim();
+        });
+
+        const filteredSpl = spl.filter(line => line !== null);
+        
+        return {rawResult: result, consoleResult: filteredSpl} as CompositeScriptExecutionResult;
     }
     private _parseAffectedRecords(parsedXMLObj: ScriptExecutionXMLResult) {
         return parsedXMLObj?.HTML?.BODY?.div
@@ -160,10 +177,17 @@ interface ScriptExecutionXMLResult{
     }
 }
 
+export type CompositeScriptExecutionResult = {
+    consoleResult: string[];
+    rawResult: string;
+}
+
 export type BackgroundScriptExecutionResult = {
     raw: string;
     result: string;
     affectedRecords: string;
+    consoleResult: string[];
+    rawResult:string;
 };
 
 export interface BackgroundScriptExecutorOptions {

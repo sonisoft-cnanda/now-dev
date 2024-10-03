@@ -1,4 +1,3 @@
-import { HTTPRequest } from "../../comm/http/HTTPRequest";
 import { HttpResponse } from "../../comm/http/HttpResponse";
 import { TableAPIRequest } from "../../comm/http/TableAPIRequest";
 import { ServiceNowTableResponse } from "../../model/types";

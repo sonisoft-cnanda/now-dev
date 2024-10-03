@@ -1,5 +1,0 @@
-(function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
-
-	// Implement email action here
-
-})(current, event, email, logger, classifier);

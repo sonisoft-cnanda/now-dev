@@ -2,7 +2,8 @@ import { UISession } from "@servicenow/sdk-cli-core";
 import { ICookieStore } from "./ICookieStore";
 import { CookieStoreFactory } from "./CookieStoreFactory";
 import { IUserSession } from "./IUserSession";
-import { isNil } from "../../amb/Helper";
+import { isNil } from "../../util/utils";
+
 
 
 export class UserSession implements IUserSession{

@@ -1,6 +1,0 @@
-function executeDiagnostic(id) {
- 	// Add your code here
- 	return null; // your script should return a comma separated list of sys_ids
- }
- 
- executeDiagnostic(id);

@@ -1,1 +1,0 @@
-export { type MetadataConversionResult, FluentConverter } from './FluentConverter.js';

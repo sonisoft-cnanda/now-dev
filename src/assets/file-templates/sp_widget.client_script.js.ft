@@ -1,4 +1,0 @@
-function test() {
-  /* widget controller */
-  var c = this;
-}

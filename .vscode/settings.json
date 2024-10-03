@@ -2,6 +2,7 @@
 {
   "editor.snippetSuggestions": "top",
   "jest.runMode": "on-demand",
+  "jest.monitorLongRun": 600000,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },

@@ -10,7 +10,7 @@ import { ICookieStore } from './ICookieStore';
 import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
 import { Logger } from '../../util/Logger';
 import { IServiceNowInstance } from '../../sn/IServiceNowInstance';
-import { isNil } from "../../amb/Helper";
+import { isNil } from '../../util/utils';
 
 
 axios.defaults.withCredentials = true;
