@@ -12,7 +12,7 @@
   "scripts": {
     "build-index-export": "npx ctix build --config ./.ctirc",
     "prepublish": "npm version prerelease",
-    "publish-registry": "NPM_TOKEN=glpat-CqxWYPbm2FuEo5W_jXBz npm publish",
+    "publish-registry": "npm publish",
     "push": "npm run build && npm run pre-publish && npm run publish-registry",
     "alpha": "npm version premajor --preid alpha",
     "beta": " npm version premajor --preid beta",
@@ -31,23 +31,22 @@
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\""
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@servicenow/glide": "^26.0.1",
-    "@servicenow/sdk": "^2.0.1",
-    "@servicenow/sdk-build": "^2.0.1",
-    "@servicenow/sdk-build-core": "^2.0.1",
-    "@servicenow/sdk-cli": "^2.0.1",
-    "@servicenow/sdk-cli-core": "^2.0.1",
-    "@servicenow/sdk-core": "^2.0.1",
-    "@servicenow/sdk-project": "^2.0.1",
+    "@servicenow/sdk": "2.0.1",
+    "@servicenow/sdk-build": "2.0.1",
+    "@servicenow/sdk-build-core": "2.0.1",
+    "@servicenow/sdk-cli": "2.0.1",
+    "@servicenow/sdk-cli-core": "2.0.1",
+    "@servicenow/sdk-core": "2.0.1",
+    "@servicenow/sdk-project": "2.0.1",
     "@ts-morph/common": "^0.24.0",
     "@types/mock-fs": "^4.13.4",
     "@types/node-gzip": "^1.1.3",
