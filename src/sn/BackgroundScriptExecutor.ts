@@ -164,10 +164,10 @@ export class BackgroundScriptExecutor {
                     scriptResults.push(new ScriptExecutionOutputLine(line).asSystemLine());
                 //If the output does have a  "*** Script: " prefixing it, it is output from this script or a script being called   
                 }else if(line.indexOf("*** Script: ") !== -1){
+                    line = line.replace("*** Script: ", "");
                     if(line.indexOf("[DEBUG]") !== -1){
                         scriptResults.push(new ScriptExecutionOutputLine(line).asDebugLine());
                     }else{
-                        line = line.replace("*** Script: ", "");
                         scriptResults.push(new ScriptExecutionOutputLine(line).asScriptLine());
                     }
                 }
