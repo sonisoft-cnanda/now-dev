@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ServiceNowRequest } from "../../comm/http/ServiceNowRequest";
 import * as qs from 'qs';
 
-import { XMLParser } from 'fast-xml-parser';
+import { X2jOptions, XMLParser } from 'fast-xml-parser';
 import { HttpResponse } from "./HttpResponse";
 import { HTTPRequest } from "./HTTPRequest";
 import { XMLHTTP_PROCESSOR_ENDPOINT } from "../../constants/ServiceNow";
@@ -26,21 +27,23 @@ export class ServiceNowProcessorRequest{
     };
 
     public async execute(processor:string, processorMethod:string, scope:string, processorArgs:object):Promise<string>{
-        const retVal:string = null;
+        let retVal:string = null;
         const resp:HttpResponse<unknown> =  await this.doXmlHttpRequest(processor, processorMethod, scope, processorArgs);
         if(resp.status == 200){
             const data:string = resp.data;
             if(typeof data != 'undefined' && data && data.indexOf('answer=') != -1){
-               
-                const parser:XMLParser = new XMLParser();
+                const options:X2jOptions = {
+                    ignoreAttributes: false,
+                    attributeNamePrefix : "@_",
+                    allowBooleanAttributes: true
+                };
+                const parser:XMLParser = new XMLParser(options);
                 const val:any = parser.parse(data);
                 console.log(val);
-                // parser.parse(data, function (err, result) {
-                //     const answer:string = result.xml.$.answer;
-                //     retVal = answer;
-                //     //console.log(answer);
-                // });
-                
+                if(val.xml){
+                    const answer:string = val.xml["@_answer"];
+                    retVal = answer;
+                }
             }
         }
         return retVal;

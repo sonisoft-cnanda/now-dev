@@ -1,0 +1,63 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "detail_message": "All steps passed",
+          "duration": "38 Seconds",
+          "message": "All steps passed",
+          "name": "Executing Server - Independent steps with order 1 - 1",
+          "percent_complete": "100",
+          "result": null,
+          "results": [],
+          "state": "2",
+          "sys_id": "f422eff393301a500aec3a718bba1085",
+          "updated_on": "2024-09-29 15:31:47"
+        },
+        {
+          "children": [],
+          "detail_message": "Rolling back test data",
+          "duration": "0 Seconds",
+          "message": "Rollback completed successfully",
+          "name": "Rollback",
+          "percent_complete": "100",
+          "result": null,
+          "results": [],
+          "state": "2",
+          "sys_id": "7822eff393301a500aec3a718bba1085",
+          "updated_on": "2024-09-29 15:31:47"
+        }
+      ],
+      "detail_message": "Test passed",
+      "duration": "38 Seconds",
+      "message": "Test passed",
+      "name": "Parameterized Test 'TaniumPatchUtil_IT' with order 1 started by Chris Nanda on 09/29/24 08:31:09.346",
+      "percent_complete": "100",
+      "result": {
+        "result_id": "3022eff393301a500aec3a718bba1083",
+        "useCloudRunner": false
+      },
+      "results": [],
+      "state": "2",
+      "sys_id": "bc22eff393301a500aec3a718bba1081",
+      "updated_on": "2024-09-29 15:31:47"
+    }
+  ],
+  "detail_message": "Test passed",
+  "duration": "38 Seconds",
+  "message": "Test passed",
+  "name": "Test 'TaniumPatchUtil_IT' started by Chris Nanda on 09/29/24 08:31:09.057",
+  "percent_complete": "100",
+  "result": {
+    "parameter_result": "b422aff393301a500aec3a718bba10ec",
+    "parameter_set_to_tracker_id_map": {
+      "160950b79330d6500aec3a718bba10bd": "bc22eff393301a500aec3a718bba1081"
+    },
+    "result_ids": ["3022eff393301a500aec3a718bba1083"]
+  },
+  "results": [],
+  "state": "2",
+  "sys_id": "2022ebf393301a500aec3a718bba1094",
+  "updated_on": "2024-09-29 15:31:47"
+}

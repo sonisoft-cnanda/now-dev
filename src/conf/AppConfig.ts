@@ -1,5 +1,5 @@
 
-import { key, optional, asNumber, loadConfiguration, ConfigProvider, split, map } from 'typed-config';
+import { key, optional, loadConfiguration, ConfigProvider } from 'typed-config';
 import { NowConfigProvider } from './NowConfigProvider';
 import { map2, split2, trim2 } from './config-transformer';
 

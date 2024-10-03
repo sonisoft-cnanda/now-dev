@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 
 export class ATFFileHandler{
 
-    getFileAsJson(path: string) : unknown {
+    public getFileAsJson(path: string) : unknown {
         try {
             
             return fs.readJSONSync(path) || {};
@@ -12,6 +12,14 @@ export class ATFFileHandler{
             console.log(ex);
             return {};
         }
+    }
+
+    public async writeTestFile() : Promise<void>{
+
+    }
+
+    public async writeTestMetadata() : Promise<void>{
+        
     }
 
 

@@ -1,0 +1,34 @@
+Search a predefined list of tables and fields for strings of code.
+search
+GET https://dev256787.service-now.com/api/sn_codesearch/code_search/search
+
+Prepare request
+Query parameters
+NameValueDescription
+search_group
+The Search Group definition to use when searching.
+term
+The term to search for.
+current_app
+Setting search_all_scopes to false limits results to only files with this scope.
+search_all_scopes
+Include results from scopes outside the one specified in current_app.
+extended_matching
+Override the default value for the group, returns additional fields with context
+limit
+The maximum number of results to return. Can not go over global maximum.
+table
+The specific table to search in. Must also provide search group when using this.
+
+
+tables - Can return the list of tables that would be searched for a given search group.
+GET https://dev256787.service-now.com/api/sn_codesearch/code_search/tables
+
+Prepare request
+Query parameters
+NameValueDescription
+search_group
+The Search Group definition to use when searching.
+
+
+https://dev256787.service-now.com/sn_codesearch_search_group_list.do

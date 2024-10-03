@@ -1,6 +1,0 @@
-export { AppConfig } from './AppConfig.js';
-export { split2, map2, trim2 } from './config-transformer.js';
-export { ExtensionConfiguration } from './ExtensionConfiguration.js';
-export { NowConfigProvider } from './NowConfigProvider.js';
-export { ServiceNowAppConfig } from './ServiceNowAppConfig.js';
-export { ServiceNowAppConfigProvider } from './ServiceNowAppConfigProvider.js';
