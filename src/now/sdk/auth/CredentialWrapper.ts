@@ -5,9 +5,9 @@ import { NowStringUtil } from '../../../util/NowStringUtil';
 import { KeyChain } from '@servicenow/sdk-cli/dist/auth/keychain/index.js'
 import { Logger } from '../../../util/Logger';
 
-interface Arguments {
-    alias: string
-}
+// interface Arguments {
+//     alias: string
+// }
 
 export interface CredentialArg extends sdk_auth.StoredCredential {
     isDefault: boolean;
@@ -46,15 +46,27 @@ export class CredentialWrapper{
         return await this.getCredentialsTestWrapper(username, password, host);
     }
 
-    public async getStoredCredentialsByAlias(alias?:string)  : Promise<Creds>{
+    public async getStoredCredentialsByAlias(alias?:string)  : Promise<Creds | null>{
         //let credArgs:ArgumentsCamelCase<Arguments> = {alias: alias};
+        let credentialResult:Creds | null = null;
         const credentialArgs:NowAuthArgument = {_:[], alias:null, auth: null} as NowAuthArgument;
         if(!NowStringUtil.isStringEmpty(alias)){
             credentialArgs.auth = alias;
             credentialArgs.alias = alias;
         }
+        try{
+            credentialResult = await sdk_auth.getCredentials(credentialArgs);
+        }catch(e){
+            const err:Error = e as Error;
+            this._logger.error("Error occurred retrieving credential for alias: " + alias + ". Error message:" + err.message,err);
+            if(err.message.indexOf("Could not find stored credentials for alias") !== -1){
+                credentialResult = null;
+            }
+            else 
+                throw err;
+        }
             
-        return await sdk_auth.getCredentials(credentialArgs);
+        return credentialResult;
     }
 
     public async getCredentialsTestWrapper(username: null, password: null, host: null) : Promise<Creds>{

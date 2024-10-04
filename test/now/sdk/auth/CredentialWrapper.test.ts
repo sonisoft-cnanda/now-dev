@@ -1,8 +1,19 @@
 
 import { CredentialWrapper } from '../../../../src/now/sdk/auth/CredentialWrapper'
 import {  Creds } from '@servicenow/sdk-cli-core'
-import { generateRandomString } from '../../../test_utils/test_utils';
 const SECONDS = 1000;
+
+const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+export function generateRandomString(length) {
+    let result = " ";
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
 
 describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
    const aliasList:string[] = [];
@@ -84,6 +95,16 @@ describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
            
         
         }, 700 * SECONDS)
+
+        it('should return null if credential for alias does not exist', async () => {
+            const wrapper:CredentialWrapper = new CredentialWrapper();
+         
+            const credential:Creds = await wrapper.getStoredCredentialsByAlias("randTestAlias1778");
+ 
+            expect(credential).toBeNull();
+            
+         
+         }, 700 * SECONDS)
 
     });
 
