@@ -17,6 +17,7 @@ export * from './util/AppUtil.js';
 export * from './util/Logger.js';
 export * from './util/NowStringUtil.js';
 export * from './util/utils.js';
+export * from './auth/oauth/OAuth.js';
 export * from './comm/http/CookieStore.js';
 export * from './comm/http/CookieStoreFactory.js';
 export * from './comm/http/HTTPRequest.js';
