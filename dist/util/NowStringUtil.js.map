@@ -1,0 +1,1 @@
+{"version":3,"file":"NowStringUtil.js","sourceRoot":"","sources":["../../src/util/NowStringUtil.ts"],"names":[],"mappings":"AAEA,MAAM,OAAO,aAAa;IAEf,MAAM,CAAC,aAAa,CAAC,KAAK;QAC7B,OAAO,CAAC,CAAC,KAAK,KAAK,SAAS,IAAI,KAAK,KAAK,IAAI,IAAI,KAAK,KAAK,EAAE,IAAI,CAAC,KAAK,GAAG,EAAE,CAAC,CAAC,IAAI,EAAE,KAAK,EAAE,CAAC,CAAC;IAClG,CAAC;CACJ"}
