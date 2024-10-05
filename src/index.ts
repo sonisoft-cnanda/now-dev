@@ -32,6 +32,7 @@ export * from './comm/http/ServiceNowRequest.js';
 export * from './comm/http/TableAPIRequest.js';
 export * from './comm/http/UserSession.js';
 export * from './comm/ws/ATFMessageHandler.js';
+export * from './sn/app/ApplicationManager.js';
 export * from './sn/user/UserRequest.js';
 export * from './now/sdk/auth/CredentialStore.js';
 export * from './now/sdk/auth/CredentialWrapper.js';

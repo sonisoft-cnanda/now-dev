@@ -46,18 +46,25 @@ export class CredentialWrapper {
     }
     async validateCredentials(alias) {
         const { login: loginService } = await import('@servicenow/sdk-cli-core/dist/command/login/index.js');
+        const result = { instanceUrl: null, isSuccess: false, session: null };
         try {
             const creds = await this.getStoredCredentials(alias);
             const session = await loginService(creds, this._logger);
             if (!session) {
-                return;
+                result.isSuccess = false;
+                return result;
             }
             const { instanceUrl } = session;
+            result.session = session;
+            result.instanceUrl = instanceUrl;
+            result.isSuccess = true;
             this._logger.successful(`Successfully validated creds with instance ${instanceUrl}.`);
         }
         catch (error) {
+            result.isSuccess = false;
             this._logger.error(error instanceof Error ? error.message : error, error);
         }
+        return result;
     }
     async storeCredentials(alias, isDefault, host, username, password) {
         const { login: loginService } = await import('@servicenow/sdk-cli-core/dist/command/login/index.js');

@@ -1,5 +1,5 @@
 
-import { Creds } from '@servicenow/sdk-cli-core'
+import { Creds, UISession } from '@servicenow/sdk-cli-core'
 import * as sdk_auth from '@servicenow/sdk-cli/dist/auth/index.js';
 import { NowStringUtil } from '../../../util/NowStringUtil';
 import { KeyChain } from '@servicenow/sdk-cli/dist/auth/keychain/index.js'
@@ -74,8 +74,9 @@ export class CredentialWrapper{
         return await sdk_auth.getCredentials(credentialArgs);
     }
 
-    public async validateCredentials(alias:string){
-        const { login: loginService } = await import('@servicenow/sdk-cli-core/dist/command/login/index.js')
+    public async validateCredentials(alias:string) : Promise<ValidateCredentialsResult>{
+        const { login: loginService } = await import('@servicenow/sdk-cli-core/dist/command/login/index.js');
+        const result:ValidateCredentialsResult = { instanceUrl:null, isSuccess:false, session:null } as ValidateCredentialsResult;
         try {
            
             const creds:Creds = await this.getStoredCredentials(alias)
@@ -83,13 +84,20 @@ export class CredentialWrapper{
             const session = await loginService(creds, this._logger);
 
             if (!session) {
-                return
+                result.isSuccess = false;
+                return result;
             }
-            const { instanceUrl } = session
+            const { instanceUrl } = session;
+            result.session = session;
+            result.instanceUrl = instanceUrl;
+            result.isSuccess = true;
             this._logger.successful(`Successfully validated creds with instance ${instanceUrl}.`)
         } catch (error) {
+            result.isSuccess = false;
             this._logger.error(error instanceof Error ? error.message : (error as string), error)
         }
+
+        return result;
     }
 
     public async storeCredentials(alias:string, isDefault:boolean, host:string, username:string, password:string) : Promise<void>{
@@ -141,4 +149,10 @@ export class CredentialWrapper{
 //    private async getCredentialsFromSdk(argsObject:){
 
 //    }
+}
+
+export type ValidateCredentialsResult = {
+    instanceUrl:string | null;
+    isSuccess:boolean;
+    session:UISession | null;
 }
