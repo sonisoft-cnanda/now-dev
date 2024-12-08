@@ -1,6 +1,0 @@
-(function(query, facetService, searchResults) {
-	/* Calculate your facets here using facetService */
-	/* var stateFacet = facetService.createFacet('State', 'state'); */
-	/* stateFacet.addFacetItem('Facet Item Label', '123'); */
-
-})(query, facetService, searchResults);

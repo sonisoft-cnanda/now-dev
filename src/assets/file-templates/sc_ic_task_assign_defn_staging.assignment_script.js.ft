@@ -1,5 +1,0 @@
-(function(){
-    var assignment = {'user': '', 'group':''};
-
-    return assignment;
-})();

@@ -1,6 +1,6 @@
 {
   "name": "@sonisoft/now-sdk-ext-core",
-  "version": "1.0.0-alpha.23",
+  "version": "1.0.0-alpha.30",
   "description": "",
   "type": "module",
   "repository": {
@@ -12,12 +12,12 @@
   "scripts": {
     "build-index-export": "npx ctix build --config ./.ctirc",
     "prepublish": "npm version prerelease",
-    "publish-registry": "NPM_TOKEN=glpat-AFN1audvLyZ498hF9obt npm publish",
+    "publish-registry": "npm publish",
     "push": "npm run build && npm run pre-publish && npm run publish-registry",
     "alpha": "npm version premajor --preid alpha",
     "beta": " npm version premajor --preid beta",
     "buildts": "tsc -p ./ && tsc-alias",
-    "build": "npm run clean && npm run buildts",
+    "build": "npm run clean && npm run build-index-export && npm run buildts",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "copy-static-assets": "ts-node copyStaticAssets.ts",
     "debug": "npm run build && npm run watch-debug",
@@ -31,23 +31,22 @@
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\""
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@servicenow/glide": "^26.0.1",
-    "@servicenow/sdk": "^2.0.1",
-    "@servicenow/sdk-build": "^2.0.1",
-    "@servicenow/sdk-build-core": "^2.0.1",
-    "@servicenow/sdk-cli": "^2.0.1",
-    "@servicenow/sdk-cli-core": "^2.0.1",
-    "@servicenow/sdk-core": "^2.0.1",
-    "@servicenow/sdk-project": "^2.0.1",
+    "@servicenow/sdk": "2.0.1",
+    "@servicenow/sdk-build": "2.0.1",
+    "@servicenow/sdk-build-core": "2.0.1",
+    "@servicenow/sdk-cli": "2.0.1",
+    "@servicenow/sdk-cli-core": "2.0.1",
+    "@servicenow/sdk-core": "2.0.1",
+    "@servicenow/sdk-project": "2.0.1",
     "@ts-morph/common": "^0.24.0",
     "@types/mock-fs": "^4.13.4",
     "@types/node-gzip": "^1.1.3",
@@ -127,7 +126,7 @@
     "supertest": "7.0.0",
     "ts-jest": "^29.2.4",
     "ts-jest-mocker": "^1.0.0",
-    "ts-node": "10.9.2",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.4",

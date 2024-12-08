@@ -2,12 +2,19 @@ import { UISession } from "@servicenow/sdk-cli-core";
 import { ICookieStore } from "./ICookieStore";
 import { CookieStoreFactory } from "./CookieStoreFactory";
 import { IUserSession } from "./IUserSession";
-import { isNil } from "../../amb/Helper";
+import { isNil } from "../../util/utils";
+
 
 
 export class UserSession implements IUserSession{
     
-    private _nowSession:UISession;
+    private _nowSession: UISession;
+    public get nowSession(): UISession {
+        return this._nowSession;
+    }
+    public set nowSession(value: UISession) {
+        this._nowSession = value;
+    }
 
 
     public constructor(session:UISession){

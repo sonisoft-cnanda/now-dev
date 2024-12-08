@@ -14,7 +14,8 @@
       "useSemicolon": true,
       "fileExt": "to-js",
       "overwrite": true,
-      "output": "./src"
+      "output": "./src",
+      "overwrite": true
     }
   ]
 }

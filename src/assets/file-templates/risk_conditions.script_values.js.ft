@@ -1,9 +1,0 @@
-// Can script field values here as you would in a business rule
-//
-//   if (current.assignment_group.getDisplayValue == "Network") {
-//      current.risk = 2;
-//      current.impact = 1;
-//   } else {
-//      current.risk = 3;
-//      current.impact = 2;
-//   }

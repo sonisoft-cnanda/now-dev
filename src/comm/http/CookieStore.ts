@@ -1,4 +1,5 @@
-import { isNil } from "../../amb/Helper";
+
+import { isNil } from "../../util/utils";
 import { ICookieStore } from "./ICookieStore";
 import { CookieJar, Cookie } from 'tough-cookie';
 

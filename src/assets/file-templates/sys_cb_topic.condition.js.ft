@@ -1,8 +1,0 @@
-(function execute() {
-    /* Return true or false to indicate if the topic or topic node can run 
-       and be discoverable (or not).  For example:
-
-       var applicability = vaInputs.first_name == 'Bill' ? true : false;
-    */
-    return true;
-})()

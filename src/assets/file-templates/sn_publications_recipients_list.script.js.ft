@@ -1,8 +1,0 @@
-//(function() { 
-    //This script is used to upload recipients to the recipients list based on type chosen 
-    //Example: 
-    //Script should have the type as the 'key' and array of sys_ids corresponding to the type as the values. 
-    //internal => sys_user 
-    //var obj = {'internal' : ['sysId1','sysId2','sysId3']}; 
-    //return obj; 
-    //})();

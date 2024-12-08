@@ -1,9 +1,0 @@
-(function (recipientQuery, targetRecord) {
-	/**
-	 * recipientQuery: A GlideRecord representing the table defined in "Table". Add conditions to
-	 *        filter the recipients returned to the Email Client auto-complete.
-	 *        i.e. recipientQuery.addQuery('active', true);
-	 * targetRecord: A GlideRecord representing the record in which the Email Client was opened from
-	 */
-
-})(recipientQuery, targetRecord);
