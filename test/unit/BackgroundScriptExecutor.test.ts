@@ -1,7 +1,7 @@
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
 import { BackgroundScriptExecutor } from '../../src/sn/BackgroundScriptExecutor';
-import { Creds } from '@servicenow/sdk-cli-core';
-import { CredentialWrapper } from '../../src/now/sdk/auth/CredentialWrapper';
+import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
+
 import * as path from 'path';
 import * as fs from 'fs';
 import { info } from "console";
@@ -14,16 +14,16 @@ describe('BackgroundScriptExecutor', () => {
     
 
     beforeEach(async () => {
-        const wrapper:CredentialWrapper = new CredentialWrapper();
-        const alias:string = 'ven07473';
-        const credential:Creds = await wrapper.getStoredCredentialsByAlias( alias);
+       
+        const alias:string = 'ven05195';
+        const credentialArgs = {"_": "get-credentials", auth: alias};
+   
+        const credential = await getCredentials(credentialArgs);
         
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
             alias: alias,
-            host: credential.host,
-            password: credential.password,
-            username: credential.username,
+            credential: credential
             }
             instance = new ServiceNowInstance(snSettings);
             executor = new BackgroundScriptExecutor( instance,TEST_SCOPE );
@@ -82,7 +82,7 @@ describe('BackgroundScriptExecutor', () => {
         }, 100000);
 
         it('should execute script with given scope', async () => {
-            const filePath:string = path.resolve('/Users/cnanda/git/servicenow/now-dev-sdk/now-dev/test/unit/testScript1.js');
+            const filePath:string = path.resolve('./test/unit/testScript1.js');
             const script:string = fs.readFileSync(filePath).toString('utf8');
           
             const scope = TEST_SCOPE;

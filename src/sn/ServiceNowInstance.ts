@@ -6,6 +6,7 @@ export interface ServiceNowSettingsInstance {
     alias?:string;
     isDefault?:boolean;
     password?:string;
+    credential?:any;
 }
 
 export class ServiceNowInstance implements IServiceNowInstance{
@@ -16,6 +17,7 @@ export class ServiceNowInstance implements IServiceNowInstance{
 
     private _password:string;
     
+    private _credential:any;
 
     constructor(snInstanceSettingsObj?:ServiceNowSettingsInstance | null){
         if(typeof snInstanceSettingsObj != 'undefined' && snInstanceSettingsObj != null){
@@ -33,6 +35,10 @@ export class ServiceNowInstance implements IServiceNowInstance{
             }
             if(snInstanceSettingsObj.password){
                 this._password = snInstanceSettingsObj.password;
+            }
+
+            if(snInstanceSettingsObj.credential){
+                this._credential = snInstanceSettingsObj.credential;
             }
 
         }
@@ -57,5 +63,9 @@ export class ServiceNowInstance implements IServiceNowInstance{
     //todo: Do we store the password in Secrets or the entire SN Instance? Can we store the entire array of SN Instances in secrets?
     getPassword():string{
         return this._password;
+    }
+
+    public get credential():any{
+        return this._credential;
     }
 }

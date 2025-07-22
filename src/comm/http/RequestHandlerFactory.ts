@@ -5,7 +5,7 @@ import { RequestHandler } from "./RequestHandler";
 
 export class RequestHandlerFactory{
 
-    public static createRequestHandler(snInstance:IServiceNowInstance, authHandler:IAuthenticationHandler):IRequestHandler{
-        return new RequestHandler(snInstance, authHandler);
+    public static createRequestHandler( authHandler:IAuthenticationHandler):IRequestHandler{
+        return new RequestHandler( authHandler);
     }
 }

@@ -1,109 +1,136 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders, AxiosHeaderValue } from 'axios';
 
 import { HTTPRequest } from './HTTPRequest';
 import { IHttpResponse } from './IHttpResponse';
+import { HttpResponse } from './HttpResponse';
 import { IRequestHandler } from './IRequestHandler';
 import { Cookie } from 'tough-cookie';
 import { ICookieStore } from './ICookieStore';
 import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
 import { Logger } from '../../util/Logger';
-import { IServiceNowInstance } from '../../sn/IServiceNowInstance';
-import { isNil } from '../../util/utils';
+import { makeRequest } from "@servicenow/sdk-cli-core/dist/http/index.js";
 
 
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 export class RequestHandler implements IRequestHandler{
    
     _logger:Logger = new Logger("RequestHandler");
-    _defaultHeaders:RawAxiosRequestHeaders;
-    httpClient:AxiosInstance;
+    //_defaultHeaders:RawAxiosRequestHeaders;
+    //httpClient:AxiosInstance;
     _cookies: Cookie[];
 
     _cookieStore:ICookieStore;
     _authHandler:IAuthenticationHandler;
 
-    private _snInstance: IServiceNowInstance;
-    public get snInstance(): IServiceNowInstance {
-        return this._snInstance;
-    }
-    public set snInstance(value: IServiceNowInstance) {
-        this._snInstance = value;
-    }
+    _session: any;
 
     /**
      * The Singleton's constructor should always be private to prevent direct
      * construction calls with the `new` operator.
      */
-    public constructor(snInstance:IServiceNowInstance, authHandler:IAuthenticationHandler) {
-        this.snInstance = snInstance;
-        this._defaultHeaders = {} as RawAxiosRequestHeaders;
+    public constructor(authHandler:IAuthenticationHandler) {
+        //this._defaultHeaders = {} as RawAxiosRequestHeaders;
        this._authHandler = authHandler;
         
         //Need to get the config from the extension info
         //baseURL should be instance URL that was added to settings
         //todo: Updated with settings config
-        this.httpClient = axios.create({
-            withCredentials: true,
-            baseURL: this.snInstance.getHost(),
-          });
+        // this.httpClient = axios.create({
+        //     withCredentials: true,
+        //     baseURL: ExtensionConfiguration.instance.getServiceNowInstanceURL(),
+        //   });
 
-        this.httpClient.defaults.maxRedirects = 0;
+        // this.httpClient.defaults.maxRedirects = 0;
          
      }
 
-    public getHttpClient():AxiosInstance{
-        return this.httpClient;
+
+
+    public setSession(session: any){
+        this._session = session;
     }
 
-    //FIXME: This should pull a more variable instance url
-    public async getCookies() : Promise<Cookie[]> {
-        return await this._authHandler.getCookies().getCookies( this.snInstance.getHost());
-    }
+    // public async request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>{
 
-    public async getCookieString():Promise<string>{
-        return await this._authHandler.getCookies().getCookieString(this.snInstance.getHost());
-    }
+    //     for(var prop in this._defaultHeaders){
+    //         if(typeof this._defaultHeaders[prop] !='undefined' && this._defaultHeaders[prop])
+    //             config.headers[prop] = this._defaultHeaders[prop];
+    //     }
+    //     config.headers["Cookie"] = await this.getCookieString();
+    //     return this.httpClient.request(config);
+    // }
 
-    public setRequestToken(token:string){
-        this._defaultHeaders["X-Usertoken"]  = token as AxiosHeaderValue;
-    }
+    private async doRequest<T>(request: HTTPRequest): Promise<HttpResponse<T>> {
+        let response:HttpResponse<T> = null;
+       let {config} = await this.getRequestConfig(request);
+       this._logger.debug("Retrieved Configuration", {config:config});
+       //const { auth, path, params, fields, json, headers: baseHeaders, ...rest } = opts;
+        // let opts = {
+        //     auth: this._session,
+        //     path: url,
+        //     rest: { method: request.method }
+        // }
+        
+        let resp = await makeRequest(config);
 
-    public async request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>{
-
-        for(const prop in this._defaultHeaders){
-            if(typeof this._defaultHeaders[prop] !='undefined' && this._defaultHeaders[prop])
-                config.headers[prop] = this._defaultHeaders[prop];
+        let responseBodyReader = resp.body.getReader();
+        let responseBody = await responseBodyReader.read();
+        let responseBodyString = new TextDecoder().decode(responseBody.value);
+        if(responseBodyString){
+            let data = null;
+            try{
+                
+                data = JSON.parse(responseBodyString);
+                
+            }catch(ex){
+                this._logger.error("Error parsing response body.", {error:ex, responseBodyString: responseBodyString});
+                data = responseBodyString;
+            }
+            response = new HttpResponse<T>(data);
+            response.data = data;
         }
-        config.headers["Cookie"] = await this.getCookieString();
-        return this.httpClient.request(config);
+       
+        response.status = resp.status;
+        response.statusText = resp.statusText;
+        response.headers = {};
+        response.cookies = [];
+        resp.headers.forEach((value, key) => {
+            if(key === "set-cookie"){
+                response.cookies.push(value);
+            }else{
+                response.headers[key] = value;
+            }
+        });
+        //response.headers = resp.headers;
+
+
+        return response;
     }
 
 
     public async post<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
-
-        const {config, url} = await this.getRequestConfig(request);
-        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        request.method = "POST";
+        // let {config} = await this.getRequestConfig(request);
+        // this._logger.debug("Retrieved Configuration", {config:config, url:url});
         let response:IHttpResponse<T> = null;
        try{
-            response = await this.httpClient.post(url, request.body , config);
-            this._logger.debug("Http  POST Response Received", response);
-            try{
-                if(!((response.data) instanceof String) ){
-                    const rpObj: T | null = response.data as T;
-                    response.bodyObject = rpObj;
-                }
-            }catch(ex){
-                this._logger.error("Error setting response.bodyObject.", {error:ex as Error, response: response, request: request});
+        const response = await this.doRequest<T>(request);
+         this._logger.debug("Http SN POST Response Received", response);
+         
+        try{
+            if(!((response.data) instanceof String) ){
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
             }
-            
-            return response;
+        }catch(ex){
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
+        }
+        
+        return response;
        }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error during POST request.", {error:err, response: response, request: request});
-            throw err;
+       
+        this._logger.error("Error during POST request.", {error:ex, response: response, request: request});
+        throw new Error(ex);
        }
         
 
@@ -111,122 +138,96 @@ export class RequestHandler implements IRequestHandler{
     }
 
     public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
-
-        const {config, url} = await this.getRequestConfig(request);
-        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        request.method = "PUT";
         let response:IHttpResponse<T> = null;
-       try{
-            response = await this.httpClient.put(url, request.body , config);
+        try{
+         const response = await this.doRequest<T>(request);
             this._logger.debug("Http PUT Response Received", response);
             try{
                 if(!((response.data) instanceof String) ){
-                    const rpObj: T | null = response.data as T;
-                    response.bodyObject = rpObj;
+                    let rpObj: T | null = response.data as T;
+                    response.bodyObject = response.data;
                 }
             }catch(ex){
-                const err:Error = ex as Error;
-                this._logger.error("Error during PUT request.", {err, request});
-                throw err;
                 //console.log(ex);
             }
             
             return response;
        }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error during PUT request.", {err, request});
-            throw err;
+        //log error
+        //console.log(ex);
+        throw new Error(ex);
        }
         
 
+        return null;
     }
 
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
-        this._logger.debug("get", request);
-
-        const {config, url} =  await this.getRequestConfig(request);
-
-        this._logger.debug("Retrieved Configuration", {config:config, url:url});
+        request.method = "GET";
         let response:IHttpResponse<T> = null;
-       try{
-        response = await this.httpClient.get(url , config);
-        this._logger.debug("Http Response Received", response);
+        try{
+         const response = await this.doRequest<T>(request);
+          this._logger.debug("Http SN POST Response Received", response);
 
         try{
             if(!((response.data) instanceof String) ){
-                const rpObj: T | null = response.data as T;
-                response.bodyObject = rpObj;
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;
             }
         }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
-            throw err;
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
         }
 
         return response;
        }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
-            throw err;
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
        }
         
+        return null;
     }
 
     public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
-
-        const {config, url} = await this.getRequestConfig(request);
-            
-       try{
-        const response: IHttpResponse<T> = await this.httpClient.delete(url , config);
+        request.method = "DELETE";
+        let response:IHttpResponse<T> = null;
+        try{
+         const response = await this.doRequest<T>(request);
 
         try{
             if(!((response.data) instanceof String) ){
-                const rpObj: T | null = response.data as T;
-                response.bodyObject = rpObj;
-            }
+                let rpObj: T | null = response.data as T;
+                response.bodyObject = response.data;            }
         }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error setting response.bodyObject.", {error:err, response: response, request: request});
-            throw err;
+            console.log(ex);
         }
 
         return response;
        }catch(ex){
-            const err:Error = ex as Error;
-            this._logger.error("Error setting response.bodyObject.", {error:err, request: request});
-            throw err;
+        //log error
+        console.log(ex);
        }
         
 
+        return null;
     }
 
-    private async getRequestConfig(request: HTTPRequest):Promise<{ config: AxiosRequestConfig; url: string; }>{
-       
-        const config:AxiosRequestConfig = {
-                                                withCredentials: true, 
-                                                headers:this._defaultHeaders
-                                            };
-        let url:string = request.path;
-       
-        if(request.headers != null){
-            for(const prop in request.headers){
-                if(!isNil(request.headers[prop])){
-                    const val:string = request.headers[prop] as string;
-                    config.headers[prop] = val;
-                }
-                    
-            }
-        }
-        config.headers["Cookie"] = await this.getCookieString();
-        if(request.query != null){
-            const strQuery = this.getQueryString(request.query);
-            if(url.indexOf("?") == -1){
-                url += "?" + strQuery;
-            }else{
-                url += "&" + strQuery;
-            }
-        }
+    private async getRequestConfig(request: HTTPRequest):Promise<{ config: any }>{
+                                            
+        const config = {
+            auth: this._session,
+        } as any;
 
-        return {config: config, url: url};
+        if(request.body){
+            config.body = request.body;
+        }
+        
+        config.params = request.query;
+        config.baseHeaders = request.headers;
+
+        config.path = request.path;
+        config.method = request.method;
+
+        return {config: config};
     }
 
     private getQueryString(queryObj:object):string{
@@ -234,8 +235,8 @@ export class RequestHandler implements IRequestHandler{
         const params = new URLSearchParams();
       
       
-        for(const prop in queryObj){
-            params.set(prop, queryObj[prop] as string);
+        for(var prop in queryObj){
+            params.set(prop, queryObj[prop]);
         }
 
         return params.toString();;

@@ -2,14 +2,14 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    "lib": ["ES2022", "es6"],
+    "lib": ["ES2022"],
     "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "Node",
+    "module": "esnext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strict": false,
@@ -18,17 +18,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "./src",
-   
+    "moduleSuffixes": [""],
+    "maxNodeModuleJsDepth": 0, // <--- ADD THIS
     "allowJs": true,
     "checkJs": false,
-    "types": [
-      "node",
-      "jest",
-      "crypto-js",
-      "crypto-js/enc-base64",
-      "@servicenow/glide",
-      "@servicenow/sdk-build"
-    ],
+    "types": ["node", "jest", "crypto-js", "crypto-js/enc-base64"],
     "plugins": [
       {
         "transform": "typescript-transform-paths"
@@ -44,12 +38,12 @@
     "verbose": false
   },
   "ts-node": {
-    "esm": true
+    "esm": false
   },
- "include": ["./src/eslint.config.mjs", "./src", "src/**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": [
-    "node_modules",
-    "dist",
+    "node_modules/",
+    "dist/",
     "logs",
     "build",
     "test/**/*",

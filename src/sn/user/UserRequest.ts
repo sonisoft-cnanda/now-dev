@@ -1,7 +1,7 @@
-import { HttpResponse } from "../../comm/http/HttpResponse";
+import { IHttpResponse } from "../../comm/http/IHttpResponse";
 import { TableAPIRequest } from "../../comm/http/TableAPIRequest";
 import { ServiceNowTableResponse } from "../../model/types";
-import { IServiceNowInstance } from "../IServiceNowInstance";
+import { ServiceNowInstance } from "../ServiceNowInstance";
 import { SNRequestBase } from "../SNRequestBase";
 import { IUser } from "./model/IUser";
 
@@ -9,7 +9,7 @@ import { IUser } from "./model/IUser";
 export class UserRequest extends SNRequestBase{
 
     
-    public constructor(instance:IServiceNowInstance){
+    public constructor(instance:ServiceNowInstance){
         super(instance);
     }
 
@@ -37,7 +37,7 @@ export class UserRequest extends SNRequestBase{
 
         
 
-       const resp:HttpResponse<ServiceNowTableResponse<IUser>> =  await request.get<ServiceNowTableResponse<IUser>>("sys_user", params);
+       const resp:IHttpResponse<ServiceNowTableResponse<IUser>> =  await request.get<ServiceNowTableResponse<IUser>>("sys_user", params);
        if(resp.status == 200){
             const tableResp:ServiceNowTableResponse<IUser> =  resp.bodyObject;
             if(tableResp.result && tableResp.result.length > 0){
