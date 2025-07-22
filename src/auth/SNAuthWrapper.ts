@@ -1,8 +1,9 @@
-import { Creds } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
-import { login } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
-import { UISession } from '@servicenow/sdk-cli-core/dist/util/UISession';
+// import { Creds } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
+// import { login } from '@servicenow/sdk-cli-core/dist/command/login/index.js';
+// import { UISession } from '@servicenow/sdk-cli-core/dist/util/UISession';
 import { logger } from '@servicenow/sdk-cli/dist/logger/index.js';
 import { Logger } from '../util/Logger.js';
+import { UISession } from '@servicenow/sdk-cli-core/dist/auth/basic-auth/UISession.js';
 export class SNAuthWrapper{
 
     private _logger:any;
@@ -16,14 +17,14 @@ export class SNAuthWrapper{
         try {
 
 
-            const credentials: Creds = {
-                host: "https://ven01280.service-now.com",
-                username: "chris.nanda",
-                password: "D$adP00l$G$$k0ut",
-            } as Creds;
+            // const credentials: Creds = {
+            //     host: "https://ven01280.service-now.com",
+            //     username: "chris.nanda",
+            //     password: "D$adP00l$G$$k0ut",
+            // } as Creds;
 
-            const session = await login(credentials, logger)
-           
+            // const session = await login(credentials, logger)
+           const session = null;
             if (!session) {
                 // throw new Error(
                 //     'Unauthorized. Use the $now-sdk login command first to authenticate before using $now-sdk fetch.',
@@ -46,13 +47,15 @@ export class SNAuthWrapper{
 
         let result:UISession | null = null;
         try{
-            const credentials: Creds = {
-                host: host,
-                username: username,
-                password: password,
-            } as Creds;
+            // const credentials: Creds = {
+            //     host: host,
+            //     username: username,
+            //     password: password,
+            // } as Creds;
 
-            result = await login(credentials, logger)
+            //result = await login(credentials, logger)
+            //TODO Fix this
+            result = null;
             this._logger.debug("Login Attempt Complete.", result);
         }catch(e){
             this._logger.error("Error during login.", e);

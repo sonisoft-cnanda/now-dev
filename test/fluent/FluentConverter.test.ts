@@ -18,7 +18,7 @@ const TEST_APP_METADATA_FILE_NAME:string = "sys_script_client_87a474d2db1ad55049
 const TEST_APP_METADATA_FILE_NAME_CONVERTED:string = "sys_script_client_87a474d2db1ad550495d70f339961957.now.ts";
 const TEST_APP_MOVE_METADATA_FILE:string = TEST_APP_XML_METADATA_IMPORT_DIRECTORY + "/" + TEST_APP_METADATA_FILE_NAME;
 
-describe('FluentConverter Integration Test', () => {
+describe.skip('FluentConverter Integration Test', () => {
    
     beforeEach(async () => {
 

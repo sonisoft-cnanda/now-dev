@@ -1,13 +1,16 @@
-import { ServiceNowInstance } from '../../src/sn/ServiceNowInstance';
+import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
 import { BackgroundScriptExecutor } from '../../src/sn/BackgroundScriptExecutor';
+import { getCredentials } from "@servicenow/sdk-cli/dist/auth";
 
 describe('BackgroundScriptExecutor', () => {
     let instance: ServiceNowInstance;
     let executor: BackgroundScriptExecutor;
     const TEST_SCOPE = 'global';
+    const alias = 'ven05195';
     
     it('should allow construction with or without specified options', ()=>{
         instance = new ServiceNowInstance();
+        
         executor = new BackgroundScriptExecutor({ instance, scope: TEST_SCOPE });
         expect(executor).toBeDefined();
         expect(executor.instance).toBe(instance);
@@ -22,8 +25,16 @@ describe('BackgroundScriptExecutor', () => {
         expect(executor).toBeDefined();
     })
 
-    beforeEach(() => {
-        instance = new ServiceNowInstance();
+    beforeEach(async () => {
+
+        const credentialArgs = {"_": "get-credentials", auth: alias || "fluent-default"};
+   
+        const credential = await getCredentials(credentialArgs);
+           const snSettings:ServiceNowSettingsInstance = {
+                alias: alias,
+               credential
+            }
+        instance = new ServiceNowInstance(snSettings);
         executor = new BackgroundScriptExecutor({ instance, scope: TEST_SCOPE });
     });
 

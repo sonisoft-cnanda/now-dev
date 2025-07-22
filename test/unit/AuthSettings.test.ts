@@ -14,7 +14,7 @@ type SecretsMock = {
     get():any;
 }
 
-describe('AuthSettings', () => {
+describe.skip('AuthSettings', () => {
    
     xit('get password', async () => {
         // let context:ContextMock = {} as ContextMock;

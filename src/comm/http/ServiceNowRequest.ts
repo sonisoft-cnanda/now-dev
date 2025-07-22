@@ -1,12 +1,15 @@
 import { AuthenticationHandlerFactory } from "../../auth/AuthenticationHandlerFactory";
 import { IAuthenticationHandler } from "../../auth/IAuthenticationHandler";
 import { ExtensionConfiguration } from "../../conf/ExtensionConfiguration";
+import { ServiceNowInstance } from "../../sn/ServiceNowInstance";
 import { HTTPRequest } from "./HTTPRequest";
 import { HttpResponse } from "./HttpResponse";
 import { ICookieStore } from "./ICookieStore";
+import { IHttpResponse } from "./IHttpResponse";
 import { IRequestHandler } from "./IRequestHandler";
 import { IUserSession } from "./IUserSession";
 import { RequestHandlerFactory } from "./RequestHandlerFactory";
+import { getSafeUserSession } from "@servicenow/sdk-cli-core/dist/util/sessionToken";
 
 
 export class ServiceNowRequest{
@@ -14,18 +17,24 @@ export class ServiceNowRequest{
     _requestHandler:IRequestHandler;
     auth:IAuthenticationHandler;
 
-    constructor(){
-        let self:ServiceNowRequest = this;
+    private _instance:ServiceNowInstance;
 
-        this.auth = AuthenticationHandlerFactory.createAuthHandler();
+    public constructor(instance:ServiceNowInstance = null){
+       // let self:ServiceNowRequest = this;
+
+        if (instance) {
+            this._instance = instance;
+        }
+
+        this.auth = AuthenticationHandlerFactory.createAuthHandler(this._instance);
         this._requestHandler = RequestHandlerFactory.createRequestHandler( this.auth);
-
+        this.auth.setRequestHandler(this._requestHandler);
         
     }
 
-    public async executeRequest<T>(request: HTTPRequest) : Promise<HttpResponse<T>>{
+    public async executeRequest<T>(request: HTTPRequest) : Promise<IHttpResponse<T>>{
         let httpMethod:string = request.method;
-        let resp:HttpResponse<T> = null;
+        let resp:IHttpResponse<T> = null;
 
 
         if(typeof httpMethod != "undefined" && httpMethod){
@@ -57,28 +66,28 @@ export class ServiceNowRequest{
 
 
 
-    public async put<T>(request: HTTPRequest): Promise<HttpResponse<T>>{
+    public async put<T>(request: HTTPRequest): Promise<IHttpResponse<T>>{
         if(!this.isLoggedIn())
             await this.ensureLoggedIn();
 
         return await this._requestHandler.put<T>(request);
     }
 
-    public async post<T>(request: HTTPRequest): Promise<HttpResponse<T>>{
+    public async post<T>(request: HTTPRequest): Promise<IHttpResponse<T>>{
         if(!this.isLoggedIn())
             await this.ensureLoggedIn();
 
         return await this._requestHandler.post<T>(request);
     }
 
-    public async get<T>(request: HTTPRequest): Promise<HttpResponse<T>>{
+    public async get<T>(request: HTTPRequest): Promise<IHttpResponse<T>>{
         if(!this.isLoggedIn())
             await this.ensureLoggedIn();
 
         return await this._requestHandler.get<T>(request);
     }
 
-    public async delete<T>(request: HTTPRequest): Promise<HttpResponse<T>>{
+    public async delete<T>(request: HTTPRequest): Promise<IHttpResponse<T>>{
         if(!this.isLoggedIn())
             await this.ensureLoggedIn();
 
@@ -87,23 +96,11 @@ export class ServiceNowRequest{
 
 
     private async ensureLoggedIn(){
-       //if(!this.isLoggedIn()){
-            
-                let session:IUserSession = await this.auth.doLogin(
-                    ExtensionConfiguration.instance.getServiceNowInstanceURL(),
-                    ExtensionConfiguration.instance.getServiceNowUserName(), 
-                    ExtensionConfiguration.instance.getServiceNowPassword()
-                );
+    
 
-                if(!this.auth.isLoggedIn()){
-                    throw new Error("Unable to login.");
-                }
-
-                this._requestHandler.setRequestToken(this.auth.getToken());
-                //this._requestHandler._defaultHeaders["cookie"] = this.auth.getCookies();
-            
-            
-        //}
+        await this.auth.doLogin();
+       
+               
     }
 
     isLoggedIn():Boolean{

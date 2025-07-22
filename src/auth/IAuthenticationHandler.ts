@@ -4,9 +4,11 @@ import { IRequestHandler } from "../comm/http/IRequestHandler";
 
 export interface IAuthenticationHandler{
 
-    doLogin(host:string, username:string, password:string);
+    doLogin();
 
     getRequestHandler():IRequestHandler;
+
+    setRequestHandler(requestHandler:IRequestHandler);
 
     isLoggedIn():Boolean;
 

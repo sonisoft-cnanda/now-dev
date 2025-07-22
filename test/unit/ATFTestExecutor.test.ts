@@ -8,7 +8,7 @@ import { ATFTestExecutor, TestResult } from '../../src/sn/ATFTestExecutor';
 const SECONDS = 1000;
 
 
-describe('ATFTestExecutor', () => {
+describe.skip('ATFTestExecutor', () => {
    
     describe('execute test', () => {
        

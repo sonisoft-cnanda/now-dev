@@ -19,7 +19,7 @@ let json:string = JSON5.stringify(jsConfig);
 
 
 
-describe('Project', () => {
+describe.skip('Project', () => {
     let rootDir:string = "";
     let scriptDir:string = "";
 

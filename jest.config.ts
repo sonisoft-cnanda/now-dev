@@ -4,6 +4,8 @@ const config: JestConfigWithTsJest = {
   collectCoverageFrom: ["src/**/*.js", "src/**/*.ts","!**/node_modules/**"],
   testMatch: ["**/*.test.js", "**/*.test.ts"],
   coverageReporters: ["html", "text", "text-summary", "cobertura"],
+  testEnvironment: "node",
+  preset: "ts-jest",
   verbose: true,
   testTimeout:50000,
   transform: {

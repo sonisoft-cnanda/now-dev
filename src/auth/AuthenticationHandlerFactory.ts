@@ -1,3 +1,4 @@
+import { ServiceNowInstance } from "../sn/ServiceNowInstance";
 import { IAuthenticationHandler } from "./IAuthenticationHandler";
 import { NowSDKAuthenticationHandler } from "./NowSDKAuthenticationHandler";
 
@@ -5,7 +6,7 @@ import { NowSDKAuthenticationHandler } from "./NowSDKAuthenticationHandler";
 export class AuthenticationHandlerFactory{
 
 
-    public static createAuthHandler():IAuthenticationHandler{
-        return new NowSDKAuthenticationHandler();
+    public static createAuthHandler(instance:ServiceNowInstance):IAuthenticationHandler{
+        return new NowSDKAuthenticationHandler(instance);
     }
 }

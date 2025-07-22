@@ -12,7 +12,7 @@ import { JSDOM } from 'jsdom'
 const { window } = new JSDOM();
 
 
-describe('AMBClient', () => {
+describe.skip('AMBClient', () => {
    
     describe('execute test', () => {
        

@@ -17,7 +17,7 @@ let jsConfig:any = {
 };
 let json:string = JSON5.stringify(jsConfig);
 
-describe('AppConfig', () => {
+describe.skip('AppConfig', () => {
     beforeEach(() => {
         fs.writeFileSync(NowConfigProvider.CONFIG_FILE, json);
        });

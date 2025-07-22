@@ -10,7 +10,7 @@ import { HTTPRequest, IHttpResponse } from "../comm";
 
 
 export class BackgroundScriptExecutor {
-    snRequest: ServiceNowRequest = new ServiceNowRequest();
+    snRequest: ServiceNowRequest ;
     instance: ServiceNowInstance;
     scope: string;
 
@@ -19,6 +19,9 @@ export class BackgroundScriptExecutor {
     public constructor({ instance, scope }: BackgroundScriptExecutorOptions = {}) {
         if (instance && instance instanceof ServiceNowInstance) {
             this.instance = instance;
+            this.snRequest = new ServiceNowRequest(instance);
+        }else{
+            this.snRequest = new ServiceNowRequest();
         }
         if (typeof scope == "string") {
             this.scope = scope;

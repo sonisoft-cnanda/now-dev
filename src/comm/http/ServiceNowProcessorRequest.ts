@@ -4,6 +4,7 @@ import { XMLHTTP_PROCESSOR_ENDPOINT } from '../../constants';
 import { Parser } from 'xml2js';
 import { HttpResponse } from "./HttpResponse";
 import { HTTPRequest } from "./HTTPRequest";
+import { IHttpResponse } from "./IHttpResponse";
 
 export class ServiceNowProcessorRequest{
 
@@ -13,9 +14,9 @@ export class ServiceNowProcessorRequest{
 
     public async execute(processor:string, processorMethod:string, scope:string, processorArgs:object):Promise<string>{
         let retVal:string = null;
-        let resp:HttpResponse<unknown> =  await this.doXmlHttpRequest(processor, processorMethod, scope, processorArgs);
+        let resp:IHttpResponse<unknown> =  await this.doXmlHttpRequest(processor, processorMethod, scope, processorArgs);
         if(resp.status == 200){
-            let data:string = resp.data;
+            let data:string = resp.data as string;
             if(typeof data != 'undefined' && data && data.indexOf('answer=') != -1){
                
                 let parser:Parser = new Parser();
@@ -30,8 +31,8 @@ export class ServiceNowProcessorRequest{
         return retVal;
     }
 
-    async doXmlHttpRequest(processor:string, processorMethod:string, scope:string, processorArgs:object) : Promise<HttpResponse<unknown>>{
-        let resp:HttpResponse<unknown> = null;
+    async doXmlHttpRequest(processor:string, processorMethod:string, scope:string, processorArgs:object) : Promise<IHttpResponse<unknown>>{
+        let resp:IHttpResponse<unknown> = null;
 
         try{
             let dataObj:{[key:string]: string} ={};

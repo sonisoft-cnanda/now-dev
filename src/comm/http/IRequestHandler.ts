@@ -12,8 +12,10 @@ export interface IRequestHandler{
     delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> ;
 
     //request(config:AxiosRequestConfig):Promise<AxiosResponse<any,any>>;
-    setRequestToken(token:String);
+    //setRequestToken(token:String);
 
     getCookies() : Promise<Cookie[]> ;
+
+    setSession(session: any);
 
 }

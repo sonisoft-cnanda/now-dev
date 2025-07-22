@@ -1,6 +1,6 @@
-import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
+import { UISession } from "@servicenow/sdk-cli-core/dist/auth/basic-auth/UISession";
 import { IAuthenticationHandler } from "./IAuthenticationHandler";
-import { Creds, login } from "@servicenow/sdk-cli-core/dist/command/login";
+//import { Creds, login } from "@servicenow/sdk-cli-core/dist/command/login";
 import { Logger } from '../util/Logger.js';
 import { IRequestHandler } from "../comm/http/IRequestHandler";
 import { logger } from "@servicenow/sdk-cli/dist/logger";
@@ -41,9 +41,12 @@ export class AuthenticationHandler implements IAuthenticationHandler{
         //     }
         //   );
     }
+    setRequestHandler(requestHandler: IRequestHandler) {
+        throw new Error("Method not implemented.");
+    }
 
-    public async doLogin(host:string, username:string, password:string){
-        this.login(host, username, password);
+    public async doLogin(){
+       // this.login(host, username, password);
       
     }
 
@@ -52,13 +55,15 @@ export class AuthenticationHandler implements IAuthenticationHandler{
 
         let result:UISession | null = null;
         try{
-            const credentials: Creds = {
-                host: host,
-                username: username,
-                password: password,
-            } as Creds;
+            // const credentials: Creds = {
+            //     host: host,
+            //     username: username,
+            //     password: password,
+            // } as Creds;
 
-            result = await login(credentials, logger)
+            // result = await login(credentials, logger)
+            //TODO Fix
+            result = null;
             this._logger.debug("Login Attempt Complete.", result);
         }catch(e){
             this._logger.error("Error during login.", e);

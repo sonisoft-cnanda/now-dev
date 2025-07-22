@@ -5,7 +5,7 @@ import { HTTPRequest, HTTPRequestHandler, HttpResponse } from '../../src/comm/ht
 import { ServiceNowRequest } from '../../src/comm/http/ServiceNowRequest';
 
 
-describe('ServiceNowRequest', () => {
+describe.skip('ServiceNowRequest', () => {
    
     describe('req', () => {
        

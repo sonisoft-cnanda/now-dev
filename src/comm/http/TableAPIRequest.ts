@@ -2,6 +2,7 @@
 
 import { HTTPRequest } from "./HTTPRequest";
 import { HttpResponse } from "./HttpResponse";
+import { IHttpResponse } from "./IHttpResponse";
 import { ServiceNowRequest } from "./ServiceNowRequest";
 
 export class TableAPIRequest{
@@ -13,22 +14,22 @@ export class TableAPIRequest{
 
     private _apiBase:string = "/api/now/table/{table_name}";
 
-    public async get<T>(tableName:string, query:object): Promise<HttpResponse<T>>{
+    public async get<T>(tableName:string, query:object): Promise<IHttpResponse<T>>{
        
         let uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "get", query, null);
     }
 
-    public async post<T>(tableName:string, query:object, body:object): Promise<HttpResponse<T>>{
+    public async post<T>(tableName:string, query:object, body:object): Promise<IHttpResponse<T>>{
        
         let uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "post", query, body);
     }
 
-    private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<HttpResponse<T>>{
-        let resp:HttpResponse<T> = null;
+    private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<IHttpResponse<T>>{
+        let resp:IHttpResponse<T> = null;
 
         try{
             let req:ServiceNowRequest = new ServiceNowRequest();

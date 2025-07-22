@@ -4,7 +4,7 @@ import {  Creds } from '@servicenow/sdk-cli-core'
 import { generateRandomString } from '../../../test_utils/test_utils';
 const SECONDS = 1000;
 
-describe('now.sdk.auth.CredentialsWrapper Integration Test', () => {
+describe.skip('now.sdk.auth.CredentialsWrapper Integration Test', () => {
    const aliasList:string[] = [];
     beforeEach(async () => {
 

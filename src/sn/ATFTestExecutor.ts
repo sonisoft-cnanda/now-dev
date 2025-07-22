@@ -3,7 +3,7 @@ import { ServiceNowProcessorRequest } from "../comm/http/ServiceNowProcessorRequ
 import { ServiceNowRequest } from "../comm/http/ServiceNowRequest";
 import * as qs from 'qs';
 import { ReferenceLink, ServiceNowTableResponse } from "../model/types";
-import { HTTPRequest, HttpResponse } from "../comm";
+import { HTTPRequest, HttpResponse, IHttpResponse } from "../comm";
 
 export class ATFTestExecutor{
 
@@ -80,7 +80,7 @@ export class ATFTestExecutor{
        
  
         let request:HTTPRequest = { path: "/api/sn_cicd/progress/"+progressId, headers: null, query: null, body:null};
-        let resp:HttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
+        let resp:IHttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
         if(resp.status == 200){
             return resp.bodyObject;
         }
@@ -92,7 +92,7 @@ export class ATFTestExecutor{
        
  
         let request:HTTPRequest = { path: "/api/now/table/sys_atf_test_result?sysparm_query=sys_id="+testResultId, headers: null, query: null, body:null};
-        let resp:HttpResponse<ServiceNowTableResponse<TestResult>> = await this._req.get<ServiceNowTableResponse<TestResult>>(request);
+        let resp:IHttpResponse<ServiceNowTableResponse<TestResult>> = await this._req.get<ServiceNowTableResponse<TestResult>>(request);
         if(resp.status == 200){
             let tableResp:ServiceNowTableResponse<TestResult> =  resp.bodyObject;
             if(tableResp.result && tableResp.result.length > 0){

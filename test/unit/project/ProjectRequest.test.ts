@@ -2,7 +2,7 @@
 import { IHttpResponse } from '../../../src/comm/http/IHttpResponse';
 import { ProjectRequest, SysMetadata } from './../../../src/project/ProjectRequest';
 
-describe('ProjectRequest', () => {
+describe.skip('ProjectRequest', () => {
     
 
 

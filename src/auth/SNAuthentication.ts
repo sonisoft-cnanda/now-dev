@@ -50,7 +50,7 @@ export class SNAuthentication{
            if(response.status == 200){
                 if(response.headers["x-is-logged-in"] && response.headers["x-is-logged-in"] === "true"){
                     this._isLoggedIn = true;
-                    let gck:string = this.parseToken(response.data);
+                    let gck:string = this.parseToken(response.data as string);
                     this._gck = gck;
                     this._cookies = response.headers["set-cookie"];
                     this._requestHandler.setCookies(this._cookies);
