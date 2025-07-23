@@ -1,8 +1,9 @@
 
 
 import { IServiceNowInstance } from "../../sn/IServiceNowInstance";
+import { ServiceNowInstance } from "../../sn/ServiceNowInstance";
 import { HTTPRequest } from "./HTTPRequest";
-import { HttpResponse } from "./HttpResponse";
+import { IHttpResponse } from "./IHttpResponse";
 import { ServiceNowRequest } from "./ServiceNowRequest";
 
 export class TableAPIRequest{
@@ -26,25 +27,25 @@ export class TableAPIRequest{
         this.snInstance = instance;
     }
 
-    public async get<T>(tableName:string, query:object): Promise<HttpResponse<T>>{
+    public async get<T>(tableName:string, query:object): Promise<IHttpResponse<T>>{
        
         const uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "get", query, null);
     }
 
-    public async post<T>(tableName:string, query:object, body:object): Promise<HttpResponse<T>>{
+    public async post<T>(tableName:string, query:object, body:object): Promise<IHttpResponse<T>>{
        
         const uri:string = this.replaceVar(this._apiBase, {table_name:tableName});
 
         return await this._doRequest<T>(uri, "post", query, body);
     }
 
-    private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<HttpResponse<T>>{
-        let resp:HttpResponse<T> = null;
+    private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<IHttpResponse<T>>{
+        let resp:IHttpResponse<T> = null;
 
         try{
-            const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance);
+            const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance as ServiceNowInstance);
 
             const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body:bodyData};
             resp = await req.executeRequest<T>(request);

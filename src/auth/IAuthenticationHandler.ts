@@ -1,17 +1,18 @@
-import { ICookieStore } from "../comm/http/ICookieStore.js";
-import { IRequestHandler } from "../comm/http/IRequestHandler.js";
-import { IUserSession } from "../comm/http/IUserSession.js";
+import { ICookieStore } from "../comm/http/ICookieStore";
+import { IRequestHandler } from "../comm/http/IRequestHandler";
 
 
 export interface IAuthenticationHandler{
 
-    doLogin(host:string, username:string, password:string) : Promise<IUserSession>;
+    doLogin();
 
     getRequestHandler():IRequestHandler;
 
-    isLoggedIn():boolean;
+    setRequestHandler(requestHandler:IRequestHandler);
 
-    setLoggedIn(loggedIn:boolean);
+    isLoggedIn():Boolean;
+
+    setLoggedIn(loggedIn:Boolean);
 
     getToken():string;
 
