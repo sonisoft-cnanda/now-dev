@@ -89,6 +89,14 @@ export class ServiceNowRequest{
         return await this._requestHandler.delete<T>(request);
     }
 
+    public async getUserSession() {
+        if(this.isLoggedIn()){
+            return this.auth.getSession();
+        }else{
+            return this.auth.doLogin();
+        }
+    }
+
 
     private async ensureLoggedIn(){
     

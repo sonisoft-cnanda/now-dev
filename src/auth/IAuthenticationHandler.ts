@@ -17,4 +17,6 @@ export interface IAuthenticationHandler{
     getToken():string;
 
     getCookies():ICookieStore;
+
+    getSession():any;
 }

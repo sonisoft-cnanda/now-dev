@@ -9,6 +9,7 @@ export * from './exception/FileExistsException.js';
 export * from './exception/InvalidParameterException.js';
 export * from './exception/PathException.js';
 export * from './model/types.js';
+export * from './sn/Application.js';
 export * from './sn/BackgroundScriptExecutor.js';
 export * from './sn/IServiceNowInstance.js';
 export * from './sn/ServiceNowInstance.js';

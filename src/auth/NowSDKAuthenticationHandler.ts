@@ -75,4 +75,8 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
     public getCookies():ICookieStore{
         return this._session.getCookies();
     }
+
+    public getSession():any{
+        return this._session;
+    }
 }
