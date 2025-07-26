@@ -8,5 +8,9 @@ export interface HTTPRequest {
     body:any | null;
     query:object | null;
     method?:string | null;
+
+    fields?:object | null;
+
+    json?:object | null;
     
 }

@@ -5,9 +5,17 @@ import { Parser } from 'xml2js';
 import { HttpResponse } from "./HttpResponse";
 import { HTTPRequest } from "./HTTPRequest";
 import { IHttpResponse } from "./IHttpResponse";
+import { ServiceNowInstance } from "../../sn/ServiceNowInstance";
 
 export class ServiceNowProcessorRequest{
 
+    _instance:ServiceNowInstance;
+
+    public constructor(instance:ServiceNowInstance){
+        this._instance = instance;
+    }
+
+    
     private _headers:object = {
         "Content-Type":"application/x-www-form-urlencoded"
     };
@@ -44,10 +52,10 @@ export class ServiceNowProcessorRequest{
                 dataObj[prop] = processorArgs[prop];
             }
 
-            let data = qs.stringify(dataObj);
+            //let data = qs.stringify(dataObj);
 
-            let req:ServiceNowRequest = new ServiceNowRequest(null);
-            let request:HTTPRequest = { path: XMLHTTP_PROCESSOR_ENDPOINT, headers: this._headers, query: null, body:data};
+            let req:ServiceNowRequest = new ServiceNowRequest(this._instance);
+            let request:HTTPRequest = {method: 'POST', path: XMLHTTP_PROCESSOR_ENDPOINT, headers: this._headers, query: null, fields:dataObj, body:null};
             resp = await req.post(request);
         }catch(err){
             console.log(err);
