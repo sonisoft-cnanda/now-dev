@@ -61,6 +61,32 @@ export class Application {
         // }
     }
 
+    public async convertToStoreApp() : Promise<boolean> {
+        let userSession = await this.snRequest.getUserSession();
+        const fd:FormData = new FormData();
+        fd.append("sysparm_processor", "com.snc.apps.AppsAjaxProcessor");
+        fd.append("sysparm_function", "convertToStoreApp");
+        fd.append("sysparm_ck", userSession.userToken ?? '');
+        fd.append("sysparm_sys_id", this._applicationId);
+        fd.append("sysparm_name", "start");
+        fd.append("sysparm_scope", "global");
+
+        const params:URLSearchParams = new URLSearchParams(fd as any );
+        const request: HTTPRequest = {
+            method: 'POST',
+            path: '/xmlhttp.do',
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            query: null,
+            body: params
+        };
+        const response: IHttpResponse<string> = await this.snRequest.post<string>(request);
+        if (response.status == 200) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public async uninstall() : Promise<boolean> {
         let userSession = await this.snRequest.getUserSession();
         const { appID, sys_class_name, upgrade_finished } = await this.getAppAndSummary();

@@ -7,8 +7,9 @@ import { Cookie } from 'tough-cookie';
 import { ICookieStore } from './ICookieStore';
 import { IAuthenticationHandler } from '../../auth/IAuthenticationHandler';
 import { Logger } from '../../util/Logger';
-import { makeRequest } from "@servicenow/sdk-cli-core/dist/http/index.js";
-
+import { makeRequest, parseResponseBody } from "@servicenow/sdk-cli-core/dist/http/index.js";
+import { parseXml } from '@servicenow/sdk-cli-core/dist/util/Util';
+import { DOMParser } from 'xmldom';
 
 //axios.defaults.withCredentials = true;
 
@@ -60,6 +61,27 @@ export class RequestHandler implements IRequestHandler{
     //     return this.httpClient.request(config);
     // }
 
+
+    isValidXmlString(xmlString) {
+        try {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+      
+          // Check for parsing errors
+          const parserError = xmlDoc.getElementsByTagName("parsererror");
+          if (parserError.length > 0) {
+            // XML is not well-formed, contains parsing errors
+            return false;
+          }
+      
+          // If no parsererror element is found, the XML is well-formed
+          return true;
+        } catch (e) {
+          // An unexpected error occurred during parsing
+          return false;
+        }
+      }
+
     private async doRequest<T>(request: HTTPRequest): Promise<HttpResponse<T>> {
         let response:HttpResponse<T> = null;
        let {config} = await this.getRequestConfig(request);
@@ -73,10 +95,21 @@ export class RequestHandler implements IRequestHandler{
         
         let resp = await makeRequest(config);
 
-        let responseBodyReader = resp.body.getReader();
-        let responseBody = await responseBodyReader.read();
-        let responseBodyString = new TextDecoder().decode(responseBody.value);
+        if (!resp.ok) {
+            (parseResponseBody)(resp.clone());
+        }
+
+       
+
+
+        // let responseBodyReader = resp.body.getReader();
+        // let responseBody = await responseBodyReader.read();
+        let responseBodyString = await resp.text();
         if(responseBodyString){
+
+            //const xml = await ( parseXml)(responseBodyString);
+            //const answer = xml['xml']['@_answer'];
+
             let data = null;
             try{
                 
@@ -88,6 +121,10 @@ export class RequestHandler implements IRequestHandler{
             }
             response = new HttpResponse<T>(data);
             response.data = data;
+            response.body = responseBodyString;
+        }else{
+            response = new HttpResponse<T>(null);
+           
         }
        
         response.status = resp.status;
@@ -220,7 +257,15 @@ export class RequestHandler implements IRequestHandler{
         if(request.body){
             config.body = request.body;
         }
-        
+
+        if(request.fields){
+            config.fields = request.fields;
+        }
+
+        if(request.json){
+            config.json = request.json;
+        }
+
         config.params = request.query;
         config.baseHeaders = request.headers;
 
