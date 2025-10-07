@@ -45,7 +45,7 @@ export class ApplicationDetailModel {
     can_open_in_studio:boolean;
     is_customized_app:boolean;
     can_install_or_upgrade_customization:boolean;
-    customized_version_info:any;
+    customized_version_info:unknown;
     is_store_app:boolean;
     store_link:string;
 
@@ -60,18 +60,18 @@ export class ApplicationDetailModel {
     isInstalledAndUpdateAvailable:boolean;
     isCustomizationUpdateAvailable:boolean;
     installed_as_dependency:boolean;
-    app_schedule_details:any;
-    dependencies:any;
+    app_schedule_details:unknown;
+    dependencies:unknown;
     contains_plugins:boolean;
     optional_apps_available:boolean;
     install_tracker_id:string;
-    versions:any[];
+    versions:unknown[];
     new_guided_setup_id:string;
     upgradeHistoryId:string;
-    upgradeDetailsInfo:any;
-    installationInfo:any;
-    installedFilesQuery:any;
-    customizedFilesQuery:any;
+    upgradeDetailsInfo:unknown;
+    installationInfo:unknown;
+    installedFilesQuery:unknown;
+    customizedFilesQuery:unknown;
     userDateFormat:string;
     time_taken:number;
 
