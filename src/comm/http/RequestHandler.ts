@@ -84,7 +84,7 @@ export class RequestHandler implements IRequestHandler{
 
     private async doRequest<T>(request: HTTPRequest): Promise<HttpResponse<T>> {
         let response:HttpResponse<T> = null;
-       let {config} = await this.getRequestConfig(request);
+       const {config} = await this.getRequestConfig(request);
        this._logger.debug("Retrieved Configuration", {config:config});
        //const { auth, path, params, fields, json, headers: baseHeaders, ...rest } = opts;
         // let opts = {
@@ -93,18 +93,18 @@ export class RequestHandler implements IRequestHandler{
         //     rest: { method: request.method }
         // }
         
-        let resp = await makeRequest(config);
+        const resp = await makeRequest(config);
 
-        if (!resp.ok) {
-            (parseResponseBody)(resp.clone());
-        }
+        // if (!resp.ok) {
+        //     await (parseResponseBody)(resp.clone());
+        // }
 
        
 
 
         // let responseBodyReader = resp.body.getReader();
         // let responseBody = await responseBodyReader.read();
-        let responseBodyString = await resp.text();
+        const responseBodyString = await resp.text();
         if(responseBodyString){
 
             //const xml = await ( parseXml)(responseBodyString);
@@ -149,14 +149,14 @@ export class RequestHandler implements IRequestHandler{
         request.method = "POST";
         // let {config} = await this.getRequestConfig(request);
         // this._logger.debug("Retrieved Configuration", {config:config, url:url});
-        let response:IHttpResponse<T> = null;
+        const response:IHttpResponse<T> = null;
        try{
         const response = await this.doRequest<T>(request);
          this._logger.debug("Http SN POST Response Received", response);
          
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -176,13 +176,13 @@ export class RequestHandler implements IRequestHandler{
 
     public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
         request.method = "PUT";
-        let response:IHttpResponse<T> = null;
+        const response:IHttpResponse<T> = null;
         try{
          const response = await this.doRequest<T>(request);
             this._logger.debug("Http PUT Response Received", response);
             try{
                 if(!((response.data) instanceof String) ){
-                    let rpObj: T | null = response.data as T;
+                    const rpObj: T | null = response.data;
                     response.bodyObject = response.data;
                 }
             }catch(ex){
@@ -202,14 +202,14 @@ export class RequestHandler implements IRequestHandler{
 
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
         request.method = "GET";
-        let response:IHttpResponse<T> = null;
+        const response:IHttpResponse<T> = null;
         try{
          const response = await this.doRequest<T>(request);
           this._logger.debug("Http SN POST Response Received", response);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data;
                 response.bodyObject = response.data;
             }
         }catch(ex){
@@ -226,13 +226,13 @@ export class RequestHandler implements IRequestHandler{
 
     public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
         request.method = "DELETE";
-        let response:IHttpResponse<T> = null;
+        const response:IHttpResponse<T> = null;
         try{
          const response = await this.doRequest<T>(request);
 
         try{
             if(!((response.data) instanceof String) ){
-                let rpObj: T | null = response.data as T;
+                const rpObj: T | null = response.data;
                 response.bodyObject = response.data;            }
         }catch(ex){
             console.log(ex);
@@ -267,7 +267,7 @@ export class RequestHandler implements IRequestHandler{
         }
 
         config.params = request.query;
-        config.baseHeaders = request.headers;
+        config.headers = request.headers;
 
         config.path = request.path;
         config.method = request.method;
@@ -280,7 +280,7 @@ export class RequestHandler implements IRequestHandler{
         const params = new URLSearchParams();
       
       
-        for(var prop in queryObj){
+        for(const prop in queryObj){
             params.set(prop, queryObj[prop]);
         }
 

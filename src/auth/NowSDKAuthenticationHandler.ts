@@ -12,7 +12,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
 
     private _requestHandler:IRequestHandler;
   
-    private _isLoggedIn:Boolean = false;
+    private _isLoggedIn:boolean = false;
 
     private _session:any;
 
@@ -26,7 +26,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
     }
 
     public async doLogin() : Promise<any>{
-        let session:any =  await this.login();
+        const session:any =  await this.login();
         this._session = session;
 
         return session;
@@ -35,8 +35,8 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
     private async login() : Promise<any>{
 
         try{
-            let auth = {credentials: this._instance.credential};
-            let session = await getSafeUserSession(auth, this._logger);
+            const auth = {credentials: this._instance.credential};
+            const session = await getSafeUserSession(auth, this._logger);
             if(session){
                 this._requestHandler.setSession(session);
                 this.setLoggedIn(true);
@@ -48,6 +48,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
             return session;
         }catch(e){
             this._logger.error("Error during login.", e);
+            throw e;
         }
         return null;
     }
@@ -60,11 +61,11 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
         this._requestHandler = requestHandler;
     }
 
-    public isLoggedIn():Boolean{
+    public isLoggedIn():boolean{
         return this._isLoggedIn;
     }
 
-    public setLoggedIn(loggedIn:Boolean){
+    public setLoggedIn(loggedIn:boolean){
         this._isLoggedIn = loggedIn;
     }
 

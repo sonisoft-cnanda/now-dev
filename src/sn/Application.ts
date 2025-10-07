@@ -63,21 +63,22 @@ export class Application {
 
     public async convertToStoreApp() : Promise<boolean> {
         let userSession = await this.snRequest.getUserSession();
-        const fd:FormData = new FormData();
-        fd.append("sysparm_processor", "com.snc.apps.AppsAjaxProcessor");
-        fd.append("sysparm_function", "convertToStoreApp");
-        fd.append("sysparm_ck", userSession.userToken ?? '');
-        fd.append("sysparm_sys_id", this._applicationId);
-        fd.append("sysparm_name", "start");
-        fd.append("sysparm_scope", "global");
-
-        const params:URLSearchParams = new URLSearchParams(fd as any );
+        let params = {
+            sysparm_processor: "com.snc.apps.AppsAjaxProcessor",
+            sysparm_function: "convertToStoreApp",
+            sysparm_ck: userSession.userToken ?? '',
+            sysparm_sys_id: this._applicationId,
+            sysparm_name: "start",
+            sysparm_scope: "global"
+        }
+        
         const request: HTTPRequest = {
             method: 'POST',
             path: '/xmlhttp.do',
-            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            headers: {},
             query: null,
-            body: params
+            fields: params,
+            body: null
         };
         const response: IHttpResponse<string> = await this.snRequest.post<string>(request);
         if (response.status == 200) {
