@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //import { UISession } from "@servicenow/sdk-cli-core/dist/util/UISession";
 import { IRequestHandler } from "../comm/http/IRequestHandler";
 import { Logger } from "../util/Logger";
@@ -12,11 +14,11 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
 
     private _requestHandler:IRequestHandler;
   
-    private _isLoggedIn:Boolean = false;
+    private _isLoggedIn:boolean = false;
 
-    private _session:any;
+    private _session:unknown;
 
-    private _logger:any;
+    private _logger:Logger;
 
     private _instance:ServiceNowInstance;
 
@@ -26,17 +28,17 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
     }
 
     public async doLogin() : Promise<any>{
-        let session:any =  await this.login();
+        const session:unknown =  await this.login();
         this._session = session;
 
         return session;
     }
 
-    private async login() : Promise<any>{
+    private async login() : Promise<unknown>{
 
         try{
-            let auth = {credentials: this._instance.credential};
-            let session = await getSafeUserSession(auth, this._logger);
+            const auth = {credentials: this._instance.credential};
+            const session : unknown = await getSafeUserSession(auth, this._logger);
             if(session){
                 this._requestHandler.setSession(session);
                 this.setLoggedIn(true);
@@ -48,6 +50,7 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
             return session;
         }catch(e){
             this._logger.error("Error during login.", e);
+            throw e;
         }
         return null;
     }
@@ -60,23 +63,25 @@ export class NowSDKAuthenticationHandler implements IAuthenticationHandler{
         this._requestHandler = requestHandler;
     }
 
-    public isLoggedIn():Boolean{
+    public isLoggedIn():boolean{
         return this._isLoggedIn;
     }
 
-    public setLoggedIn(loggedIn:Boolean){
+    public setLoggedIn(loggedIn:boolean){
         this._isLoggedIn = loggedIn;
     }
 
     public getToken():string{
-        return this._session.getToken();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        return (this._session as any).getToken() as string;
     }
 
     public getCookies():ICookieStore{
-        return this._session.getCookies();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+        return (this._session as any).getCookies();
     }
 
-    public getSession():any{
+    public getSession():unknown{
         return this._session;
     }
 }

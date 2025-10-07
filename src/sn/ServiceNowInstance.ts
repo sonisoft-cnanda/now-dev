@@ -6,7 +6,7 @@ export interface ServiceNowSettingsInstance {
     alias?:string;
     isDefault?:boolean;
     password?:string;
-    credential?:any;
+    credential?:unknown;
 }
 
 export class ServiceNowInstance implements IServiceNowInstance{
@@ -17,7 +17,7 @@ export class ServiceNowInstance implements IServiceNowInstance{
 
     private _password:string;
     
-    private _credential:any;
+    private _credential:unknown;
 
     constructor(snInstanceSettingsObj?:ServiceNowSettingsInstance | null){
         if(typeof snInstanceSettingsObj != 'undefined' && snInstanceSettingsObj != null){
@@ -65,7 +65,7 @@ export class ServiceNowInstance implements IServiceNowInstance{
         return this._password;
     }
 
-    public get credential():any{
+    public get credential():unknown{
         return this._credential;
     }
 }

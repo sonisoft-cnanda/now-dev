@@ -16,8 +16,8 @@ export class ProgressWorker{
     }
 
     public async getProgress(progressId:string):Promise<ProgressResult>{
-        let request:HTTPRequest = { path: "/api/sn_cicd/progress/"+progressId, headers: null, query: null, body:null};
-        let resp:IHttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
+        const request:HTTPRequest = { path: "/api/sn_cicd/progress/"+progressId, headers: null, query: null, body:null};
+        const resp:IHttpResponse<ProgressResultResponse> = await this._req.get<ProgressResultResponse>(request);
         if(resp.status == 200){
             return resp.bodyObject.result;
         }
