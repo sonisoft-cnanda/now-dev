@@ -41,6 +41,20 @@ export class TableAPIRequest{
         return await this._doRequest<T>(uri, "post", query, body);
     }
 
+    public async put<T>(tableName:string, sysId:string, body:object): Promise<IHttpResponse<T>>{
+       
+        const uri:string = this.replaceVar(this._apiBase, {table_name:tableName}) + '/' + sysId;
+
+        return await this._doRequest<T>(uri, "put", null, body);
+    }
+
+    public async patch<T>(tableName:string, sysId:string, body:object): Promise<IHttpResponse<T>>{
+       
+        const uri:string = this.replaceVar(this._apiBase, {table_name:tableName}) + '/' + sysId;
+
+        return await this._doRequest<T>(uri, "patch", null, body);
+    }
+
     private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<IHttpResponse<T>>{
         let resp:IHttpResponse<T> = null;
 

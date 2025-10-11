@@ -19,7 +19,7 @@ describe('ATFTestExecutor', () => {
 
     beforeEach(async () => {
        
-        const alias: string = 'ven07473';
+        const alias: string = 'tanengdev012';
         //const credentialArgs = {"_": "get-credentials", auth: alias || "fluent-default"};
    
          credential = await getCredentials(alias);
@@ -61,6 +61,40 @@ describe('ATFTestExecutor', () => {
         const TEST_SUITE_NAME = 'My New Test Suite'; // Example test suite name
 
         it('should execute test suite by sys_id', async () => {
+            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
+            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID);
+            
+            expect(resp).not.toBeNull();
+            expect(resp.status).toBeDefined();
+            expect(resp.status_label).toBeDefined();
+            expect(resp.links).toBeDefined();
+            expect(resp.links.progress).toBeDefined();
+            expect(resp.links.progress.id).toBeDefined();
+        }, 60 * SECONDS);
+
+        it('should execute test suite by sys_id with CICD Credentials', async () => {
+            process.env['SN_SDK_NODE_ENV'] = 'SN_SDK_CI_INSTALL';
+            process.env['SN_SDK_INSTANCE_URL'] = 'https://tanengqa02.service-now.com';
+            process.env['SN_SDK_USER'] = 'admin';
+            process.env['SN_SDK_USER_PWD'] = 'G$$k0utTanium';
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cred: any = await getCredentials('test');
+       
+            expect(cred).not.toBeNull();
+            expect(cred).toBeDefined();
+            expect(cred.instanceUrl).toBe('https://tanengqa02.service-now.com');
+            expect(cred.username).toBe('admin');
+            expect(cred.password).toBe('G$$k0utTanium');
+    
+            if(cred){
+               const snSettings:ServiceNowSettingsInstance = {
+               alias: '',
+               credential: cred
+               }
+               instance = new ServiceNowInstance(snSettings);
+           }
+
             const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
             const resp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID);
             

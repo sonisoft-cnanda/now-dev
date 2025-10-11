@@ -2,6 +2,8 @@ import { ServiceNowInstance } from "../ServiceNowInstance";
 import { Logger } from "../../util/Logger";
 import { TableAPIRequest } from "../../comm/http/TableAPIRequest";
 import { IHttpResponse } from "../../comm/http/IHttpResponse";
+import { ServiceNowProcessorRequest } from "../../comm/http/ServiceNowProcessorRequest";
+import { Parser } from 'xml2js';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
@@ -10,7 +12,9 @@ import {
     SyslogResponse,
     SyslogAppScopeResponse,
     SyslogFormatOptions,
-    SyslogTailOptions
+    SyslogTailOptions,
+    LogTailResponse,
+    LogTailItem
 } from './SyslogRecord';
 
 /**
@@ -23,14 +27,17 @@ export class SyslogReader {
     
     private _logger: Logger = new Logger("SyslogReader");
     private _tableAPI: TableAPIRequest;
+    private _processorRequest: ServiceNowProcessorRequest;
     private _instance: ServiceNowInstance;
     private _tailInterval?: NodeJS.Timeout;
     private _lastFetchedSysId?: string;
+    private _lastSequence?: string;
     private _isTailing: boolean = false;
 
     public constructor(instance: ServiceNowInstance) {
         this._instance = instance;
         this._tableAPI = new TableAPIRequest(instance);
+        this._processorRequest = new ServiceNowProcessorRequest(instance);
     }
 
     /**
@@ -355,6 +362,207 @@ export class SyslogReader {
     }
 
     /**
+     * Tail ServiceNow logs using the ChannelAjax logtail processor
+     * This is more efficient than polling the table API as it uses sequence numbers
+     * @param options Tail options including interval and callbacks
+     */
+    public async startTailingWithChannelAjax(options: Omit<SyslogTailOptions, 'query' | 'initialLimit'> = {}): Promise<void> {
+        if (this._isTailing) {
+            throw new Error('Already tailing logs. Stop current tail before starting a new one.');
+        }
+
+        const {
+            interval = 1000, // Poll every 1 second by default
+            onLog,
+            formatOptions,
+            outputFile,
+            append = true
+        } = options;
+
+        this._isTailing = true;
+        this._logger.info(`Starting to tail logs using ChannelAjax with ${interval}ms interval`);
+
+        // Fetch initial logs to get starting sequence
+        const initialLogs = await this.fetchLogsFromChannelAjax();
+        
+        if (initialLogs && initialLogs.length > 0) {
+            console.log('\n=== Initial Logs ===');
+            initialLogs.forEach(item => {
+                const formattedLog = this.formatLogTailItem(item);
+                console.log(formattedLog);
+                
+                if (onLog) {
+                    // Convert LogTailItem to SyslogRecord format for callback
+                    const syslogRecord = this.logTailItemToSyslogRecord(item);
+                    onLog(syslogRecord);
+                }
+            });
+
+            if (outputFile) {
+                const logText = initialLogs.map(item => this.formatLogTailItem(item)).join('\n');
+                this.saveTextToFile(logText, outputFile, append);
+            }
+        }
+
+        // Start polling for new logs
+        this._tailInterval = setInterval(async () => {
+            try {
+                const newLogs = await this.fetchLogsFromChannelAjax();
+                
+                if (newLogs && newLogs.length > 0) {
+                    newLogs.forEach(item => {
+                        const formattedLog = this.formatLogTailItem(item);
+                        console.log(formattedLog);
+                        
+                        if (onLog) {
+                            const syslogRecord = this.logTailItemToSyslogRecord(item);
+                            onLog(syslogRecord);
+                        }
+                    });
+
+                    if (outputFile) {
+                        const logText = newLogs.map(item => this.formatLogTailItem(item)).join('\n');
+                        this.saveTextToFile(logText, outputFile, true);
+                    }
+                }
+            } catch (error) {
+                this._logger.error(`Error while tailing: ${error}`);
+            }
+        }, interval);
+
+        console.log(`\n👀 Tailing logs via ChannelAjax (press Ctrl+C to stop)...`);
+    }
+
+    /**
+     * Fetch logs from the ChannelAjax logtail processor
+     * @returns Array of log tail items
+     */
+    private async fetchLogsFromChannelAjax(): Promise<LogTailItem[]> {
+        const processorArgs: Record<string, string> = {
+            sysparm_type: 'read',
+            sysparm_value: this._lastSequence || '0',
+            sysparm_want_session_messages: 'true',
+            sysparm_silent_request: 'true',
+            sysparm_express_transaction: 'true',
+            'ni.nolog.x_referer': 'ignore',
+            'x_referer': 'channel.do?sysparm_channel=logtail'
+        };
+
+        const response = await this._processorRequest.doXmlHttpRequest(
+            'ChannelAjax',
+            'logtail',
+            'global',
+            processorArgs
+        );
+
+        if (response.status === 200) {
+            const xmlData = response.data as string;
+            const parsedData = await this.parseLogTailXml(xmlData);
+            
+            if (parsedData) {
+                // Update the sequence for the next request
+                this._lastSequence = parsedData.channel_last_sequence;
+                return parsedData.item || [];
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Parse XML response from ChannelAjax logtail
+     * @param xmlData XML string from response
+     * @returns Parsed LogTailResponse
+     */
+    private async parseLogTailXml(xmlData: string): Promise<LogTailResponse | null> {
+        return new Promise((resolve, reject) => {
+            const parser = new Parser({
+                explicitArray: false,
+                mergeAttrs: true
+            });
+
+            parser.parseString(xmlData, (err, result) => {
+                if (err) {
+                    this._logger.error(`Error parsing XML: ${err}`);
+                    reject(err);
+                    return;
+                }
+
+                if (result && result.xml) {
+                    const xmlRoot = result.xml;
+                    const response: LogTailResponse = {
+                        channel_last_sequence: xmlRoot.channel_last_sequence || '0',
+                        client_last_sequence: xmlRoot.client_last_sequence || '0',
+                        sysparm_max: xmlRoot.sysparm_max || '15',
+                        item: []
+                    };
+
+                    // Handle both single item and array of items
+                    if (xmlRoot.item) {
+                        if (Array.isArray(xmlRoot.item)) {
+                            response.item = xmlRoot.item;
+                        } else {
+                            response.item = [xmlRoot.item];
+                        }
+                    }
+
+                    resolve(response);
+                } else {
+                    resolve(null);
+                }
+            });
+        });
+    }
+
+    /**
+     * Format a LogTailItem for console output
+     * @param item Log tail item
+     * @returns Formatted string
+     */
+    private formatLogTailItem(item: LogTailItem): string {
+        const timestamp = new Date(parseInt(item.date));
+        const formattedDate = timestamp.toLocaleString();
+        return `[${formattedDate}] [${item.sequence}] ${item.message}`;
+    }
+
+    /**
+     * Convert LogTailItem to SyslogRecord format
+     * @param item Log tail item
+     * @returns SyslogRecord
+     */
+    private logTailItemToSyslogRecord(item: LogTailItem): SyslogRecord {
+        const timestamp = new Date(parseInt(item.date));
+        return {
+            sys_id: item.sequence, // Use sequence as ID
+            sys_created_on: timestamp.toISOString(),
+            level: 'info', // Default level as it's not provided in logtail
+            message: item.message,
+            source: 'logtail',
+            sequence: item.sequence
+        };
+    }
+
+    /**
+     * Save text content to a file
+     * @param content Text content to save
+     * @param filePath File path
+     * @param append Whether to append
+     */
+    private saveTextToFile(content: string, filePath: string, append: boolean): void {
+        const dir = path.dirname(filePath);
+        
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        if (append) {
+            fs.appendFileSync(filePath, content + '\n');
+        } else {
+            fs.writeFileSync(filePath, content + '\n');
+        }
+    }
+
+    /**
      * Stop tailing logs
      */
     public stopTailing(): void {
@@ -364,6 +572,7 @@ export class SyslogReader {
         }
         this._isTailing = false;
         this._lastFetchedSysId = undefined;
+        this._lastSequence = undefined;
         this._logger.info('Stopped tailing logs');
         console.log('\n✓ Stopped tailing logs');
     }

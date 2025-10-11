@@ -94,17 +94,34 @@ export class RequestHandler implements IRequestHandler{
         // }
         
         const resp = await makeRequest(config);
-
-        // if (!resp.ok) {
-        //     await (parseResponseBody)(resp.clone());
-        // }
-
-       
-
-
+        let responseBodyString: string | null = null;
+        if (!resp.ok) {
+           
+            try {
+                responseBodyString = await resp.text();
+            } catch (e) {
+                responseBodyString = null;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                this._logger.error("Error parsing response body.", {error:e});
+            }
+            this._logger.error("Error during request.", { error: resp, request: request });
+            this._logger.error("Response Details:", { body: responseBodyString, status: resp.status });
+            throw new Error("Error during request. Status: " + resp.status + " Body: " + (responseBodyString !== null ? responseBodyString : "[no response body]"));
+        }else{
+            try{
+                responseBodyString = await resp.text();
+            }catch(e){
+                responseBodyString = null;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                this._logger.error("Error parsing response body.", {error:e});
+            }
+        }
         // let responseBodyReader = resp.body.getReader();
         // let responseBody = await responseBodyReader.read();
-        const responseBodyString = await resp.text();
+       
+      
+       
+
         if(responseBodyString){
 
             //const xml = await ( parseXml)(responseBodyString);
