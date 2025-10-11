@@ -296,6 +296,42 @@ describe('SyslogReader', () => {
         }, 120 * SECONDS);
     });
 
+    // ChannelAjax tail test - skipped by default as it runs indefinitely
+    describe.skip('startTailingWithChannelAjax', () => {
+        it('should tail logs using ChannelAjax processor', async () => {
+            const syslogReader = new SyslogReader(instance);
+            const outputFile = path.join(__dirname, '../../../tmp/syslog/channel-tail-output.txt');
+            
+            console.log('\n=== Starting ChannelAjax Tail Test (will run for 30 seconds) ===');
+            
+            const receivedLogs: SyslogRecord[] = [];
+            
+            await syslogReader.startTailingWithChannelAjax({
+                interval: 1000, // Poll every second
+                onLog: (log) => {
+                    receivedLogs.push(log as SyslogRecord);
+                    console.log(`\n[New Log] Seq:${log.sequence || 'N/A'} - ${log.message.substring(0, 80)}...`);
+                },
+                outputFile: outputFile,
+                append: true
+            });
+            
+            // Run for 30 seconds
+            await new Promise(resolve => setTimeout(resolve, 30000));
+            
+            syslogReader.stopTailing();
+            
+            console.log(`\nReceived ${receivedLogs.length} new logs during tail`);
+            expect(syslogReader.isTailing).toBe(false);
+            
+            // Verify logs have sequence numbers
+            if (receivedLogs.length > 0) {
+                const hasSequences = receivedLogs.some(log => log.sequence);
+                expect(hasSequences).toBe(true);
+            }
+        }, 45 * SECONDS);
+    });
+
     // Tail test - skipped by default as it runs indefinitely
     describe.skip('startTailing', () => {
         it('should tail syslog in real-time', async () => {

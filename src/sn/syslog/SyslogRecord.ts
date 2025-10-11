@@ -113,3 +113,34 @@ export interface SyslogTailOptions {
     append?: boolean;
 }
 
+/**
+ * Represents a log item from the ChannelAjax logtail response
+ */
+export interface LogTailItem {
+    /** Timestamp in milliseconds */
+    date: string;
+    
+    /** Log message */
+    message: string;
+    
+    /** Sequence number for this log entry */
+    sequence: string;
+}
+
+/**
+ * Response from ChannelAjax logtail processor
+ */
+export interface LogTailResponse {
+    /** Last sequence number from server */
+    channel_last_sequence: string;
+    
+    /** Client's last sequence number */
+    client_last_sequence: string;
+    
+    /** Maximum number of items to return */
+    sysparm_max: string;
+    
+    /** Array of log items */
+    item: LogTailItem[];
+}
+

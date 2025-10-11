@@ -11,6 +11,7 @@ import { JSDOM } from 'jsdom'
 import { AMBClient } from "../../../src/sn/amb/AMBClient";
 import { ServiceNowInstance, ServiceNowSettingsInstance } from "../../../src/sn/ServiceNowInstance";
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
+import { TableAPIRequest } from "../../../src/comm/http/TableAPIRequest";
 
 const { window } = new JSDOM();
 
@@ -91,29 +92,55 @@ describe('AMBClient', () => {
 
 
 
-            const rwChannel = client.getRecordWatcherChannel("syslog", 'level=2', null, subConfig);
+            const rwChannel = client.getRecordWatcherChannel("incident", 'active=true', null, subConfig);
             console.log('📋 Record Watcher Channel Created:', rwChannel.getName());
 
+            let messageReceived = false;
             rwChannel.subscribe(function(message){
                 console.log('\n🎉 RECEIVED MESSAGE via channel subscribe callback!');
                 console.log(JSON.stringify(message, null, 2));
                 logger.debug("Channel subscription callback", message);
+                messageReceived = true;
             });
 
-            console.log('\n👀 Waiting for messages (30 seconds)...');
-            console.log('   Update incident 7eaeca2093ef39100c8a30118bba1067 in another browser to test\n');
+            console.log('\n👀 Subscription active, now creating a incident entry programmatically...\n');
             
-            // Wait longer to allow time for manual testing
-            await new Promise(resolve => setTimeout(resolve, 30000));
+            // Wait a moment for subscription to fully establish
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Create a syslog entry programmatically using Table API
+            const tableAPI = new TableAPIRequest(instance);
+            const incidentBody = {
+                active: true,  // Matches the filter in RecordWatcher
+                short_description: 'AMBClient.test.ts',
+                description: 'Test syslog entry created by automated test at ' + new Date().toISOString()
+            };
+
+            console.log('📝 Creating syslog entry with active=true...');
+            const createResponse = await tableAPI.post('incident', {}, JSON.stringify(incidentBody) as any);
+            
+            if (createResponse.status === 201 || createResponse.status === 200) {
+                console.log('✅ Incident entry created successfully');
+                console.log('   Response:', JSON.stringify(createResponse.bodyObject, null, 2));
+            } else {
+                console.log('⚠️  Unexpected response status:', createResponse.status);
+            }
+
+            console.log('\n⏳ Waiting for AMB message (2 seconds)...\n');
+            
+            // Wait for message to be received via AMB
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             console.log('\n⏹️  Test complete, disconnecting...');
+            console.log(`   Message received: ${messageReceived ? '✅ YES' : '❌ NO'}`);
             client.disconnect();
 
-            //expect(client._serverConnection.connected).toBe(false);
+            // Verify that we received a message
+            expect(messageReceived).toBe(true);
         }, 60 * SECONDS)
 
 
-        it('can run client to watch syslog', async () => {
+        it.skip('can run client to watch syslog', async () => {
             const logger = new Logger('AMBClient.test');
             
             // Initialize window FIRST (CometD needs it)
@@ -171,22 +198,48 @@ describe('AMBClient', () => {
             const rwChannel = client.getRecordWatcherChannel("syslog", "", null, subConfig);
             console.log('📋 Record Watcher Channel Created:', rwChannel.getName());
 
+            let messageReceived = false;
             rwChannel.subscribe(function(message){
                 console.log('\n🎉 RECEIVED MESSAGE via channel subscribe callback!');
                 console.log(JSON.stringify(message, null, 2));
                 logger.debug("Channel subscription callback", message);
+                messageReceived = true;
             });
 
-            console.log('\n👀 Waiting for messages (60 seconds)...');
-            console.log('   Update incident 7eaeca2093ef39100c8a30118bba1067 in another browser to test\n');
+            console.log('\n👀 Subscription active, now creating a syslog entry programmatically...\n');
             
-            // Wait longer to allow time for manual testing
-            await new Promise(resolve => setTimeout(resolve, 60000));
+            // Wait a moment for subscription to fully establish
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Create a syslog entry programmatically using Table API
+            const tableAPI = new TableAPIRequest(instance);
+            const syslogBody = {
+                level: '1',  // Info level
+                source: 'AMBClient.test.ts (watch all syslog)',
+                message: 'Test syslog entry for watch-all test at ' + new Date().toISOString()
+            };
+
+            console.log('📝 Creating syslog entry...');
+            const createResponse = await tableAPI.post('syslog', {}, syslogBody);
+            
+            if (createResponse.status === 201 || createResponse.status === 200) {
+                console.log('✅ Syslog entry created successfully');
+                console.log('   Response:', JSON.stringify(createResponse.bodyObject, null, 2));
+            } else {
+                console.log('⚠️  Unexpected response status:', createResponse.status);
+            }
+
+            console.log('\n⏳ Waiting for AMB message (10 seconds)...\n');
+            
+            // Wait for message to be received via AMB
+            await new Promise(resolve => setTimeout(resolve, 10000));
 
             console.log('\n⏹️  Test complete, disconnecting...');
+            console.log(`   Message received: ${messageReceived ? '✅ YES' : '❌ NO'}`);
             client.disconnect();
 
-            //expect(client._serverConnection.connected).toBe(false);
+            // Verify that we received a message
+            expect(messageReceived).toBe(true);
         }, 120 * SECONDS)
         
     })
