@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"]
+    },
     "composite": true,
     "declaration": true,
     "lib": ["ES2022"],

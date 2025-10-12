@@ -1,483 +1,156 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { mock } from "ts-jest-mocker";
-import {Channel} from "../../src/amb/Channel.js";
-import {ServerConnection} from "../../src/amb/ServerConnection.js";
-import { isNull } from "../../src/amb/Helper.js";
-import  { Callback, CometD, Status, SubscriptionHandle } from "cometd";
-import { ChannelListener } from "../../src/amb/ChannelListener.js";
+/**
+ * Unit tests for Channel class
+ * Focuses on logic and state management
+ */
 
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { Channel } from '../../../src/sn/amb/Channel';
+import { ServerConnection } from '../../../src/sn/amb/ServerConnection';
+import { ChannelListener } from '../../../src/sn/amb/ChannelListener';
 
-const serverConnectionMock = mock(ServerConnection);
+// Mock Logger
+jest.mock('../../../src/util/Logger', () => ({
+    Logger: jest.fn().mockImplementation(() => ({
+        debug: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        addErrorMessage: jest.fn(),
+        addWarnMessage: jest.fn()
+    }))
+}));
 
-// const events = {
-// 	CONNECTION_INITIALIZED: "connection.initialized",
-// 	CONNECTION_OPENED: "connection.opened",
-// 	SESSION_LOGGED_IN: "session.logged.in",
-// 	SESSION_LOGGED_OUT: "session.logged.out",
-// 	SESSION_INVALIDATED: "session.invalidated"
-// };
-
-
-
-
-describe("Channel", () => {
-	//const cometd:CometD = cometdMock;
-	//const mockCometD:CometD = cometd;
-	const conn:ServerConnection = serverConnectionMock;
-	let outputMessage = "";
-	
-
+describe('Channel - Unit Tests', () => {
+    let mockCometD: {
+        subscribe: jest.Mock;
+        unsubscribe: jest.Mock;
+        publish: jest.Mock;
+        getStatus: jest.Mock;
+    };
+    let mockServerConnection: {
+        getSubscriptionCommandSender: jest.Mock;
+    };
+    let channel: Channel;
+    const channelName = 'testChannelName';
 	
 	beforeEach(() => {
-		outputMessage = "";
-		// mockCometD = {
-		// 	subscribe: jest.fn(),
-		// 	unsubscribe: jest.fn(),
-		// 	publish: jest.fn(),
-		// 	getStatus: jest.fn()
-		// };
+        // Create mock CometD
+        mockCometD = {
+            subscribe: jest.fn().mockReturnValue({ id: 'sub-123' }),
+            unsubscribe: jest.fn(),
+            publish: jest.fn(),
+            getStatus: jest.fn().mockReturnValue('connected')
+        };
+
+        // Create mock ServerConnection
+        mockServerConnection = {
+            getSubscriptionCommandSender: jest.fn().mockReturnValue(null)
+        };
+
+        // Create channel instance
+        channel = new Channel(
+            mockServerConnection as unknown as ServerConnection,
+            mockCometD,
+            channelName,
+            true
+        );
+    });
+
+    function createMockListener(id: number = 1) {
+        return {
+            getCallback: jest.fn().mockReturnValue(() => 'listener callback'),
+            getSubscriptionCallback: jest.fn().mockReturnValue(null),
+            getID: jest.fn().mockReturnValue(id),
+            resubscribe: jest.fn()
+        };
+    }
+
+    describe('Constructor', () => {
+        it('should create channel with name', () => {
+            expect(channel).toBeInstanceOf(Channel);
+            expect(channel.getName()).toBe(channelName);
+        });
+
+        it('should store server connection', () => {
+            expect(channel.getServerConnection()).toBe(mockServerConnection);
+		});
 	});
 
-	function getMockCometD(){
-		const cometdMock = mock(CometD); 
-		return cometdMock;
-	}
+    describe('getName', () => {
+        it('should return channel name', () => {
+            expect(channel.getName()).toBe(channelName);
+        });
+    });
 
-	function testSubscribe(subscribeOptionsCallback, sendToCometD, testResubscribe) {
-		const cometdMock =getMockCometD(); 
-
-		const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				return "Llama";
-			});
-
-		let testChannel;
-		if (isNull(subscribeOptionsCallback))
-			testChannel = new Channel(conn ,cometdMock, "testChannelName", true);
-		else
-			testChannel = new Channel(conn, cometdMock, "testChannelName", true, subscribeOptionsCallback);
-
-		testChannel.subscribe(mockChannelListener);
-		expect(cometdMock.subscribe).toHaveBeenCalledTimes(1);
-
-		if (testResubscribe) {
-			testChannel.resubscribe();
-			expect(mockChannelListener.resubscribe).toHaveBeenCalledTimes(1);
-		}
-
-		if (sendToCometD) {
-			const subOptionsWrapper = { "subscribeOptions": subscribeOptionsCallback() };
-			expect(cometdMock.subscribe).toHaveBeenCalledWith("testChannelName",null, expect.any(Function), subOptionsWrapper, expect.any(Function));
-		} else
-			expect(cometdMock.subscribe).toHaveBeenCalledWith("testChannelName",null, expect.any(Function),null, expect.any(Function));
-	}
-
-	it("returns the channel name", () => {
-		const testChannel = new Channel(conn, getMockCometD(), "testChannelName", false);
-		expect(testChannel.getName()).toBe("testChannelName");
+    describe('getServerConnection', () => {
+        it('should return server connection', () => {
+            expect(channel.getServerConnection()).toBe(mockServerConnection);
+		});
 	});
 
-	describe("subscribe", () => {
-		it("calls cometd subscribe with subscribe options when subscribe options is not an empty object", () => {
-			const subscribeOptionsCallback = function() { return {"blah": "blah"}; };
-			testSubscribe(subscribeOptionsCallback, true, false);
-		});
+    describe('subscribe', () => {
+        it('should subscribe with channel listener', () => {
+            const mockListener = createMockListener();
+            
+            const listenerId = channel.subscribe(mockListener as unknown as ChannelListener);
+            
+            expect(listenerId).toBe(1);
+            expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
+        });
 
-		it("calls cometd subscribe without subscribe options when subscribe options is an empty object", () => {
-			const subscribeOptionsCallback = (() => { return {}; });
-			testSubscribe(subscribeOptionsCallback, false, false);
-		});
+        it('should return null when listener has no callback', () => {
+            const mockListener = createMockListener();
+            mockListener.getCallback.mockReturnValue(null);
+            
+            const listenerId = channel.subscribe(mockListener as unknown as ChannelListener);
+            
+            expect(listenerId).toBeNull();
+            expect(mockCometD.subscribe).not.toHaveBeenCalled();
+        });
 
-		it("calls cometd subscribe without subscribe options when subscribe options is missing", () => {
-			testSubscribe(null, false, false);
-		});
-
-		it("calls cometd subscribe without subscribe options when subscribe options callback is an empty function", () => {
-			const subscribeOptionsCallback = (() => {});
-			testSubscribe(subscribeOptionsCallback, false, false);
-		});
-
-		it("does not call cometd subscribe to channel if disconnected but does create listener", () => {
-
-			// const mockChannelListener = {
-				// getCallback: jest.fn().mockImplementation(() => {
-				// 	return "poop";
-				// }),
-				// getSubscriptionCallback: jest.fn()
-
-			// };
-			
-			const mockCometD = getMockCometD();
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				return "poop";
-			});
-
-			mockChannelListener.getSubscriptionCallback.mockReturnValue(() => {});
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			const listenerCount = testChannel.subscribe(mockChannelListener);
-
-			expect(listenerCount).toBe(1);
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(0);
-
-		});
-
-		it("does not subscribe to channel if listener callback undefined", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(null);
-			mockChannelListener.getSubscriptionCallback.mockReturnValue(() => {});
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			const listenerCount = testChannel.subscribe(mockChannelListener);
-
-			expect(listenerCount).toBe(null);
-			//expect(outputMessage).toBe("amb.Channel [ERROR] Cannot subscribe to channel: testChannelName, callback not provided");
-		});
-
-		it("subscribes to a channel if subscription does not already exist", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				 true;
-			});
-			mockChannelListener.getSubscriptionCallback.mockReturnValue(() => {});
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			const listenerCount = testChannel.subscribe(mockChannelListener);
-
-			expect(listenerCount).toBe(1);
+        it('should not subscribe twice with same listener', () => {
+            const mockListener = createMockListener();
+            
+            const listenerId1 = channel.subscribe(mockListener as unknown as ChannelListener);
+            const listenerId2 = channel.subscribe(mockListener as unknown as ChannelListener);
+            
+            expect(listenerId1).toBe(listenerId2);
 			expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
-			expect(mockCometD.subscribe).toHaveBeenCalledWith("testChannelName",null, expect.any(Function), null, expect.any(Function));
-		});
-
-		it("does not subscribe if not initialized", () => {
-			const mockCometD = getMockCometD();
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener.getSubscriptionCallback.mockReturnValue(() => {});
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			const idCounter = testChannel.subscribe(mockChannelListener);
-
-			expect(idCounter).toBe(1);
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(0);
-		});
-
-		it("does not add duplicate listeners", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener.getSubscriptionCallback.mockReturnValue(() => {});
-			mockChannelListener.getID.mockReturnValue(1);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			testChannel.subscribe(mockChannelListener);
-
-			// Add the same listener
-			testChannel.subscribe(mockChannelListener);
-
-			expect(testChannel.getChannelListeners().length).toBe(1);
-		});
-
-		it("adds multiple listeners", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getSubscriptionCallback.mockReturnValue(() => { true;});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-
-			const mockChannelListener2 = mock(ChannelListener);
-			mockChannelListener2.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener2.getSubscriptionCallback.mockReturnValue(() => {true; });
-			mockChannelListener2.getID.mockReturnValue(2);
-
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel.subscribe(mockChannelListener2);
-
-			expect(testChannel.getChannelListeners().length).toBe(2);
-		});
-
-		it("queues listener subscription callbacks", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getSubscriptionCallback.mockReturnValue(() => { 
-				console.log("sub callback 2 called");
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-
-			const mockChannelListener2 = mock(ChannelListener);
-			mockChannelListener2.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener2.getSubscriptionCallback.mockReturnValue(() => {
-				console.log("sub callback 2 called");
-			});
-			mockChannelListener2.getID.mockReturnValue(2);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", false);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel.subscribe(mockChannelListener2);
-
-			expect(testChannel.getListenerCallbackQueue().length).toBe(2);
-			testChannel.subscriptionCallback({status: "successful"});
-			expect(testChannel.getListenerCallbackQueue().length).toBe(0);
-		});
-
-		it("listener subscription callback is called", () => {
-			const mockCometD = getMockCometD();
-
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getSubscriptionCallback.mockReturnValue(() => { 
-				console.log("sub callback called");
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.setSubscriptionCallbackResponse("response");
-			testChannel.subscribe(mockChannelListener1);
-
-			expect(testChannel.getChannelListeners().length).toBe(1);
-			//expect(outputMessage).toBe("sub callback called");
-		});
-
-		it("returns undefined if cometd subscribe throws exception", () => {
-			const fnCometMock = mock(CometD); 
-			fnCometMock.subscribe.mockReturnValue(() => {
-				throw "Error";
-			});
-			fnCometMock.subscribe.mockImplementation((channel: string, messageCallback: Callback, subscribeProps: object, subscribeCallback?: Callback | undefined) : SubscriptionHandle => {
-				throw new Error("Error");
-			})
-
-			const mockChannelListener = mock(ChannelListener);
-			mockChannelListener.getCallback.mockReturnValue(() => {
-				true;
-			});
-			
-		
-
-			const testChannel = new Channel(conn, fnCometMock, "testChannelName", true);
-			const listenerId = testChannel.subscribe(mockChannelListener);
-
-			expect(listenerId).toBe(null);
-			//expect(outputMessage).toBe("amb.Channel [ERROR] Error");
 		});
 	});
 
-	describe("resubscribe", () => {
-		it("should resubscribe listeners", () => {
-			const mockCometD = getMockCometD();
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			
-			mockChannelListener1.getID.mockReturnValue(1);
-
-
-			const mockChannelListener2 = mock(ChannelListener);
-			mockChannelListener2.getCallback.mockReturnValue(() => {
-				true;
-			});
-		
-			mockChannelListener2.getID.mockReturnValue(2);
-
-			
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel.subscribe(mockChannelListener2);
-
-			testChannel.resubscribe();
-
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(2);
-			expect(mockChannelListener1.resubscribe).toHaveBeenCalledTimes(1);
-			expect(mockChannelListener2.resubscribe).toHaveBeenCalledTimes(1);
-		});
-
-		it("resubscribes listener with subscribe options", () => {
-			const subscribeOptionsCallback = function() { return {"blah": "blah"}; };
-			testSubscribe(subscribeOptionsCallback, true, true);
+    describe('unsubscribe', () => {
+        it('should unsubscribe listener', () => {
+            const mockListener = createMockListener();
+            
+            channel.subscribe(mockListener as unknown as ChannelListener);
+            channel.unsubscribe(mockListener as unknown as ChannelListener);
+            
+            const listeners = (channel as unknown as {listeners: unknown[]}).listeners;
+            expect(listeners).toHaveLength(0);
 		});
 	});
 
-	describe("unsubscribe", () => {
-		xit("requires a listener argument", () => {
-			//With TS this isn't really needed
-			const mockCometD = getMockCometD();
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			
-			mockChannelListener1.getID.mockReturnValue(1);
-
-
-		
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			let subRet:any = testChannel.subscribe(mockChannelListener1);
-
-			testChannel.unsubscribe(mockChannelListener1);
-
-
-			//expect(outputMessage).toBe("amb.Channel [ERROR] Cannot unsubscribe from channel: testChannelName, listener argument does not exist");
-		});
-
-		it("should unsubscribe a listener", () => {
-			
-			const mockCometD = getMockCometD();
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-			const mockChannelListener2 = mock(ChannelListener);
-			mockChannelListener2.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener2.getID.mockReturnValue(2);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel.subscribe(mockChannelListener2);
-
-
-			expect(testChannel.getChannelListeners().length).toBe(2);
-			testChannel.unsubscribe(mockChannelListener1);
-
-			expect(testChannel.getChannelListeners().length).toBe(1);
-		});
-
-		it("should unsubscribe from channel on last listener removal", () => {
-			const mockCometD = getMockCometD();
-			const subObject = {
-				status: "successful"
-			};
-
-			
-			mockCometD.subscribe.mockReturnValue(subObject);
-			mockCometD.getStatus.mockReturnValue( "connected" as Status);
-
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-		
-			
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
-
-			expect(testChannel.getChannelListeners().length).toBe(1);
-			testChannel.unsubscribe(mockChannelListener1);
-
-			expect(testChannel.getChannelListeners().length).toBe(0);
-			expect(mockCometD.unsubscribe).toHaveBeenCalledTimes(1);
-			expect(mockCometD.unsubscribe).toHaveBeenCalledWith(subObject);
-		});
-
-		it("should not unsubscribe from cometd if already unsubscribed", () => {
-			const mockCometD = getMockCometD();
-			const subObject = {
-				status: "successful"
-			};
-
-			
-			mockCometD.subscribe.mockReturnValue (subObject);
-			mockCometD.getStatus.mockReturnValue( "connected" as Status);
-
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
-
-			expect(testChannel.getChannelListeners().length).toBe(1);
-			testChannel.unsubscribe(mockChannelListener1);
-			testChannel.unsubscribeFromCometD();
-
-			expect(testChannel.getChannelListeners().length).toBe(0);
-			expect(mockCometD.unsubscribe).toHaveBeenCalledTimes(1);
-			expect(mockCometD.unsubscribe).toHaveBeenCalledWith(subObject);
+    describe('publish', () => {
+        it('should publish message via cometd', () => {
+            const message = { data: 'test message' };
+            
+            channel.publish(message);
+            
+            expect(mockCometD.publish).toHaveBeenCalledWith(channelName, message);
 		});
 	});
 
-	describe("_handleResponse", () => {
-		it("calls registered listener callbacks", () => {
-			const mockCometD = getMockCometD();
-			let isCalled:Boolean = false;
-			let sentMessage:string = "";
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue((m) => {
-				isCalled = true;
-				sentMessage = m;
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel._handleResponse("test message");
-
-			expect(isCalled).toBe(true);
-			expect(sentMessage).toBe("test message");
+    describe('resubscribe', () => {
+        it('should reset subscription', () => {
+            (channel as unknown as {subscription: unknown}).subscription = { id: 'old-sub' };
+            
+            channel.resubscribe();
+            
+            expect((channel as unknown as {subscription: unknown}).subscription).toBeNull();
 		});
 	});
 
-	describe("publish", () => {
-		it("publishes a message", () => {
-			const mockCometD = getMockCometD();
-			const mockChannelListener1 = mock(ChannelListener);
-			mockChannelListener1.getCallback.mockReturnValue(() => {
-				true;
-			});
-			mockChannelListener1.getID.mockReturnValue(1);
-
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.subscribe(mockChannelListener1);
-			testChannel.publish("test message");
-			expect(mockCometD.publish).toHaveBeenCalledWith("testChannelName", "test message");
-		});
-	});
-
-	describe("resubscribeToCometD", () => {
-		it("resubscribes to CometD", () => {
-			const mockCometD = getMockCometD();
-			const testChannel = new Channel(conn, mockCometD, "testChannelName", true);
-			testChannel.resubscribeToCometD();
-			expect(mockCometD.subscribe).toHaveBeenCalledTimes(1);
-			expect(mockCometD.subscribe).toHaveBeenCalledWith("testChannelName",null, expect.any(Function), null, expect.any(Function));
-		});
-	});
-
+    // Note: Full AMB functionality tests are in integration tests
+    // These unit tests focus on basic Channel operations
 });

@@ -1,75 +1,40 @@
-// import MessageClient from "../amb.MessageClient";
-// import getClient from "../amb.MessageClientBuilder";
-// import ServerConnection from "../amb.ServerConnection";
-// import Channel from "../amb.Channel";
-// import ChannelListener from "../amb.ChannelListener";
+/**
+ * Unit tests for MessageClientBuilder
+ * Note: Full client building tests are in integration tests due to browser dependencies
+ * AMBClient import requires CometD which needs browser environment,
+ * so we test only the standalone utility methods
+ */
 
+import { describe, it, expect } from '@jest/globals';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// const connect = jest.fn();
-// const removeChannel = jest.fn();
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// jest.mock('../amb.Channel');
-// let listeners = [];
-// Channel.mockImplementation(() => {
-// 	return {
-// 		getChannelListeners: () => listeners
-// 	}
-// });
+describe('MessageClientBuilder - Unit Tests', () => {
+    describe('Source file exists', () => {
+        it('should have MessageClientBuilder source file', () => {
+            const filePath = path.join(__dirname, '../../../src/sn/amb/MessageClientBuilder.ts');
+            
+            expect(fs.existsSync(filePath)).toBe(true);
+        });
+    });
 
+    // Note: All MessageClientBuilder functionality tests are in integration tests
+    // MessageClientBuilder depends on:
+    // - AMBClient (requires window, CometD)
+    // - MessageClient (requires browser environment)
+    // 
+    // Cannot be tested as unit test because:
+    // - Importing MessageClientBuilder loads AMBClient
+    // - AMBClient loads MessageClient  
+    // - MessageClient requires CometD
+    // - CometD requires window object (browser environment)
+    //
+    // Full functionality testing in: test/integration/amb/MessageClientBuilder_IT.test.ts
+});
 
-// jest.mock('../amb.ServerConnection');
-// ServerConnection.mockImplementation(() => {
-// 	return {
-// 		getChannel: Channel
-// 	}
-// });
-
-// jest.mock('../amb.ChannelListener');
-// ChannelListener.mockImplementation(() => {
-// 	return {
-// 		subscribe: jest.fn(),
-// 		unsubscribe: jest.fn()
-// 	}
-// });
-
-// jest.mock('../amb.MessageClient');
-// const initialize = jest.fn();
-
-// MessageClient.mockImplementation(() => {
-// 	return {
-// 		initialize: initialize,
-// 		connect: connect,
-// 		getServerConnection: ServerConnection,
-// 		getChannel: ChannelListener,
-// 		removeChannel: removeChannel
-// 	}
-// });
-
-
-// beforeEach(() => {
-// 	jest.clearAllMocks();
-// 	listeners = [];
-// });
-
-// describe('Subscribe and unsubscribe from channel', () => {
-// 	it('channel removed from server connection list when unsubscribed and there no more listeners', () => {
-// 		const messageClient = getClient();
-// 		const channel = messageClient.getChannel('foo');
-// 		const listener = () => {
-// 		};
-// 		channel.subscribe(listener);
-// 		channel.unsubscribe(listener);
-// 		expect(removeChannel).toHaveBeenCalledWith('foo');
-// 	});
-
-// 	it('channel is not removed from server connection list when unsubscribed and other listeners are present', () => {
-// 		const messageClient = getClient();
-// 		const channel = messageClient.getChannel('foo');
-// 		const listener = () => {
-// 		};
-// 		channel.subscribe(listener);
-// 		listeners.push(listener);
-// 		channel.unsubscribe(listener);
-// 		expect(removeChannel).toHaveBeenCalledTimes(0);
-// 	});
-// });
