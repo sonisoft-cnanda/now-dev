@@ -1,3 +1,637 @@
-# ServiceNow SDK Extensions
+# ServiceNow SDK Extensions Core
 
-This library contains functionality that enhances and extends the ServiceNow SDK to enhance the development experience on ServiceNow.
+[![npm version](https://img.shields.io/npm/v/@sonisoft/now-sdk-ext-core.svg)](https://www.npmjs.com/package/@sonisoft/now-sdk-ext-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org)
+
+A comprehensive TypeScript library that extends the ServiceNow SDK with powerful features for application management, automated testing, log monitoring, and more. Perfect for CI/CD pipelines, development automation, and DevOps workflows.
+
+## ✨ Features
+
+- 🚀 **Application Management** - Install, upgrade, and manage ServiceNow applications programmatically
+- 🧪 **ATF Test Execution** - Run automated tests and get detailed results
+- 📊 **Real-time Log Monitoring** - Tail ServiceNow logs with two efficient methods
+- 🔄 **AMB (Asynchronous Message Bus)** - WebSocket-based real-time event monitoring
+- 📝 **Background Script Execution** - Execute server-side scripts programmatically
+- 🔐 **Authentication** - Seamless integration with ServiceNow CLI authentication
+- 📡 **Table API** - Full CRUD operations on ServiceNow tables
+- 🛠️ **Type-Safe** - Complete TypeScript definitions for all APIs
+
+## 📦 Installation
+
+```bash
+npm install @sonisoft/now-sdk-ext-core
+```
+
+### Prerequisites
+
+- Node.js 14.x or higher
+- ServiceNow CLI configured with instance credentials
+- TypeScript 4.x or higher (optional, for TypeScript projects)
+
+### ServiceNow CLI Setup
+
+```bash
+# Install ServiceNow CLI globally
+npm install -g @servicenow/sdk
+
+# Configure your instance credentials
+snc configure profile set
+```
+
+## 🚀 Quick Start
+
+### Basic Connection
+
+```typescript
+import { ServiceNowInstance } from '@sonisoft/now-sdk-ext-core';
+import { getCredentials } from '@servicenow/sdk-cli/dist/auth/index.js';
+
+// Get credentials from ServiceNow CLI
+const credential = await getCredentials('your-instance-alias');
+
+// Create instance connection
+const instance = new ServiceNowInstance({
+    alias: 'your-instance-alias',
+    credential: credential
+});
+```
+
+### Real-Time Log Monitoring
+
+```typescript
+import { SyslogReader } from '@sonisoft/now-sdk-ext-core';
+
+const syslogReader = new SyslogReader(instance);
+
+// Method 1: Using ChannelAjax (faster, more efficient)
+await syslogReader.startTailingWithChannelAjax({
+    interval: 1000, // Poll every second
+    onLog: (log) => {
+        console.log(`[${log.sequence}] ${log.message}`);
+    },
+    outputFile: './logs/servicenow.log'
+});
+
+// Method 2: Using Table API (supports filtering)
+await syslogReader.startTailing('syslog', {
+    interval: 5000,
+    query: 'level=error^ORDERBYDESCsys_created_on',
+    onLog: (log) => {
+        console.error(`ERROR: ${log.message}`);
+    }
+});
+
+// Stop tailing
+syslogReader.stopTailing();
+```
+
+### Execute Background Scripts
+
+```typescript
+import { BackgroundScriptExecutor } from '@sonisoft/now-sdk-ext-core';
+
+const executor = new BackgroundScriptExecutor(instance, 'global');
+
+const script = `
+    var gr = new GlideRecord('incident');
+    gr.addQuery('active', true);
+    gr.query();
+    gs.info('Active incidents: ' + gr.getRowCount());
+`;
+
+const result = await executor.executeScript(script);
+console.log('Script output:', result.output);
+```
+
+### Run ATF Tests
+
+```typescript
+import { ATFTestExecutor } from '@sonisoft/now-sdk-ext-core';
+
+const testExecutor = new ATFTestExecutor(instance);
+
+// Execute a test suite
+const result = await testExecutor.executeTestSuite('test_suite_sys_id', {
+    timeout: 300000,
+    onProgress: (update) => {
+        console.log(`Progress: ${update.progress}% - ${update.status}`);
+    }
+});
+
+console.log(`Tests passed: ${result.testsPassedCount}/${result.totalTests}`);
+```
+
+## 📚 Core Features
+
+### 1. Application Management
+
+Programmatically manage ServiceNow applications, plugins, and updates.
+
+```typescript
+import { ApplicationManager, BatchInstallation } from '@sonisoft/now-sdk-ext-core';
+
+const appManager = new ApplicationManager(instance);
+
+// Install from batch definition
+const success = await appManager.installBatch('./batch-definition.json');
+
+// Get application details
+const appDetails = await appManager.getApplicationDetails('com.example.my_app');
+
+// Check which apps need updates
+const needsAction = await appManager.getApplicationsNeedingAction('./batch-definition.json');
+```
+
+**Batch Definition Example:**
+```json
+{
+  "packages": [
+    {
+      "id": "com.snc.sdlc.agile.multi.2.0",
+      "type": "plugin",
+      "load_demo_data": false
+    },
+    {
+      "id": "sn_cicd_spoke",
+      "type": "application", 
+      "version": "1.2.3",
+      "load_demo_data": false
+    }
+  ]
+}
+```
+
+### 2. ATF (Automated Test Framework) Testing
+
+Execute tests and retrieve detailed results programmatically.
+
+```typescript
+import { ATFTestExecutor } from '@sonisoft/now-sdk-ext-core';
+
+const testExecutor = new ATFTestExecutor(instance);
+
+// Execute a single test
+const result = await testExecutor.executeTest('test_sys_id', {
+    timeout: 120000,
+    onProgress: (update) => {
+        console.log(`Test: ${update.testName} - ${update.status}`);
+    }
+});
+
+// Execute test suite
+const suiteResult = await testExecutor.executeTestSuite('suite_sys_id', {
+    timeout: 600000,
+    pollInterval: 5000
+});
+
+// Get detailed results
+console.log(`Pass Rate: ${(suiteResult.testsPassedCount / suiteResult.totalTests * 100).toFixed(2)}%`);
+console.log(`Failed Tests:`, suiteResult.testResults.filter(t => t.status === 'failure'));
+```
+
+### 3. Syslog Reading & Monitoring
+
+Two methods for log monitoring, each optimized for different use cases.
+
+#### ChannelAjax Method (Recommended for Real-Time)
+
+**Benefits:**
+- ⚡ Faster (1s default polling vs 5s)
+- 🎯 100% reliable (sequence-based tracking)
+- 💪 Minimal server load
+- ✅ No duplicates or missed logs
+
+```typescript
+import { SyslogReader } from '@sonisoft/now-sdk-ext-core';
+
+const syslogReader = new SyslogReader(instance);
+
+await syslogReader.startTailingWithChannelAjax({
+    interval: 1000,
+    onLog: (log) => {
+        const timestamp = new Date(log.sys_created_on).toLocaleString();
+        console.log(`[${timestamp}] [Seq:${log.sequence}] ${log.message}`);
+    },
+    outputFile: './logs/tail.log'
+});
+```
+
+#### Table API Method (Supports Filtering)
+
+**Benefits:**
+- 🔍 Server-side filtering with encoded queries
+- 📋 Access to syslog_app_scope table
+- 🎨 Custom field selection
+- 📊 Rich formatting options
+
+```typescript
+await syslogReader.startTailing('syslog', {
+    interval: 5000,
+    query: 'level=error^sys_created_on>javascript:gs.minutesAgoStart(10)',
+    onLog: (log) => {
+        if (log.level === 'error') {
+            sendAlert(log);
+        }
+    },
+    formatOptions: {
+        fields: ['sys_created_on', 'level', 'source', 'message'],
+        dateFormat: 'relative',
+        maxMessageWidth: 100
+    }
+});
+```
+
+#### Query and Export Logs
+
+```typescript
+// Query recent errors
+const errors = await syslogReader.querySyslog(
+    'level=error^ORDERBYDESCsys_created_on',
+    50
+);
+
+// Print formatted table
+syslogReader.printTable(errors, {
+    fields: ['sys_created_on', 'level', 'source', 'message'],
+    maxMessageWidth: 80
+});
+
+// Export to file
+await syslogReader.saveToFile(errors, './logs/errors.json', 'json');
+await syslogReader.saveToFile(errors, './logs/errors.csv', 'csv');
+await syslogReader.saveToFile(errors, './logs/errors.txt', 'table');
+```
+
+### 4. AMB (Asynchronous Message Bus)
+
+Monitor real-time events and record changes via WebSocket.
+
+```typescript
+import { AMBClient, MessageClientBuilder } from '@sonisoft/now-sdk-ext-core';
+
+const builder = new MessageClientBuilder();
+const subscriptions = builder.buildClientSubscriptions();
+const client = new AMBClient(subscriptions, instance);
+
+// Authenticate and connect
+await client.authenticate();
+client.connect();
+
+// Watch for incident changes
+const channel = client.getRecordWatcherChannel('incident', 'active=true', null, {
+    subscriptionCallback: (message) => {
+        console.log('Incident updated:', message);
+    }
+});
+
+channel.subscribe((message) => {
+    console.log('Change detected:', message);
+});
+
+// Disconnect when done
+client.disconnect();
+```
+
+### 5. Table API Operations
+
+Full CRUD operations on ServiceNow tables.
+
+```typescript
+import { TableAPIRequest } from '@sonisoft/now-sdk-ext-core';
+
+const tableAPI = new TableAPIRequest(instance);
+
+// Create a record
+const createResponse = await tableAPI.post('incident', {}, {
+    short_description: 'Test incident',
+    urgency: '2',
+    impact: '2'
+});
+
+// Read records
+const readResponse = await tableAPI.get('incident', {
+    sysparm_query: 'active=true',
+    sysparm_limit: 10
+});
+
+// Update a record
+const updateResponse = await tableAPI.put('incident', 'sys_id_here', {
+    state: '6', // Resolved
+    close_notes: 'Issue resolved'
+});
+
+// Partial update
+const patchResponse = await tableAPI.patch('incident', 'sys_id_here', {
+    work_notes: 'Added update via API'
+});
+```
+
+### 6. Background Script Execution
+
+Execute server-side GlideScript with full control.
+
+```typescript
+import { BackgroundScriptExecutor } from '@sonisoft/now-sdk-ext-core';
+
+const executor = new BackgroundScriptExecutor(instance, 'global');
+
+// Execute script
+const result = await executor.executeScript(`
+    var gr = new GlideRecord('sys_user');
+    gr.addQuery('active', true);
+    gr.addQuery('last_login', '>', gs.daysAgoStart(30));
+    gr.query();
+    
+    var count = gr.getRowCount();
+    gs.info('Active users (last 30 days): ' + count);
+    
+    return count;
+`);
+
+console.log('Script output:', result.output);
+console.log('Return value:', result.result);
+```
+
+## 📖 API Reference
+
+### Core Classes
+
+- **`ServiceNowInstance`** - Instance connection and configuration
+- **`ServiceNowRequest`** - HTTP request handling with authentication
+- **`TableAPIRequest`** - ServiceNow Table API wrapper
+
+### Application Management
+
+- **`ApplicationManager`** - High-level application management
+- **`AppRepoApplication`** - App repository operations
+- **`BatchDefinition`** - Batch installation definitions
+- **`CompanyApplications`** - Company application queries
+
+### Testing & Automation
+
+- **`ATFTestExecutor`** - ATF test execution and monitoring
+- **`BackgroundScriptExecutor`** - Server-side script execution
+
+### Logging & Monitoring
+
+- **`SyslogReader`** - Log querying and real-time monitoring
+- **`AMBClient`** - Real-time event subscriptions
+- **`MessageClientBuilder`** - AMB client configuration
+
+### Utilities
+
+- **`Logger`** - Winston-based logging
+- **`NowStringUtil`** - String manipulation utilities
+- **`AppUtil`** - Application utility functions
+
+## 🎯 Use Cases
+
+### CI/CD Pipeline Integration
+
+```typescript
+// Install required apps before deployment
+const appManager = new ApplicationManager(instance);
+await appManager.installBatch('./required-apps.json');
+
+// Run tests
+const testExecutor = new ATFTestExecutor(instance);
+const testResults = await testExecutor.executeTestSuite('deployment_test_suite');
+
+if (testResults.testsPassedCount !== testResults.totalTests) {
+    throw new Error('Tests failed, aborting deployment');
+}
+```
+
+### Log Analysis & Monitoring
+
+```typescript
+// Real-time error monitoring with alerts
+const syslogReader = new SyslogReader(instance);
+
+await syslogReader.startTailing('syslog', {
+    query: 'level=error',
+    onLog: async (log) => {
+        if (log.message.includes('OutOfMemory')) {
+            await sendPageAlert('Critical: OOM detected');
+        }
+        await saveToElasticsearch(log);
+    }
+});
+```
+
+### Data Migration Scripts
+
+```typescript
+const executor = new BackgroundScriptExecutor(instance, 'global');
+const tableAPI = new TableAPIRequest(instance);
+
+// Export data
+const response = await tableAPI.get('custom_table', {
+    sysparm_limit: 1000,
+    sysparm_query: 'sys_created_on>2024-01-01'
+});
+
+// Process and transform
+const records = response.bodyObject.result;
+// ... transformation logic ...
+
+// Import to another instance
+for (const record of transformedRecords) {
+    await targetTableAPI.post('target_table', {}, record);
+}
+```
+
+## 📋 Command-Line Tools
+
+The library includes ready-to-use CLI tools:
+
+### Log Tailing (ChannelAjax)
+```bash
+node docs/examples/syslog-tail-channel.mjs your-instance ./logs/tail.log 1000
+```
+
+### Log Tailing (Table API)
+```bash
+node docs/examples/syslog-tail.mjs your-instance error ./logs/errors.log
+```
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the `/docs` directory:
+
+- **[Getting Started](./docs/GettingStarted.md)** - Setup and basic usage
+- **[API Reference](./docs/APIReference.md)** - Complete API documentation
+- **[Application Manager](./docs/ApplicationManager.md)** - Application management guide
+- **[ATF Test Executor](./docs/ATFTestExecutor.md)** - Testing automation
+- **[Syslog Reader](./docs/SyslogReader.md)** - Log monitoring guide
+- **[ChannelAjax Tailing](./docs/SyslogReaderChannelAjax.md)** - Advanced log tailing
+- **[AMB Guide](./docs/AMB_FIX_SUMMARY.md)** - Real-time event monitoring
+- **[Examples](./docs/examples/)** - Working code examples
+
+## 🔧 Advanced Configuration
+
+### Custom Request Handlers
+
+```typescript
+import { RequestHandler, ServiceNowInstance } from '@sonisoft/now-sdk-ext-core';
+
+const handler = new RequestHandler(instance, {
+    timeout: 30000,
+    maxRetries: 3,
+    retryDelay: 1000
+});
+```
+
+### Custom Logging
+
+```typescript
+import { Logger } from '@sonisoft/now-sdk-ext-core';
+
+const logger = Logger.createLogger('MyApp');
+logger.info('Application started');
+logger.error('Error occurred', { details: errorObj });
+```
+
+### Authentication Handler
+
+```typescript
+import { NowSDKAuthenticationHandler } from '@sonisoft/now-sdk-ext-core';
+
+const authHandler = new NowSDKAuthenticationHandler(
+    'instance-alias',
+    credential
+);
+
+const token = await authHandler.getToken();
+```
+
+## 🤝 TypeScript Support
+
+The library is written in TypeScript and includes full type definitions:
+
+```typescript
+import type {
+    ServiceNowInstance,
+    SyslogRecord,
+    ATFTestResult,
+    ApplicationDetailModel,
+    BatchDefinition
+} from '@sonisoft/now-sdk-ext-core';
+```
+
+## 🐛 Error Handling
+
+```typescript
+import { 
+    FileException, 
+    InvalidParameterException 
+} from '@sonisoft/now-sdk-ext-core';
+
+try {
+    await appManager.installBatch('./batch.json');
+} catch (error) {
+    if (error instanceof FileException) {
+        console.error('File not found:', error.message);
+    } else if (error instanceof InvalidParameterException) {
+        console.error('Invalid parameter:', error.message);
+    } else {
+        console.error('Unexpected error:', error);
+    }
+}
+```
+
+## ⚡ Performance Tips
+
+1. **Use ChannelAjax for log tailing** - 5x faster than Table API polling
+2. **Batch operations** - Group multiple API calls when possible
+3. **Adjust poll intervals** - Balance responsiveness vs. API load
+4. **Use encoded queries** - Server-side filtering is more efficient
+5. **Implement retry logic** - Handle transient network issues
+
+## 🔒 Security Best Practices
+
+1. **Never hardcode credentials** - Use ServiceNow CLI authentication
+2. **Use environment variables** - For configuration
+3. **Implement role-based access** - Verify user permissions
+4. **Audit API usage** - Log all operations
+5. **Use HTTPS** - Always use secure connections
+
+## 📦 Dependencies
+
+- `@servicenow/sdk` - ServiceNow SDK
+- `@servicenow/sdk-cli` - ServiceNow CLI tools
+- `cometd` - WebSocket support for AMB
+- `xml2js` - XML parsing
+- `winston` - Logging
+- `axios` - HTTP client
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test suite
+npm test -- --testPathPattern=SyslogReader
+
+# Run with coverage
+npm test -- --coverage
+```
+
+## 🏗️ Building from Source
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Install dependencies
+npm install
+
+# Build TypeScript
+npm run buildts
+
+# Run tests
+npm test
+
+# Create package
+npm pack
+```
+
+## 📝 License
+
+MIT License - see LICENSE file for details
+
+## 🙏 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with tests
+4. Submit a pull request
+
+## 📞 Support
+
+For issues, questions, or contributions:
+
+- 📧 Create an issue in the repository
+- 📖 Check the documentation in `/docs`
+- 💬 Review existing examples in `/docs/examples`
+
+## 🗺️ Roadmap
+
+- [ ] GraphQL API support
+- [ ] Webhook integration
+- [ ] Enhanced batch operations
+- [ ] Performance metrics
+- [ ] CLI tool package
+- [ ] Plugin development tools
+
+## 📈 Version History
+
+See [CHANGELOG](./CHANGELOG.md) for version history and release notes.
+
+---
+
+**Made with ❤️ for the ServiceNow Developer Community**
