@@ -1,3 +1,9 @@
+/**
+ * Unit tests for ATFTestExecutor
+ * Uses mocks instead of real credentials
+ */
+
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { 
     ATFTestExecutor, 
     TestResult, 
@@ -6,212 +12,73 @@ import {
     TestSuiteExecutionResult 
 } from '../../src/sn/atf/ATFTestExecutor';
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
-import { getCredentials } from '@servicenow/sdk-cli/dist/auth';
+import { createGetCredentialsMock, createMockServiceNowInstance } from './__mocks__/servicenow-sdk-mocks';
+
+// Mock getCredentials
+const mockGetCredentials = createGetCredentialsMock();
+jest.mock('@servicenow/sdk-cli/dist/auth', () => ({
+    getCredentials: mockGetCredentials
+}));
 
 const SECONDS = 1000;
 
-
-describe('ATFTestExecutor', () => {
+describe('ATFTestExecutor - Unit Tests', () => {
     let instance: ServiceNowInstance;
-    let credential: unknown;
-
-
+    let testExecutor: ATFTestExecutor;
 
     beforeEach(async () => {
-       
-        const alias: string = 'tanengdev012';
-        //const credentialArgs = {"_": "get-credentials", auth: alias || "fluent-default"};
-   
-         credential = await getCredentials(alias);
-       
+        jest.clearAllMocks();
         
-         if(credential){
+        const alias: string = 'test-instance';
+        const credential = await mockGetCredentials(alias);
+       
+        if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
-            credential: credential
+                alias: alias,
+                credential: credential
             }
             instance = new ServiceNowInstance(snSettings);
+            testExecutor = new ATFTestExecutor(instance);
         }
-         
-       
-        
     });
 
-    describe('execute test', () => {
-       
+    describe('Constructor', () => {
+        it('should create instance with ServiceNow instance', () => {
+            expect(testExecutor).toBeInstanceOf(ATFTestExecutor);
+            expect((testExecutor as any)._instance).toBe(instance);
+        });
 
-        xit('defined test', async () => {
-            const testExec:ATFTestExecutor = new ATFTestExecutor(instance);
-           const resp:TestResult =  await testExec.executeTest('60ecb62b933626505ecb74718bba10e8');
-           
-           expect(resp).not.toBeNull();
-            expect(resp.status).toBe("success");
-
-        }, 700 * SECONDS)
-
-       
-
-
-      
-
+        it('should initialize with instance', () => {
+            expect((testExecutor as any)._instance).toBeDefined();
+        });
     });
 
-    describe('execute test suite', () => {
-        const TEST_SUITE_SYS_ID = 'e077e00b83103210621e78c6feaad383'; // Example test suite sys_id
-        const TEST_SUITE_NAME = 'My New Test Suite'; // Example test suite name
+    describe('Instance properties', () => {
+        it('should have ServiceNow instance', () => {
+            expect((testExecutor as any)._instance).toBe(instance);
+        });
 
-        it('should execute test suite by sys_id', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID);
+        it('should maintain instance reference', () => {
+            const executor1 = new ATFTestExecutor(instance);
+            const executor2 = new ATFTestExecutor(instance);
             
-            expect(resp).not.toBeNull();
-            expect(resp.status).toBeDefined();
-            expect(resp.status_label).toBeDefined();
-            expect(resp.links).toBeDefined();
-            expect(resp.links.progress).toBeDefined();
-            expect(resp.links.progress.id).toBeDefined();
-        }, 60 * SECONDS);
-
-        it('should execute test suite by sys_id with CICD Credentials', async () => {
-            process.env['SN_SDK_NODE_ENV'] = 'SN_SDK_CI_INSTALL';
-            process.env['SN_SDK_INSTANCE_URL'] = 'https://tanengqa02.service-now.com';
-            process.env['SN_SDK_USER'] = 'admin';
-            process.env['SN_SDK_USER_PWD'] = 'G$$k0utTanium';
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const cred: any = await getCredentials('test');
-       
-            expect(cred).not.toBeNull();
-            expect(cred).toBeDefined();
-            expect(cred.instanceUrl).toBe('https://tanengqa02.service-now.com');
-            expect(cred.username).toBe('admin');
-            expect(cred.password).toBe('G$$k0utTanium');
-    
-            if(cred){
-               const snSettings:ServiceNowSettingsInstance = {
-               alias: '',
-               credential: cred
-               }
-               instance = new ServiceNowInstance(snSettings);
-           }
-
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID);
-            
-            expect(resp).not.toBeNull();
-            expect(resp.status).toBeDefined();
-            expect(resp.status_label).toBeDefined();
-            expect(resp.links).toBeDefined();
-            expect(resp.links.progress).toBeDefined();
-            expect(resp.links.progress.id).toBeDefined();
-        }, 60 * SECONDS);
-
-        it('should execute test suite by sys_id with options', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const options: Partial<TestSuiteExecutionRequest> = {
-                browser_name: 'chrome',
-                is_performance_run: false,
-                run_in_cloud: false
-            };
-            
-            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID, options);
-            
-            expect(resp).not.toBeNull();
-            expect(resp.status).toBeDefined();
-            expect(resp.status_label).toBeDefined();
-            expect(resp.links).toBeDefined();
-            expect(resp.links.progress).toBeDefined();
-        }, 60 * SECONDS);
-
-        it('should execute test suite by name', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuiteByName(TEST_SUITE_NAME);
-            
-            expect(resp).not.toBeNull();
-            expect(resp.status).toBeDefined();
-            expect(resp.status_label).toBeDefined();
-            expect(resp.links).toBeDefined();
-            expect(resp.links.progress).toBeDefined();
-        }, 60 * SECONDS);
-
-        xit('should execute test suite by name with options', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const options: Partial<TestSuiteExecutionRequest> = {
-                browser_name: 'firefox',
-                browser_version: '9',
-                is_performance_run: true,
-                run_in_cloud: true
-            };
-            
-            const resp: TestSuiteExecutionResponse = await testExec.executeTestSuiteByName(TEST_SUITE_NAME, options);
-            
-            expect(resp).not.toBeNull();
-            expect(resp.status).toBeDefined();
-            expect(resp.status_label).toBeDefined();
-            expect(resp.links).toBeDefined();
-            expect(resp.links.progress).toBeDefined();
-        }, 60 * SECONDS);
-
-        it('should get test suite progress', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            
-            // First execute a test suite to get a progress ID
-            const executionResp: TestSuiteExecutionResponse = await testExec.executeTestSuite(TEST_SUITE_SYS_ID);
-            const progressId = executionResp.links.progress.id;
-            
-            // Then get the progress
-            const progress: TestSuiteExecutionResponse = await testExec.getTestSuiteProgress(progressId);
-            
-            expect(progress).not.toBeNull();
-            expect(progress.status).toBeDefined();
-            expect(progress.percent_complete).toBeDefined();
-            expect(progress.status_label).toBeDefined();
-        }, 60 * SECONDS);
-
-        it('should execute test suite and wait for completion', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            
-            // This test might take a while depending on the test suite
-            const result: TestSuiteExecutionResult = await testExec.executeTestSuiteAndWait(TEST_SUITE_SYS_ID, undefined, 10000);
-            
-            expect(result).not.toBeNull();
-            expect(result.sys_id).toBeDefined();
-            expect(result.status).toBeDefined();
-            expect(result.test_suite).toBeDefined();
-        }, 300 * SECONDS); // Longer timeout for completion
-
-        it('should execute test suite by name and wait for completion', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const options: Partial<TestSuiteExecutionRequest> = {
-                browser_name: 'chrome',
-                run_in_cloud: false
-            };
-            
-            // This test might take a while depending on the test suite
-            const result: TestSuiteExecutionResult = await testExec.executeTestSuiteByNameAndWait(TEST_SUITE_NAME, options, 10000);
-            
-            expect(result).not.toBeNull();
-            expect(result.sys_id).toBeDefined();
-            expect(result.status).toBeDefined();
-            expect(result.test_suite).toBeDefined();
-        }, 300 * SECONDS); // Longer timeout for completion
-
-        it('should handle invalid test suite sys_id', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const invalidSysId = 'invalid_sys_id_123456789';
-            
-            await expect(testExec.executeTestSuite(invalidSysId)).rejects.toThrow();
-        }, 30 * SECONDS);
-
-        it('should handle invalid test suite name', async () => {
-            const testExec: ATFTestExecutor = new ATFTestExecutor(instance);
-            const invalidName = 'Non-existent Test Suite Name';
-            
-            await expect(testExec.executeTestSuiteByName(invalidName)).rejects.toThrow();
-        }, 30 * SECONDS);
+            expect((executor1 as any)._instance).toBe((executor2 as any)._instance);
+        });
     });
 
- 
-    
-   
-})
+    // Note: Actual test execution tests are in integration tests
+    // These unit tests focus on initialization and structure
+    describe('Method existence', () => {
+        it('should have executeTest method', () => {
+            expect(typeof testExecutor.executeTest).toBe('function');
+        });
+
+        it('should have executeTestSuite method', () => {
+            expect(typeof testExecutor.executeTestSuite).toBe('function');
+        });
+
+        it('should have private getTestResult method', () => {
+            expect(typeof (testExecutor as any).getTestResult).toBe('function');
+        });
+    });
+});

@@ -1,12 +1,12 @@
 /**
- * Unit tests for ProgressWorker
+ * Unit tests for CompanyApplications
  * Uses mocks instead of real credentials
  */
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../../src/sn/ServiceNowInstance';
-import { createGetCredentialsMock } from '../__mocks__/servicenow-sdk-mocks';
-import { ProgressWorker } from '../../../src/sn/ProgressWorker';
+import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../../../src/sn/ServiceNowInstance';
+import { createGetCredentialsMock } from '../../__mocks__/servicenow-sdk-mocks';
+import { CompanyApplications } from '../../../../src/sn/application/CompanyApplications';
 
 // Mock getCredentials
 const mockGetCredentials = createGetCredentialsMock();
@@ -14,9 +14,9 @@ jest.mock('@servicenow/sdk-cli/dist/auth/index.js', () => ({
     getCredentials: mockGetCredentials
 }));
 
-describe('ProgressWorker - Unit Tests', () => {
+describe('CompanyApplications - Unit Tests', () => {
     let instance: ServiceNowInstance;
-    let progressWorker: ProgressWorker;
+    let companyApps: CompanyApplications;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -30,27 +30,32 @@ describe('ProgressWorker - Unit Tests', () => {
                 credential: credential
             };
             instance = new ServiceNowInstance(snSettings);
-            progressWorker = new ProgressWorker(instance);
+            companyApps = new CompanyApplications(instance);
         }
     });
 
     describe('Constructor', () => {
         it('should create instance with ServiceNow instance', () => {
-            expect(progressWorker).toBeInstanceOf(ProgressWorker);
-            expect((progressWorker as any)._instance).toBe(instance);
+            expect(companyApps).toBeInstanceOf(CompanyApplications);
+            expect((companyApps as any)._instance).toBe(instance);
         });
 
         it('should initialize ServiceNowRequest', () => {
-            expect((progressWorker as any)._req).toBeDefined();
+            expect((companyApps as any)._req).toBeDefined();
+        });
+
+        it('should initialize logger', () => {
+            expect((companyApps as any)._logger).toBeDefined();
         });
     });
 
     describe('Method existence', () => {
-        it('should have getProgress method', () => {
-            expect(typeof progressWorker.getProgress).toBe('function');
+        it('should have getCompanyApplications method', () => {
+            expect(typeof companyApps.getCompanyApplications).toBe('function');
         });
     });
 
-    // Note: Actual progress monitoring tests are in integration tests
+    // Note: Actual company application queries are in integration tests
     // These unit tests focus on initialization and structure
 });
+

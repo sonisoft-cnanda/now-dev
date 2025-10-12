@@ -1,114 +1,334 @@
-import {FunctionQueue} from "../../src/amb/FunctionQueue";
+/**
+ * Unit tests for FunctionQueue
+ */
 
-describe('FunctionQueue', () => {
-	it('test initial state', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		expect(funQueue.getSize()).toBe(0);
-		expect(funQueue.getCapacity()).toBe(queueCapacity);
-		expect(funQueue.getAvailableSpace()).toBe(queueCapacity);
-	});
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { FunctionQueue } from '../../../src/sn/amb/FunctionQueue';
 
-	it('test bad ctor argument', () => {
-		let funQueue = new FunctionQueue(0);
-		expect(funQueue.getSize()).toBe(0);
-		expect(funQueue.getCapacity()).toBe(1);
-	});
+describe('FunctionQueue - Unit Tests', () => {
+    let queue: FunctionQueue;
 
-	it('test state after enqueue', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		funQueue.enqueue("item#1");
-		expect(funQueue.getSize()).toBe(1);
-		expect(funQueue.getAvailableSpace()).toBe(queueCapacity - 1);
-	});
+    beforeEach(() => {
+        queue = new FunctionQueue();
+    });
 
-	it('test after dequeue', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		funQueue.enqueue("item#1");
-		funQueue.enqueue("item#2");
-		expect(funQueue.dequeue()).toEqual("item#1");
-		expect(funQueue.getSize()).toBe(1);
-	});
+    describe('Constructor', () => {
+        it('should create queue with default max size', () => {
+            expect(queue).toBeInstanceOf(FunctionQueue);
+            expect(queue.getCapacity()).toBe(0x7ffffff);
+        });
 
-	it('test state after enqueueMultiple', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		const inputItems = ["item#1", "item#2", "item#3", "item#4"];
-		funQueue.enqueueMultiple(inputItems);
-		expect(funQueue.getSize()).toBe(4);
-		expect(funQueue.dequeue()).toEqual("item#1");
-	});
+        it('should create queue with custom size', () => {
+            const customQueue = new FunctionQueue(100);
+            expect(customQueue.getCapacity()).toBe(100);
+        });
 
-	it('test after dequeueMultiple', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		const inputItems = ["item#1", "item#2", "item#3", "item#4"];
-		inputItems.forEach((item) => funQueue.enqueue(item));
-		const numToGrab = inputItems.length - 1;
-		const outputItems = funQueue.dequeueMultiple(numToGrab);
-		expect(funQueue.getSize()).toBe(1);
-		expect(outputItems.length).toBe(numToGrab);
-		let idx;
-		for (idx = 0; idx < numToGrab; ++idx)
-			expect(outputItems[idx] == inputItems[idx]);
-	});
+        it('should enforce minimum size of 1', () => {
+            const smallQueue = new FunctionQueue(0);
+            expect(smallQueue.getCapacity()).toBe(1);
+        });
 
-	it('test out of range arg dequeueMultiple', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		const inputItems = ["item#1", "item#2", "item#3", "item#4"];
-		const emptyArray = [];
-		funQueue.enqueueMultiple(inputItems);
-		expect(funQueue.dequeueMultiple(-7)).toBeUndefined();
-		expect(funQueue.dequeueMultiple(queueCapacity + 1)).toBeUndefined();
-	});
+        it('should floor fractional sizes', () => {
+            const fractionalQueue = new FunctionQueue(10.7);
+            expect(fractionalQueue.getCapacity()).toBe(10);
+        });
 
-	it('test singular forms near boundaries', () => {
-		const queueCapacity = 4;
-		const funQueue = new FunctionQueue(queueCapacity);
-		let inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
-		let idx;
-		for (idx = 0; idx < queueCapacity; ++idx)
-			expect(funQueue.enqueue(inputItems[idx])).toBe(true);
-		expect(funQueue.enqueue(inputItems[queueCapacity])).toBe(false);
-		while (queueCapacity < inputItems.length)
-			inputItems.pop();
-		for (idx = 0; idx < queueCapacity; ++idx)
-			expect(funQueue.dequeue()).toEqual(inputItems[idx]);
-		expect(funQueue.getSize()).toBe(0);
-		expect(funQueue.dequeue()).toBeUndefined();
-		expect(funQueue.getSize()).toBe(0);
-	});
+        it('should handle negative sizes as 1', () => {
+            const negativeQueue = new FunctionQueue(-5);
+            expect(negativeQueue.getCapacity()).toBe(1);
+        });
+    });
 
-	it('test multiple forms near boundaries', () => {
-		const queueCapacity = 4;
-		const funQueue = new FunctionQueue(queueCapacity);
-		let inputItems = ["item#1", "item#2", "item#3", "item#4", "item#5"];
-		expect(funQueue.enqueueMultiple(inputItems)).toBe(false);
-		while (queueCapacity < inputItems.length)
-			inputItems.pop();
-		expect(funQueue.enqueueMultiple(inputItems)).toBe(true);
-		expect(funQueue.getSize()).toBe(inputItems.length);
-		expect(funQueue.getAvailableSpace()).toBe(queueCapacity - inputItems.length);
-		expect(funQueue.dequeueMultiple(queueCapacity + 1)).toBeUndefined();
-		expect(funQueue.getSize()).toBe(inputItems.length);
-		expect(funQueue.dequeueMultiple(queueCapacity)).toEqual(inputItems);
-		expect(funQueue.getSize()).toBe(0);
-	});
+    describe('enqueue', () => {
+        it('should add item to queue', () => {
+            const item = { data: 'test' };
+            const result = queue.enqueue(item);
+            
+            expect(result).toBe(true);
+            expect(queue.getSize()).toBe(1);
+        });
 
-	it('test after dequeueMultiple', () => {
-		const queueCapacity = 8;
-		const funQueue = new FunctionQueue(queueCapacity);
-		const inputItems = ["item#1", "item#2", "item#3", "item#4"];
-		inputItems.forEach((item) => funQueue.enqueue(item));
-		const numToGrab = inputItems.length - 1;
-		const outputItems = funQueue.dequeueMultiple(numToGrab);
-		expect(funQueue.getSize()).toBe(1);
-		expect(outputItems.length).toBe(numToGrab);
-		let idx;
-		for (idx = 0; idx < numToGrab; ++idx)
-			expect(outputItems[idx] == inputItems[idx]);
-	});
+        it('should add multiple items', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            queue.enqueue('item3');
+            
+            expect(queue.getSize()).toBe(3);
+        });
+
+        it('should return false when queue is full', () => {
+            const smallQueue = new FunctionQueue(2);
+            
+            expect(smallQueue.enqueue('item1')).toBe(true);
+            expect(smallQueue.enqueue('item2')).toBe(true);
+            expect(smallQueue.enqueue('item3')).toBe(false);
+            expect(smallQueue.getSize()).toBe(2);
+        });
+
+        it('should handle different item types', () => {
+            queue.enqueue(123);
+            queue.enqueue('string');
+            queue.enqueue({ key: 'value' });
+            queue.enqueue([1, 2, 3]);
+            queue.enqueue(null);
+            
+            expect(queue.getSize()).toBe(5);
+        });
+    });
+
+    describe('dequeue', () => {
+        it('should remove and return first item', () => {
+            queue.enqueue('first');
+            queue.enqueue('second');
+            
+            const item = queue.dequeue();
+            
+            expect(item).toBe('first');
+            expect(queue.getSize()).toBe(1);
+        });
+
+        it('should return items in FIFO order', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            queue.enqueue('item3');
+            
+            expect(queue.dequeue()).toBe('item1');
+            expect(queue.dequeue()).toBe('item2');
+            expect(queue.dequeue()).toBe('item3');
+        });
+
+        it('should return undefined when queue is empty', () => {
+            const item = queue.dequeue();
+            expect(item).toBeUndefined();
+        });
+
+        it('should handle dequeue until empty', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            
+            queue.dequeue();
+            queue.dequeue();
+            
+            expect(queue.getSize()).toBe(0);
+            expect(queue.dequeue()).toBeUndefined();
+        });
+    });
+
+    describe('enqueueMultiple', () => {
+        it('should add multiple items at once', () => {
+            const items = ['item1', 'item2', 'item3'];
+            const result = queue.enqueueMultiple(items);
+            
+            expect(result).toBe(true);
+            expect(queue.getSize()).toBe(3);
+        });
+
+        it('should return false when insufficient space', () => {
+            const smallQueue = new FunctionQueue(5);
+            smallQueue.enqueue('existing1');
+            smallQueue.enqueue('existing2');
+            
+            const items = ['new1', 'new2', 'new3', 'new4'];
+            const result = smallQueue.enqueueMultiple(items);
+            
+            expect(result).toBe(false);
+            expect(smallQueue.getSize()).toBe(2); // Original items remain
+        });
+
+        it('should add all items or none', () => {
+            const smallQueue = new FunctionQueue(3);
+            smallQueue.enqueue('item1');
+            
+            const items = ['item2', 'item3', 'item4'];
+            smallQueue.enqueueMultiple(items);
+            
+            expect(smallQueue.getSize()).toBe(1); // Only original item
+        });
+
+        it('should handle empty array', () => {
+            const result = queue.enqueueMultiple([]);
+            expect(result).toBe(true);
+            expect(queue.getSize()).toBe(0);
+        });
+    });
+
+    describe('dequeueMultiple', () => {
+        it('should remove and return multiple items', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            queue.enqueue('item3');
+            
+            const items = queue.dequeueMultiple(2);
+            
+            expect(items).toEqual(['item1', 'item2']);
+            expect(queue.getSize()).toBe(1);
+        });
+
+        it('should return undefined when count is negative', () => {
+            queue.enqueue('item1');
+            const items = queue.dequeueMultiple(-1);
+            
+            expect(items).toBeUndefined();
+        });
+
+        it('should return undefined when count exceeds queue size', () => {
+            queue.enqueue('item1');
+            const items = queue.dequeueMultiple(5);
+            
+            expect(items).toBeUndefined();
+            expect(queue.getSize()).toBe(1); // Items remain
+        });
+
+        it('should return empty array when count is 0', () => {
+            queue.enqueue('item1');
+            const items = queue.dequeueMultiple(0);
+            
+            expect(items).toEqual([]);
+            expect(queue.getSize()).toBe(1);
+        });
+
+        it('should remove all items when count equals size', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            
+            const items = queue.dequeueMultiple(2);
+            
+            expect(items).toEqual(['item1', 'item2']);
+            expect(queue.getSize()).toBe(0);
+        });
+    });
+
+    describe('clear', () => {
+        it('should remove all items', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            queue.enqueue('item3');
+            
+            queue.clear();
+            
+            expect(queue.getSize()).toBe(0);
+        });
+
+        it('should work on empty queue', () => {
+            queue.clear();
+            expect(queue.getSize()).toBe(0);
+        });
+    });
+
+    describe('getSize', () => {
+        it('should return 0 for empty queue', () => {
+            expect(queue.getSize()).toBe(0);
+        });
+
+        it('should return correct size', () => {
+            queue.enqueue('item1');
+            expect(queue.getSize()).toBe(1);
+            
+            queue.enqueue('item2');
+            expect(queue.getSize()).toBe(2);
+        });
+
+        it('should decrease on dequeue', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            
+            queue.dequeue();
+            expect(queue.getSize()).toBe(1);
+        });
+    });
+
+    describe('getCapacity', () => {
+        it('should return max queue size', () => {
+            expect(queue.getCapacity()).toBe(0x7ffffff);
+        });
+
+        it('should return custom capacity', () => {
+            const customQueue = new FunctionQueue(50);
+            expect(customQueue.getCapacity()).toBe(50);
+        });
+    });
+
+    describe('getAvailableSpace', () => {
+        it('should return full capacity when empty', () => {
+            const smallQueue = new FunctionQueue(10);
+            expect(smallQueue.getAvailableSpace()).toBe(10);
+        });
+
+        it('should decrease as items are added', () => {
+            const smallQueue = new FunctionQueue(5);
+            
+            smallQueue.enqueue('item1');
+            expect(smallQueue.getAvailableSpace()).toBe(4);
+            
+            smallQueue.enqueue('item2');
+            expect(smallQueue.getAvailableSpace()).toBe(3);
+        });
+
+        it('should return 0 when full', () => {
+            const smallQueue = new FunctionQueue(2);
+            smallQueue.enqueue('item1');
+            smallQueue.enqueue('item2');
+            
+            expect(smallQueue.getAvailableSpace()).toBe(0);
+        });
+
+        it('should increase on dequeue', () => {
+            const smallQueue = new FunctionQueue(5);
+            smallQueue.enqueue('item1');
+            smallQueue.enqueue('item2');
+            
+            smallQueue.dequeue();
+            expect(smallQueue.getAvailableSpace()).toBe(4);
+        });
+    });
+
+    describe('getQueueBuffer', () => {
+        it('should return queue buffer array', () => {
+            queue.enqueue('item1');
+            queue.enqueue('item2');
+            
+            const buffer = queue.getQueueBuffer();
+            
+            expect(buffer).toEqual(['item1', 'item2']);
+        });
+
+        it('should return empty array for empty queue', () => {
+            const buffer = queue.getQueueBuffer();
+            expect(buffer).toEqual([]);
+        });
+    });
+
+    describe('Edge cases', () => {
+        it('should handle rapid enqueue/dequeue', () => {
+            for (let i = 0; i < 100; i++) {
+                queue.enqueue(`item${i}`);
+            }
+            
+            for (let i = 0; i < 50; i++) {
+                queue.dequeue();
+            }
+            
+            expect(queue.getSize()).toBe(50);
+        });
+
+        it('should maintain queue integrity', () => {
+            queue.enqueue('first');
+            queue.enqueue('second');
+            queue.dequeue();
+            queue.enqueue('third');
+            
+            expect(queue.dequeue()).toBe('second');
+            expect(queue.dequeue()).toBe('third');
+        });
+
+        it('should handle clear and re-use', () => {
+            queue.enqueue('item1');
+            queue.clear();
+            queue.enqueue('item2');
+            
+            expect(queue.getSize()).toBe(1);
+            expect(queue.dequeue()).toBe('item2');
+        });
+    });
 });
+
