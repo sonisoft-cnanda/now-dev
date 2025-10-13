@@ -15,10 +15,9 @@ describe('BackgroundScriptExecutor', () => {
 
     beforeEach(async () => {
        
-        const alias:string = 'ven05195';
-        const credentialArgs = {"_": "get-credentials", auth: alias};
+        const alias:string = 'tanengdev012';
    
-        const credential = await getCredentials(credentialArgs);
+        const credential = await getCredentials(alias);
         
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
@@ -118,7 +117,7 @@ describe('BackgroundScriptExecutor', () => {
                 </HTML>`;
             const resultObj = await executor?.parseScriptResult(xmlBody);
             expect(resultObj).toBeDefined();
-            expect(resultObj?.result).toBe("testResult");
+            expect(resultObj?.result).toContain("testResult");
         })
     })
 

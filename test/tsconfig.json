@@ -1,6 +1,12 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "noEmit": true
-  }
+    "noEmit": true,
+    "baseUrl": "..",
+    "paths": {
+      "@src/*": ["../src/*"],
+      "@test/*": ["../test/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.test.ts"]
 }

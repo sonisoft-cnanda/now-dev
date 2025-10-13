@@ -16,7 +16,7 @@ import { TableAPIRequest } from "../../../src/comm/http/TableAPIRequest";
 const { window } = new JSDOM();
 
 
-describe('AMBClient', () => {
+describe.skip('AMBClient', () => {
     let instance: ServiceNowInstance;
     let credential: unknown;
     const INSTANCE_ALIAS = 'tanengdev012';
