@@ -150,9 +150,9 @@ export class SyslogReader {
             const row = displayFields.map(field => {
                 let value: string;
                 if (field === 'sys_created_on') {
-                    value = this.formatDate(record[field] as string, dateFormat);
+                    value = this.formatDate(record[field], dateFormat);
                 } else if (field === 'level') {
-                    value = this.colorizeLevel(record[field] as string);
+                    value = this.colorizeLevel(record[field]);
                 } else {
                     value = String(record[field] || '');
                 }
@@ -223,7 +223,7 @@ export class SyslogReader {
         records: (SyslogRecord | SyslogAppScopeRecord)[],
         options: SyslogFormatOptions = {}
     ): void {
-        console.log(this.formatAsTable(records, options));
+        this._logger.info(this.formatAsTable(records, options));
     }
 
     /**
@@ -313,7 +313,7 @@ export class SyslogReader {
         
         if (initialRecords.length > 0) {
             this._lastFetchedSysId = initialRecords[0].sys_id;
-            console.log('\n=== Initial Logs ===');
+            this._logger.info('\n=== Initial Logs ===');
             this.printTable(initialRecords, formatOptions);
             
             if (outputFile) {
@@ -358,7 +358,7 @@ export class SyslogReader {
             }
         }, interval);
 
-        console.log(`\n👀 Tailing ${tableName} table (press Ctrl+C to stop)...`);
+        //console.log(`\n👀 Tailing ${tableName} table (press Ctrl+C to stop)...`);
     }
 
     /**
@@ -386,10 +386,10 @@ export class SyslogReader {
         const initialLogs = await this.fetchLogsFromChannelAjax();
         
         if (initialLogs && initialLogs.length > 0) {
-            console.log('\n=== Initial Logs ===');
+            this._logger.info('\n=== Initial Logs ===');
             initialLogs.forEach(item => {
                 const formattedLog = this.formatLogTailItem(item);
-                console.log(formattedLog);
+                this._logger.info(formattedLog);
                 
                 if (onLog) {
                     // Convert LogTailItem to SyslogRecord format for callback
@@ -405,6 +405,7 @@ export class SyslogReader {
         }
 
         // Start polling for new logs
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         this._tailInterval = setInterval(async () => {
             try {
                 const newLogs = await this.fetchLogsFromChannelAjax();
@@ -412,7 +413,7 @@ export class SyslogReader {
                 if (newLogs && newLogs.length > 0) {
                     newLogs.forEach(item => {
                         const formattedLog = this.formatLogTailItem(item);
-                        console.log(formattedLog);
+                        this._logger.debug(formattedLog);
                         
                         if (onLog) {
                             const syslogRecord = this.logTailItemToSyslogRecord(item);
@@ -430,7 +431,7 @@ export class SyslogReader {
             }
         }, interval);
 
-        console.log(`\n👀 Tailing logs via ChannelAjax (press Ctrl+C to stop)...`);
+        //console.log(`\n👀 Tailing logs via ChannelAjax (press Ctrl+C to stop)...`);
     }
 
     /**
@@ -574,7 +575,7 @@ export class SyslogReader {
         this._lastFetchedSysId = undefined;
         this._lastSequence = undefined;
         this._logger.info('Stopped tailing logs');
-        console.log('\n✓ Stopped tailing logs');
+        //console.log('\n✓ Stopped tailing logs');
     }
 
     /**
