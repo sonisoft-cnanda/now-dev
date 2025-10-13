@@ -11,9 +11,8 @@ describe('ProgressWorker', () => {
     beforeEach(async () => {
        
         const alias:string = 'ven05195';
-        const credentialArgs = {"_": "get-credentials", auth: alias};
    
-        credential = await getCredentials(credentialArgs);
+        credential = await getCredentials(alias);
         
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
@@ -29,8 +28,8 @@ describe('ProgressWorker', () => {
 
     it('should get progress', async () => {
       
-        let progressWorker = new ProgressWorker(instance);
-        let progressResult = await progressWorker.getProgress('96260c6093072a505ecb74718bba10d6');
+        const progressWorker = new ProgressWorker(instance);
+        const progressResult = await progressWorker.getProgress('96260c6093072a505ecb74718bba10d6');
         console.log(progressResult);
         console.log(progressResult.status);
         expect(progressResult).toBeDefined();

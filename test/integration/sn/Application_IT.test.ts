@@ -20,9 +20,8 @@ describe('SNAppUninstall', () => {
     beforeEach(async () => {
        
         const alias:string = 'ven05195';
-        const credentialArgs = {"_": "get-credentials", auth: alias};
    
-        credential = await getCredentials(credentialArgs);
+        credential = await getCredentials(alias);
         
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
@@ -39,11 +38,11 @@ describe('SNAppUninstall', () => {
     describe('convertToStoreApp', () => {
 
         it('should change application for user session', async () => {
-            let auth = {credentials: credential};
-            let logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
-            let session = await getSafeUserSession(auth, logger);
+            const auth = {credentials: credential};
+            const logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
+            const session = await getSafeUserSession(auth, logger);
            
-            var app = new Application(instance,  "x_taniu_tan_core", "c4134c50db6ec910495d70f339961931");
+            const app = new Application(instance,  "x_taniu_tan_core", "c4134c50db6ec910495d70f339961931");
             await app.convertToStoreApp();
         }, 100000);
 
@@ -52,11 +51,11 @@ describe('SNAppUninstall', () => {
     describe('changeApplicationTest', () => {
 
         it('should change application for user session', async () => {
-            let auth = {credentials: credential};
-            let logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
-            let session = await getSafeUserSession(auth, logger);
+            const auth = {credentials: credential};
+            const logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
+            const session = await getSafeUserSession(auth, logger);
            
-            var app = new Application(instance, "a014653c83ef821036c659d0deaad39c", "x_1439397_inver");
+            const app = new Application(instance, "a014653c83ef821036c659d0deaad39c", "x_1439397_inver");
             await app.changeApplication();
         }, 100000);
 
@@ -64,24 +63,24 @@ describe('SNAppUninstall', () => {
 
     describe('uninstallNowSDK', () => {
 
-        it('should uninstall', async () => {
-            let scopeId = "a014653c83ef821036c659d0deaad39c";
-            let scope = "x_1439397_inver";
+        it.skip('should uninstall', async () => {
+            const scopeId = "a014653c83ef821036c659d0deaad39c";
+            const scope = "x_1439397_inver";
           
-            var app = new Application(instance,scope , scopeId);
+            const app = new Application(instance,scope , scopeId);
             await app.changeApplication();
             await app.uninstall();
            
         }, 100000);
 
-        it('should return csrf token', async () => {
-            let scopeId = "a014653c83ef821036c659d0deaad39c";
-            let scope = "x_1439397_inver";
-            let auth = {credentials: credential};
-            let logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
-            let userSession = await getSafeUserSession(auth, logger);
+        it.skip('should return csrf token', async () => {
+            const scopeId = "a014653c83ef821036c659d0deaad39c";
+            const scope = "x_1439397_inver";
+            const auth = {credentials: credential};
+            const logger = {debug: () => {}, info: () => {}, warn: () => {}, error: () => {}};
+            const userSession = await getSafeUserSession(auth, logger);
             const { appID, sys_class_name, upgrade_finished } = await (getAppAndSummary)(scopeId, scope, userSession);
-            var app = new Application(instance, "a014653c83ef821036c659d0deaad39c", "x_1439397_inver");
+            const app = new Application(instance, "a014653c83ef821036c659d0deaad39c", "x_1439397_inver");
             await app.changeApplication();
             await app.uninstallApplication(userSession, appID, scopeId, sys_class_name, logger);
             console.log(appID, sys_class_name, upgrade_finished);

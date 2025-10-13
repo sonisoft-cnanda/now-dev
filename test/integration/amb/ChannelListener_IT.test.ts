@@ -1,8 +1,8 @@
 import { mock } from "ts-jest-mocker";
-import {ChannelListener} from '@src/amb/ChannelListener';
-import {ChannelRedirect} from '@src/amb/ChannelRedirect';
-import {Channel} from "@src/amb/Channel";
-import {ServerConnection} from "@src/amb/ServerConnection";
+import {ChannelListener} from '@src/sn/amb/ChannelListener';
+import {ChannelRedirect} from '@src/sn/amb/ChannelRedirect';
+import {Channel} from "@src/sn/amb/Channel";
+import {ServerConnection} from "@src/sn/amb/ServerConnection";
 
 describe('ChannelListener', () => {
 	let mockChannel = mock(Channel);
@@ -62,7 +62,7 @@ describe('ChannelListener', () => {
 
 	it('returns the subscription callback', () => {
 		mockChannel.subscribe.mockImplementation(() => {return 1});
-
+		mockChannel.publish.mockImplementation(() => {return 1});
 		const subCallback = function() {
 			return 'sub callback';
 		};
@@ -73,8 +73,9 @@ describe('ChannelListener', () => {
 
 	it('publishes to a channel', () => {
 		mockChannel.subscribe.mockImplementation(() => {return 1});
-
+		mockChannel.publish.mockImplementation(() => {return 1});
 		const testChannelListener = new ChannelListener(mockChannel, mockServerConnection, null);
+		jest.spyOn(testChannelListener, 'publish');
 		testChannelListener.publish('a message');
 		expect(mockChannel.publish).toHaveBeenCalledWith('a message');
 	});
@@ -126,7 +127,9 @@ describe('ChannelListener', () => {
 
 		it('unregisters listener from channel without channel redirect', () => {
 			mockChannel.subscribe.mockImplementation(() => {return 1});
-
+			mockChannel.publish.mockImplementation(() => {return 1});
+			mockChannel.unsubscribe.mockImplementation(() => {return 1});
+			mockChannel.getName.mockImplementation(() => {return 'test channel'});
 			const messageCallback = function() {
 				return 'message callback';
 			};

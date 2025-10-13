@@ -24,7 +24,7 @@ describe('ApplicationManager', () => {
 
     beforeEach(async () => {
        
-        const alias: string = 'dev209219';
+        const alias: string = 'tanengdev012';
    
         credential = await getCredentials(alias);
         

@@ -148,9 +148,10 @@ describe('Channel - Unit Tests', () => {
             
             expect(mockCometD.subscribe).toHaveBeenCalledWith(
                 channelName,
-                expect.anything(),
+                null,
                 expect.any(Function),
-                expect.anything()
+                null,
+               expect.any(Function)
             );
         });
 
