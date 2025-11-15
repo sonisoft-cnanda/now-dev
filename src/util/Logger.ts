@@ -20,8 +20,11 @@ export class Logger{
     _labelName:string;
 	_localLogger:winston.Logger;
 
-	public constructor(labelName:string){
+  _logLevel:string;
+
+	public constructor(labelName:string, level:string = "info"){
 		this._labelName = labelName;
+    this._logLevel = level;
 		this.initLogger();
 	}
 
@@ -35,7 +38,7 @@ export class Logger{
 
     private initLogger():void{
         this._localLogger = winston.createLogger({
-            level: "debug",
+            level: this._logLevel,
             format: combine(
                 label({ label: this._labelName }),
                 timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
