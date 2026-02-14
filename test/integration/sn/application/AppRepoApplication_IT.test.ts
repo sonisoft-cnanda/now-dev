@@ -1,7 +1,8 @@
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../../../src/sn/ServiceNowInstance';
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
+import { SN_INSTANCE_ALIAS } from '../../../test_utils/test_config';
 
-import { 
+import {
     AppRepoApplication,
     AppRepoInstallRequest,
     AppRepoPublishRequest,
@@ -21,12 +22,11 @@ describe('AppRepoApplication', () => {
     const TEST_APP_VERSION = '1.0.0';
 
     beforeEach(async () => {
-        const alias: string = 'dev209219';
-        credential = await getCredentials(alias);
-        
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
+
         if (credential) {
             const snSettings: ServiceNowSettingsInstance = {
-                alias: alias,
+                alias: SN_INSTANCE_ALIAS,
                 credential: credential
             };
             instance = new ServiceNowInstance(snSettings);

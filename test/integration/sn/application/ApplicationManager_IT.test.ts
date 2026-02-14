@@ -2,12 +2,13 @@
 
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../../../src/sn/ServiceNowInstance';
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
+import { SN_INSTANCE_ALIAS } from '../../../test_utils/test_config';
 
 import { BatchDefinition } from '../../../../src/sn/application/BatchDefinition';
-import { 
-    ApplicationManager, 
-    ApplicationValidationResult, 
-    BatchValidationResult 
+import {
+    ApplicationManager,
+    ApplicationValidationResult,
+    BatchValidationResult
 } from '../../../../src/sn/application/ApplicationManager';
 
 import * as path from 'path';
@@ -23,14 +24,12 @@ describe('ApplicationManager', () => {
     const SECONDS = 1000;
 
     beforeEach(async () => {
-       
-        const alias: string = 'tanengdev012';
-   
-        credential = await getCredentials(alias);
-        
+
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
+
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
+            alias: SN_INSTANCE_ALIAS,
             credential: credential
             }
             instance = new ServiceNowInstance(snSettings);

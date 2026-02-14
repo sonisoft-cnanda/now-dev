@@ -5,8 +5,12 @@
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
-import { BackgroundScriptExecutor } from '../../src/sn/BackgroundScriptExecutor';
+import { BackgroundScriptExecutor, ScriptExecutionOutputLine } from '../../src/sn/BackgroundScriptExecutor';
 import { createGetCredentialsMock } from './__mocks__/servicenow-sdk-mocks';
+import { IHttpResponse } from '../../src/comm/http/IHttpResponse';
+import { AuthenticationHandlerFactory } from '../../src/auth/AuthenticationHandlerFactory';
+import { RequestHandlerFactory } from '../../src/comm/http/RequestHandlerFactory';
+import { MockAuthenticationHandler } from './__mocks__/servicenow-sdk-mocks';
 
 // Mock getCredentials
 const mockGetCredentials = createGetCredentialsMock();
@@ -14,17 +18,39 @@ jest.mock('@servicenow/sdk-cli/dist/auth/index.js', () => ({
     getCredentials: mockGetCredentials
 }));
 
+// Mock factories
+jest.mock('../../src/auth/AuthenticationHandlerFactory');
+jest.mock('../../src/comm/http/RequestHandlerFactory');
+
+// Mock request handler
+class MockRequestHandler {
+    get = jest.fn<() => Promise<IHttpResponse<unknown>>>();
+    post = jest.fn<() => Promise<IHttpResponse<unknown>>>();
+    put = jest.fn<() => Promise<IHttpResponse<unknown>>>();
+    delete = jest.fn<() => Promise<IHttpResponse<unknown>>>();
+}
+
 describe('BackgroundScriptExecutor - Unit Tests', () => {
     let instance: ServiceNowInstance;
     let executor: BackgroundScriptExecutor;
+    let mockAuthHandler: MockAuthenticationHandler;
+    let mockRequestHandler: MockRequestHandler;
     const TEST_SCOPE = 'global';
-    
+
     beforeEach(async () => {
         jest.clearAllMocks();
-        
+
+        mockAuthHandler = new MockAuthenticationHandler();
+        mockRequestHandler = new MockRequestHandler();
+
+        jest.spyOn(AuthenticationHandlerFactory, 'createAuthHandler')
+            .mockReturnValue(mockAuthHandler as unknown as ReturnType<typeof AuthenticationHandlerFactory.createAuthHandler>);
+        jest.spyOn(RequestHandlerFactory, 'createRequestHandler')
+            .mockReturnValue(mockRequestHandler as unknown as ReturnType<typeof RequestHandlerFactory.createRequestHandler>);
+
         const alias:string = 'test-instance';
         const credential = await mockGetCredentials(alias);
-        
+
         if(credential){
             const snSettings:ServiceNowSettingsInstance = {
                 alias: alias,
@@ -38,70 +64,408 @@ describe('BackgroundScriptExecutor - Unit Tests', () => {
     describe('Constructor', () => {
         it('should create instance with ServiceNow instance and scope', () => {
             expect(executor).toBeInstanceOf(BackgroundScriptExecutor);
-            expect((executor as any).instance).toBe(instance);
-            expect((executor as any).scope).toBe(TEST_SCOPE);
+            expect(executor.instance).toBe(instance);
+            expect(executor.scope).toBe(TEST_SCOPE);
         });
 
         it('should initialize with global scope by default', () => {
             const exec = new BackgroundScriptExecutor(instance, 'global');
-            expect((exec as any).scope).toBe('global');
+            expect(exec.scope).toBe('global');
         });
 
         it('should accept custom scope', () => {
             const customScope = 'x_custom_app';
             const exec = new BackgroundScriptExecutor(instance, customScope);
-            expect((exec as any).scope).toBe(customScope);
+            expect(exec.scope).toBe(customScope);
         });
 
         it('should initialize ServiceNowRequest', () => {
-            expect((executor as any).snRequest).toBeDefined();
+            expect(executor.snRequest).toBeDefined();
         });
     });
 
-    describe('Instance properties', () => {
-        it('should maintain instance reference', () => {
-            expect((executor as any).instance).toBe(instance);
+    describe('ScriptExecutionOutputLine', () => {
+        it('should store the line text', () => {
+            const line = new ScriptExecutionOutputLine('hello world');
+            expect(line.line).toBe('hello world');
         });
 
-        it('should maintain scope reference', () => {
-            expect((executor as any).scope).toBe(TEST_SCOPE);
+        it('should allow setting line text via setter', () => {
+            const line = new ScriptExecutionOutputLine('original');
+            line.line = 'updated';
+            expect(line.line).toBe('updated');
         });
 
-        it('should have logger', () => {
-            expect((executor as any)._logger).toBeDefined();
+        it('asDebugLine should set _isDebug to true', () => {
+            const line = new ScriptExecutionOutputLine('debug line');
+            const result = line.asDebugLine();
+            expect(result).toBe(line); // returns this
+            expect((line as any)._isDebug).toBe(true);
+            expect((line as any)._isSystem).toBe(false);
+            expect((line as any)._isScript).toBe(false);
+        });
+
+        it('asSystemLine should set _isSystem to true', () => {
+            const line = new ScriptExecutionOutputLine('system line');
+            const result = line.asSystemLine();
+            expect(result).toBe(line);
+            expect((line as any)._isSystem).toBe(true);
+            expect((line as any)._isDebug).toBe(false);
+            expect((line as any)._isScript).toBe(false);
+        });
+
+        it('asScriptLine should set _isScript to true', () => {
+            const line = new ScriptExecutionOutputLine('script line');
+            const result = line.asScriptLine();
+            expect(result).toBe(line);
+            expect((line as any)._isScript).toBe(true);
+            expect((line as any)._isDebug).toBe(false);
+            expect((line as any)._isSystem).toBe(false);
+        });
+
+        it('asDebugLine(false) should set _isDebug to false', () => {
+            const line = new ScriptExecutionOutputLine('test');
+            line.asDebugLine(true);
+            line.asDebugLine(false);
+            expect((line as any)._isDebug).toBe(false);
+        });
+
+        it('asSystemLine(false) should set _isSystem to false', () => {
+            const line = new ScriptExecutionOutputLine('test');
+            line.asSystemLine(true);
+            line.asSystemLine(false);
+            expect((line as any)._isSystem).toBe(false);
+        });
+
+        it('asScriptLine(false) should set _isScript to false', () => {
+            const line = new ScriptExecutionOutputLine('test');
+            line.asScriptLine(true);
+            line.asScriptLine(false);
+            expect((line as any)._isScript).toBe(false);
+        });
+
+        it('flags should be independent of each other', () => {
+            const line = new ScriptExecutionOutputLine('test');
+            line.asDebugLine();
+            line.asSystemLine();
+            // asSystemLine should NOT affect _isDebug
+            expect((line as any)._isDebug).toBe(true);
+            expect((line as any)._isSystem).toBe(true);
+            expect((line as any)._isScript).toBe(false);
         });
     });
 
-    describe('Method existence', () => {
-        it('should have executeScript method', () => {
-            expect(typeof executor.executeScript).toBe('function');
+    describe('parseScriptResult', () => {
+        // Note: fast-xml-parser produces a #text property only when the element
+        // has attributes. Real ServiceNow responses include class="outputtext"
+        // on the PRE tag, so we include it in test XML to match production behavior.
+
+        it('should parse a simple script result XML', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: Hello World
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+
+            expect(result).toBeDefined();
+            expect(result.raw).toBe(xml);
+            expect(result.rawResult).toBeDefined();
+            expect(result.consoleResult).toBeDefined();
+            expect(result.scriptResults).toBeDefined();
+            expect(Array.isArray(result.consoleResult)).toBe(true);
+            expect(Array.isArray(result.scriptResults)).toBe(true);
         });
 
-        it('should have getBackgroundScriptCSRFToken method', () => {
-            expect(typeof executor.getBackgroundScriptCSRFToken).toBe('function');
+        it('should strip timestamp prefix from XML', () => {
+            const xml = `[12:34:56.789]<HTML><BODY><PRE class="outputtext">*** Script: test
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBeDefined();
+        });
+
+        it('should classify *** Script: lines as script output', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: Hello World
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+
+            const scriptLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isScript === true
+            );
+            expect(scriptLines.length).toBeGreaterThan(0);
+        });
+
+        it('should classify [DEBUG] lines as debug output', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: [DEBUG] some debug info
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+
+            const debugLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isDebug === true
+            );
+            expect(debugLines.length).toBeGreaterThan(0);
+        });
+
+        it('should classify non-script lines as system output', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">Evaluator: some system output
+*** Script: user output
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+
+            const systemLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isSystem === true
+            );
+            expect(systemLines.length).toBeGreaterThan(0);
+        });
+
+        it('should handle mixed output with system, script, and debug lines', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">Evaluator: start
+*** Script: normal output
+*** Script: [DEBUG] debug output
+System: end
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+
+            expect(result.scriptResults.length).toBeGreaterThanOrEqual(3);
+        });
+
+        it('should preserve raw result', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: test
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result.raw).toBe(xml);
+        });
+
+        it('should extract affected records from div', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: test
+</PRE><div>some affected records info</div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result.affectedRecords).toBeDefined();
         });
     });
 
-    describe('Scope handling', () => {
-        it('should handle global scope', () => {
-            const globalExec = new BackgroundScriptExecutor(instance, 'global');
-            expect((globalExec as any).scope).toBe('global');
+    describe('getBackgroundScriptCSRFToken', () => {
+        it('should extract CSRF token from response HTML', async () => {
+            const htmlWithToken = `
+                <html><body>
+                <form>
+                <input name="sysparm_ck" type="hidden" value="abc123token456">
+                </form>
+                </body></html>
+            `;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue({
+                data: htmlWithToken,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            const token = await executor.getBackgroundScriptCSRFToken();
+            expect(token).toBe('abc123token456');
         });
 
-        it('should handle custom app scope', () => {
-            const appExec = new BackgroundScriptExecutor(instance, 'x_my_app');
-            expect((appExec as any).scope).toBe('x_my_app');
+        it('should return null when not logged in', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue({
+                data: '<html></html>',
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'false' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            const token = await executor.getBackgroundScriptCSRFToken();
+            expect(token).toBeNull();
         });
 
-        it('should allow scope changes via new instance', () => {
-            const exec1 = new BackgroundScriptExecutor(instance, 'global');
-            const exec2 = new BackgroundScriptExecutor(instance, 'x_app');
-            
-            expect((exec1 as any).scope).toBe('global');
-            expect((exec2 as any).scope).toBe('x_app');
+        it('should return null when status is not 200', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue({
+                data: null,
+                status: 401,
+                statusText: 'Unauthorized',
+                headers: { 'x-is-logged-in': 'false' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            const token = await executor.getBackgroundScriptCSRFToken();
+            expect(token).toBeNull();
+        });
+
+        it('should return null when response data is empty', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue({
+                data: null,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            const token = await executor.getBackgroundScriptCSRFToken();
+            expect(token).toBeNull();
         });
     });
 
-    // Note: Actual script execution tests are in integration tests
-    // These unit tests focus on initialization and configuration
+    describe('executeScript - input validation', () => {
+        it('should throw when instance is not a ServiceNowInstance', async () => {
+            await expect(
+                executor.executeScript('gs.info("test")', 'global', {} as ServiceNowInstance)
+            ).rejects.toThrow('instance must be a ServiceNowInstance');
+        });
+
+        it('should throw when instance is null', async () => {
+            await expect(
+                executor.executeScript('gs.info("test")', 'global', null)
+            ).rejects.toThrow('instance must be a ServiceNowInstance');
+        });
+
+        it('should throw when scope is not a string', async () => {
+            await expect(
+                executor.executeScript('gs.info("test")', 123 as any, instance)
+            ).rejects.toThrow('scope must be a string');
+        });
+
+        it('should throw when scope is empty', async () => {
+            await expect(
+                executor.executeScript('gs.info("test")', '', instance)
+            ).rejects.toThrow('scope must be a string');
+        });
+
+        it('should throw when script is not a string', async () => {
+            await expect(
+                executor.executeScript(123 as any, 'global', instance)
+            ).rejects.toThrow('script must be a string');
+        });
+
+        it('should throw when script is empty', async () => {
+            await expect(
+                executor.executeScript('', 'global', instance)
+            ).rejects.toThrow('script must be a string');
+        });
+    });
+
+    describe('executeScript - execution', () => {
+        it('should execute script and return parsed result on success', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+            const scriptResultXml = `<HTML><BODY><PRE class="outputtext">*** Script: Hello
+</PRE><div></div></BODY></HTML>`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            // First call: GET for CSRF token
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            // Second call: POST to execute script
+            mockRequestHandler.post.mockResolvedValue({
+                data: scriptResultXml,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            const result = await executor.executeScript('gs.info("Hello")', 'global', instance);
+
+            expect(result).toBeDefined();
+            expect(result.raw).toBe(scriptResultXml);
+            expect(result.scriptResults).toBeDefined();
+        });
+
+        it('should throw on non-200 response', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: null,
+                status: 500,
+                statusText: 'Internal Server Error',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            await expect(
+                executor.executeScript('gs.info("test")', 'global', instance)
+            ).rejects.toThrow('Error executing script');
+        });
+
+        it('should throw when response body is empty on 200', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: null,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            await expect(
+                executor.executeScript('gs.info("test")', 'global', instance)
+            ).rejects.toThrow('Error executing script');
+        });
+
+        it('should use default scope and instance when not provided', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+            const scriptResultXml = `<HTML><BODY><PRE class="outputtext">*** Script: default
+</PRE><div></div></BODY></HTML>`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: scriptResultXml,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            // Call without explicit scope and instance
+            const result = await executor.executeScript('gs.info("default")');
+            expect(result).toBeDefined();
+            expect(result.raw).toBe(scriptResultXml);
+        });
+    });
 });

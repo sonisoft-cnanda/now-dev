@@ -1,10 +1,11 @@
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../../../src/sn/ServiceNowInstance';
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
+import { SN_SN_INSTANCE_ALIAS } from '../../../test_utils/test_config';
 
-import { 
+import {
     CompanyApplications,
     CompanyApplication,
-    CompanyApplicationsResponse 
+    CompanyApplicationsResponse
 } from '../../../../src/sn/application/CompanyApplications';
 
 import {
@@ -18,14 +19,13 @@ describe('CompanyApplications Integration Tests', () => {
     let instance: ServiceNowInstance;
     let credential: unknown;
     const SECONDS = 1000;
-    const INSTANCE_ALIAS = 'tanengdev012';
 
     beforeEach(async () => {
-        credential = await getCredentials(INSTANCE_ALIAS);
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
         
         if (credential) {
             const snSettings: ServiceNowSettingsInstance = {
-                alias: INSTANCE_ALIAS,
+                alias: SN_INSTANCE_ALIAS,
                 credential: credential
             };
             instance = new ServiceNowInstance(snSettings);

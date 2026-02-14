@@ -6,6 +6,7 @@ import { makeRequest, parseResponseBody } from "@servicenow/sdk-cli-core/dist/ht
 import { getSafeUserSession } from "@servicenow/sdk-cli-core/dist/util/sessionToken.js";
 
 import { Application } from '../../../src/sn/Application';
+import { SN_INSTANCE_ALIAS } from '../../test_utils/test_config';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -18,15 +19,12 @@ describe.skip('SNAppUninstall', () => {
     let credential:any;
 
     beforeEach(async () => {
-       
-        const alias:string = 'ven05195';
-       
-   
-        credential = await getCredentials(alias);
-        
+
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
+
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
+            alias: SN_INSTANCE_ALIAS,
             credential: credential
             }
             instance = new ServiceNowInstance(snSettings);

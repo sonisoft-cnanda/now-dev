@@ -1,6 +1,7 @@
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth";
 import { ServiceNowInstance, ServiceNowSettingsInstance } from "../../../src/sn/ServiceNowInstance";
 import { ProgressWorker } from "../../../src/sn/ProgressWorker";
+import { SN_INSTANCE_ALIAS } from '../../test_utils/test_config';
 
 describe('ProgressWorker', () => {
 
@@ -9,14 +10,12 @@ describe('ProgressWorker', () => {
     let credential:any;
 
     beforeEach(async () => {
-       
-        const alias:string = 'ven05195';
-   
-        credential = await getCredentials(alias);
-        
+
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
+
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
+            alias: SN_INSTANCE_ALIAS,
             credential: credential
             }
             instance = new ServiceNowInstance(snSettings);

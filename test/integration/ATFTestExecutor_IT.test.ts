@@ -7,6 +7,7 @@ import {
 } from '../../src/sn/atf/ATFTestExecutor';
 import { ServiceNowInstance, ServiceNowSettingsInstance } from '../../src/sn/ServiceNowInstance';
 import { getCredentials } from '@servicenow/sdk-cli/dist/auth';
+import { SN_INSTANCE_ALIAS } from '../test_utils/test_config';
 
 const SECONDS = 1000;
 
@@ -18,16 +19,12 @@ describe('ATFTestExecutor', () => {
 
 
     beforeEach(async () => {
-       
-        const alias: string = 'tanengdev012';
-        //const credentialArgs = {"_": "get-credentials", auth: alias || "fluent-default"};
-   
-         credential = await getCredentials(alias);
-       
-        
+
+         credential = await getCredentials(SN_INSTANCE_ALIAS);
+
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
+            alias: SN_INSTANCE_ALIAS,
             credential: credential
             }
             instance = new ServiceNowInstance(snSettings);

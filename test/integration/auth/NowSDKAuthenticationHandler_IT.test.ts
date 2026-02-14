@@ -3,24 +3,22 @@ import { NowSDKAuthenticationHandler } from "../../../src/auth/NowSDKAuthenticat
 import { IAuthenticationHandler } from "../../../src/auth/IAuthenticationHandler";
 import { ServiceNowInstance, ServiceNowSettingsInstance } from "../../../src/sn/ServiceNowInstance";
 import { getCredentials } from "@servicenow/sdk-cli/dist/auth";
+import { SN_INSTANCE_ALIAS } from '../../test_utils/test_config';
 
 
 
 describe("NowSDKAuthenticationHandler", () => {
-	
+
 	let instance: ServiceNowInstance;
     let credential:any;
 
     beforeEach(async () => {
-       
-        const alias:string = 'tanengdev012';
-        //const credentialArgs: any = {"_": "get-credentials", auth: alias};
-   
-        credential = await getCredentials(alias);
-        
+
+        credential = await getCredentials(SN_INSTANCE_ALIAS);
+
          if(credential){
             const snSettings:ServiceNowSettingsInstance = {
-            alias: alias,
+            alias: SN_INSTANCE_ALIAS,
             credential: credential
             }
             instance = new ServiceNowInstance(snSettings);

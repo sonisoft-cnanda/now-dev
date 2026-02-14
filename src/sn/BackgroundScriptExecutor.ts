@@ -66,7 +66,7 @@ export class BackgroundScriptExecutor {
             this._logger.debug("Execute Background Script Request.", {request:request, formData:fd})
             const response: IHttpResponse<string> = await this.snRequest.post<string>(request);
             if (response.status == 200) {
-                const bodyXml:string = response?.data as string;
+                const bodyXml:string = response?.data;
                 if(bodyXml){
                     const resultObj:BackgroundScriptExecutionResult = this.parseScriptResult(bodyXml);
                     return resultObj;
@@ -132,7 +132,7 @@ export class BackgroundScriptExecutor {
         const isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
         if(response.status == 200 && isLoggedIn && !isNil(response.data)){
             
-            const e =  response.data as string;
+            const e =  response.data;
             const t = "<input name=\"sysparm_ck\" type=\"hidden\" value=\"";
            
             const n = e.substring(e.indexOf(t));
@@ -237,13 +237,13 @@ export class ScriptExecutionOutputLine{
     }
 
     public asSystemLine(isSystemLine:boolean = true):ScriptExecutionOutputLine{
-        this._isDebug = isSystemLine;
+        this._isSystem = isSystemLine;
 
         return this;
     }
 
     public asScriptLine(isScriptLine:boolean = true):ScriptExecutionOutputLine{
-        this._isDebug = isScriptLine;
+        this._isScript = isScriptLine;
 
         return this;
     }
