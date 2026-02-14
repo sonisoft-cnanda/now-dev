@@ -2,7 +2,6 @@ build:
   stage: build
   needs:
     - job: install
-      artifacts: true
   script:
     - npm run build
   artifacts:

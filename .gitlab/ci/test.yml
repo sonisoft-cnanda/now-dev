@@ -2,7 +2,6 @@ test:unit:
   stage: test
   needs:
     - job: install
-      artifacts: true
   script:
     - npm run test:unit
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'

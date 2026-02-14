@@ -1,15 +1,12 @@
 install:
   stage: install
-  script:
-    - npm ci --prefer-offline
   cache:
     key:
       files:
         - package-lock.json
     paths:
       - .npm/
-    policy: pull-push
-  artifacts:
-    paths:
       - node_modules/
-    expire_in: 1 hour
+    policy: pull-push
+  script:
+    - npm ci --prefer-offline

@@ -1,5 +1,15 @@
 default:
   image: node:20
+  before_script:
+    - npm ci --prefer-offline
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+      - node_modules/
+    policy: pull
 
 variables:
   npm_config_cache: '$CI_PROJECT_DIR/.npm'
