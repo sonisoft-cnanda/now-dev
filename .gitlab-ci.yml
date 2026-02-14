@@ -1,5 +1,5 @@
 default:
-  image: node:24
+  image: node:20
 
 variables:
   npm_config_cache: '$CI_PROJECT_DIR/.npm'
