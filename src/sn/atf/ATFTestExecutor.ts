@@ -347,15 +347,20 @@ export interface TestSuiteExecutionResponse {
 
 export interface TestSuiteExecutionResult {
     sys_id: string;
+    number: string;
     test_suite: ReferenceLink;
     status: string;
+    success: string;
     start_time: string;
     end_time: string;
-    duration: string;
-    total_tests: number;
-    passed_tests: number;
-    failed_tests: number;
-    skipped_tests: number;
-    output: string;
+    run_time: string;
+    success_count: string;
+    failure_count: string;
+    skip_count: string;
+    error_count: string;
+    parent: string;
+    base_suite_result: ReferenceLink;
+    execution_tracker: ReferenceLink;
+    schedule_run: ReferenceLink;
 }
 
