@@ -1,0 +1,18 @@
+publish:
+  stage: release
+  needs:
+    - job: build
+      artifacts: true
+    - job: test:unit
+      artifacts: false
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - echo "Publishing @sonisoft/now-sdk-ext-core to GitLab Package Registry"
+    - |
+      {
+        echo "@sonisoft:registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}"
+      } > .npmrc
+    - cat .npmrc
+    - npm publish

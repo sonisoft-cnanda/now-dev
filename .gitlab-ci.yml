@@ -1,56 +1,22 @@
 default:
-  image: node:latest
-  before_script:
-    - npm ci --cache .npm --prefer-offline
-    - |
-      {
-        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
-        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
-      } | tee -a .npmrc
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - .npm/
+  image: node:20
+
+variables:
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
 
 workflow:
   rules:
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
 
-variables:
-  NPM_TOKEN: ${CI_JOB_TOKEN}
-
-stages: # List of stages for jobs, and their order of execution
+stages:
+  - install
   - build
   - test
-  # - deploy
   - release
 
-build-job: # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-    - npm install
-    - npm run buildts
-
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
-  script:
-    - npm run test
-
-# lint-test-job:   # This job also runs in the test stage.
-#   stage: test    # It can run at the same time as unit-test-job (in parallel).
-#   script:
-#     - npm run lint
-
-# deploy-job:      # This job runs in the deploy stage.
-#   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-#   environment: dev
-#   script:
-#     - echo "Deploying application..."
-#     - echo "Application successfully deployed."
-
-# publish:
-#   stage: release
-#   script:
-#     - npm run semantic-release
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+include:
+  - local: '.gitlab/ci/install.yml'
+  - local: '.gitlab/ci/build.yml'
+  - local: '.gitlab/ci/test.yml'
+  - local: '.gitlab/ci/publish.yml'
