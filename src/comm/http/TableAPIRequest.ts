@@ -61,7 +61,7 @@ export class TableAPIRequest{
         try{
             const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance as ServiceNowInstance);
 
-            const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body:bodyData};
+            const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body: null, json: bodyData};
             resp = await req.executeRequest<T>(request);
         }catch(err){
             console.log(err);
