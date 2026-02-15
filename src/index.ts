@@ -39,6 +39,8 @@ export * from './sn/application/CompanyApplications.js';
 export * from './sn/atf/ATFTest.js';
 export * from './sn/atf/ATFTestExecutor.js';
 export * from './sn/atf/TestFactory.js';
+export * from './sn/codesearch/CodeSearch.js';
+export * from './sn/codesearch/CodeSearchModels.js';
 export * from './sn/syslog/SyslogReader.js';
 export * from './sn/syslog/SyslogRecord.js';
 export * from './sn/user/UserRequest.js';
