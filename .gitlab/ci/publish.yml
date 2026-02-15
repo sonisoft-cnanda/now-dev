@@ -7,12 +7,11 @@ publish:
       artifacts: false
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-  before_script:
-    - echo "Skipping npm ci for publish - only needs dist/"
   script:
+    - npm ci --prefer-offline
     - |
       {
         echo "@sonisoft:registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
         echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}"
       } > .npmrc
-    - npm publish
+    - npx semantic-release

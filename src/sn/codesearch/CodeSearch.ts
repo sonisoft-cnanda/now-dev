@@ -13,7 +13,11 @@ import {
     CodeSearchTablesResponse,
     CodeSearchGroup,
     CodeSearchGroupResponse,
-    CodeSearchGroupQueryOptions
+    CodeSearchGroupQueryOptions,
+    AddCodeSearchTableOptions,
+    CodeSearchTableRecord,
+    CodeSearchTableRecordResponse,
+    CodeSearchTableRecordsResponse
 } from './CodeSearchModels';
 
 /**
@@ -25,6 +29,7 @@ export class CodeSearch {
     private static readonly SEARCH_API_PATH = '/api/sn_codesearch/code_search/search';
     private static readonly TABLES_API_PATH = '/api/sn_codesearch/code_search/tables';
     private static readonly SEARCH_GROUP_TABLE = 'sn_codesearch_search_group';
+    private static readonly SEARCH_TABLE_TABLE = 'sn_codesearch_table';
 
     private _logger: Logger = new Logger("CodeSearch");
     private _req: ServiceNowRequest;
@@ -228,6 +233,85 @@ export class CodeSearch {
         }
 
         throw new Error(`Failed to query code search groups. Status: ${response.status}`);
+    }
+
+    /**
+     * Add a new table to an existing code search group.
+     * Inserts a record into the sn_codesearch_table table via Table API POST.
+     *
+     * @param options The table name, search fields, and search group sys_id
+     * @returns The created CodeSearchTableRecord including its sys_id
+     * @throws Error if any required field is empty or if the API call fails
+     */
+    public async addTableToSearchGroup(options: AddCodeSearchTableOptions): Promise<CodeSearchTableRecord> {
+        if (!options.table || options.table.trim().length === 0) {
+            throw new Error('Table name is required');
+        }
+        if (!options.search_fields || options.search_fields.trim().length === 0) {
+            throw new Error('Search fields are required');
+        }
+        if (!options.search_group || options.search_group.trim().length === 0) {
+            throw new Error('Search group sys_id is required');
+        }
+
+        this._logger.info(`Adding table '${options.table}' to search group '${options.search_group}'`);
+
+        const body = {
+            table: options.table,
+            search_fields: options.search_fields,
+            search_group: options.search_group
+        };
+
+        const response: IHttpResponse<CodeSearchTableRecordResponse> = await this._tableAPI.post<CodeSearchTableRecordResponse>(
+            CodeSearch.SEARCH_TABLE_TABLE, {}, body
+        );
+
+        if (response && (response.status === 200 || response.status === 201) && response.bodyObject?.result) {
+            this._logger.info(`Successfully added table '${options.table}' with sys_id: ${response.bodyObject.result.sys_id}`);
+            return response.bodyObject.result;
+        }
+
+        throw new Error(
+            `Failed to add table '${options.table}' to search group '${options.search_group}'. Status: ${response?.status ?? 'unknown'}`
+        );
+    }
+
+    /**
+     * List table records for a search group from the sn_codesearch_table table.
+     * Unlike getTablesForSearchGroup() which uses the REST API and returns {name, label},
+     * this method uses the Table API and returns full records including sys_id.
+     *
+     * @param searchGroupSysId The sys_id of the search group
+     * @param options Optional query/limit options
+     * @returns Array of CodeSearchTableRecord records
+     * @throws Error if searchGroupSysId is empty or if the API call fails
+     */
+    public async getTableRecordsForSearchGroup(
+        searchGroupSysId: string,
+        options: CodeSearchGroupQueryOptions = {}
+    ): Promise<CodeSearchTableRecord[]> {
+        if (!searchGroupSysId || searchGroupSysId.trim().length === 0) {
+            throw new Error('Search group sys_id is required');
+        }
+
+        this._logger.info(`Querying table records for search group: ${searchGroupSysId}`);
+
+        const query: Record<string, string | number> = {
+            sysparm_query: `search_group=${searchGroupSysId}`,
+            sysparm_limit: options.limit ?? 100,
+            sysparm_display_value: 'false'
+        };
+
+        const response: IHttpResponse<CodeSearchTableRecordsResponse> = await this._tableAPI.get<CodeSearchTableRecordsResponse>(
+            CodeSearch.SEARCH_TABLE_TABLE, query
+        );
+
+        if (response && response.status === 200 && response.bodyObject?.result) {
+            this._logger.info(`Retrieved ${response.bodyObject.result.length} table records`);
+            return response.bodyObject.result;
+        }
+
+        throw new Error(`Failed to query table records for search group '${searchGroupSysId}'. Status: ${response?.status ?? 'unknown'}`);
     }
 
     /**

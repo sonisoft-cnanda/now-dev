@@ -88,6 +88,20 @@ function createErrorResponse(status: number = 500) {
 }
 
 /**
+ * Creates a mock Table API POST response (single record).
+ */
+function createMockTableRecordResponse(record: object, status: number = 201) {
+    return {
+        data: { result: record },
+        status,
+        statusText: status === 201 ? 'Created' : 'OK',
+        headers: {},
+        config: {},
+        bodyObject: { result: record }
+    } as IHttpResponse<any>;
+}
+
+/**
  * Helper to create a realistic raw search result group
  */
 function createMockRecordTypeResult(overrides: Partial<CodeSearchRecordTypeResult> = {}): CodeSearchRecordTypeResult {
@@ -176,6 +190,10 @@ describe('CodeSearch - Unit Tests', () => {
         it('should have SEARCH_GROUP_TABLE', () => {
             expect((CodeSearch as any).SEARCH_GROUP_TABLE).toBe('sn_codesearch_search_group');
         });
+
+        it('should have SEARCH_TABLE_TABLE', () => {
+            expect((CodeSearch as any).SEARCH_TABLE_TABLE).toBe('sn_codesearch_table');
+        });
     });
 
     describe('Method existence', () => {
@@ -209,6 +227,14 @@ describe('CodeSearch - Unit Tests', () => {
 
         it('should have static formatResultsAsText method', () => {
             expect(typeof CodeSearch.formatResultsAsText).toBe('function');
+        });
+
+        it('should have addTableToSearchGroup method', () => {
+            expect(typeof codeSearch.addTableToSearchGroup).toBe('function');
+        });
+
+        it('should have getTableRecordsForSearchGroup method', () => {
+            expect(typeof codeSearch.getTableRecordsForSearchGroup).toBe('function');
         });
     });
 
@@ -697,6 +723,216 @@ describe('CodeSearch - Unit Tests', () => {
             expect(text).toContain('line3');
             expect(text).not.toContain('line4');
             expect(text).toContain('2 more matches');
+        });
+    });
+
+    describe('addTableToSearchGroup() - validation', () => {
+        it('should throw when table is empty string', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: '', search_fields: 'script', search_group: 'abc123'
+            })).rejects.toThrow('Table name is required');
+        });
+
+        it('should throw when table is whitespace only', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: '   ', search_fields: 'script', search_group: 'abc123'
+            })).rejects.toThrow('Table name is required');
+        });
+
+        it('should throw when search_fields is empty', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script', search_fields: '', search_group: 'abc123'
+            })).rejects.toThrow('Search fields are required');
+        });
+
+        it('should throw when search_fields is whitespace only', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script', search_fields: '   ', search_group: 'abc123'
+            })).rejects.toThrow('Search fields are required');
+        });
+
+        it('should throw when search_group is empty', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script', search_fields: 'script', search_group: ''
+            })).rejects.toThrow('Search group sys_id is required');
+        });
+
+        it('should throw when search_group is whitespace only', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script', search_fields: 'script', search_group: '   '
+            })).rejects.toThrow('Search group sys_id is required');
+        });
+    });
+
+    describe('addTableToSearchGroup() - API calls', () => {
+        it('should return the created record on 201 response', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            const mockRecord = {
+                sys_id: 'new123',
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: 'group123'
+            };
+            mockRequestHandler.post.mockResolvedValue(createMockTableRecordResponse(mockRecord));
+
+            const result = await codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: 'group123'
+            });
+
+            expect(result.sys_id).toBe('new123');
+            expect(result.table).toBe('sys_script');
+            expect(result.search_fields).toBe('script');
+            expect(result.search_group).toBe('group123');
+        });
+
+        it('should return the created record on 200 response', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            const mockRecord = {
+                sys_id: 'new456',
+                table: 'sys_script_include',
+                search_fields: 'script,name',
+                search_group: 'group789'
+            };
+            mockRequestHandler.post.mockResolvedValue(createMockTableRecordResponse(mockRecord, 200));
+
+            const result = await codeSearch.addTableToSearchGroup({
+                table: 'sys_script_include',
+                search_fields: 'script,name',
+                search_group: 'group789'
+            });
+
+            expect(result.sys_id).toBe('new456');
+        });
+
+        it('should throw on non-200/201 response', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.post.mockResolvedValue(createErrorResponse(403));
+
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: 'group123'
+            })).rejects.toThrow("Failed to add table 'sys_script' to search group 'group123'. Status: 403");
+        });
+
+        it('should throw with status unknown when response is null', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.post.mockResolvedValue(null);
+
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: 'group123'
+            })).rejects.toThrow("Failed to add table 'sys_script' to search group 'group123'. Status: unknown");
+        });
+
+        it('should call TableAPI post with correct table name', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            const mockRecord = { sys_id: 'x', table: 'sys_script', search_fields: 'script', search_group: 'g1' };
+            mockRequestHandler.post.mockResolvedValue(createMockTableRecordResponse(mockRecord));
+
+            await codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: 'g1'
+            });
+
+            const callArgs = mockRequestHandler.post.mock.calls[0][0] as any;
+            expect(callArgs.path).toContain('sn_codesearch_table');
+        });
+
+        it('should include correct body fields in POST request', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            const mockRecord = { sys_id: 'x', table: 'sys_ui_script', search_fields: 'script,name', search_group: 'grp1' };
+            mockRequestHandler.post.mockResolvedValue(createMockTableRecordResponse(mockRecord));
+
+            await codeSearch.addTableToSearchGroup({
+                table: 'sys_ui_script',
+                search_fields: 'script,name',
+                search_group: 'grp1'
+            });
+
+            const callArgs = mockRequestHandler.post.mock.calls[0][0] as any;
+            expect(callArgs.json.table).toBe('sys_ui_script');
+            expect(callArgs.json.search_fields).toBe('script,name');
+            expect(callArgs.json.search_group).toBe('grp1');
+        });
+    });
+
+    describe('getTableRecordsForSearchGroup() - validation', () => {
+        it('should throw when searchGroupSysId is empty', async () => {
+            await expect(codeSearch.getTableRecordsForSearchGroup(''))
+                .rejects.toThrow('Search group sys_id is required');
+        });
+
+        it('should throw when searchGroupSysId is whitespace only', async () => {
+            await expect(codeSearch.getTableRecordsForSearchGroup('   '))
+                .rejects.toThrow('Search group sys_id is required');
+        });
+    });
+
+    describe('getTableRecordsForSearchGroup() - API calls', () => {
+        it('should return table records on successful response', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            const mockRecords = [
+                { sys_id: 'rec1', table: 'sys_script', search_fields: 'script', search_group: 'grp1' },
+                { sys_id: 'rec2', table: 'sys_script_include', search_fields: 'script,name', search_group: 'grp1' }
+            ];
+            mockRequestHandler.get.mockResolvedValue(createMockGroupsResponse(mockRecords));
+
+            const records = await codeSearch.getTableRecordsForSearchGroup('grp1');
+
+            expect(records).toHaveLength(2);
+            expect(records[0].sys_id).toBe('rec1');
+            expect(records[1].table).toBe('sys_script_include');
+        });
+
+        it('should throw on non-200 response', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue(createErrorResponse(500));
+
+            await expect(codeSearch.getTableRecordsForSearchGroup('grp1'))
+                .rejects.toThrow("Failed to query table records for search group 'grp1'. Status: 500");
+        });
+
+        it('should throw with status unknown when response is null', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue(null);
+
+            await expect(codeSearch.getTableRecordsForSearchGroup('grp1'))
+                .rejects.toThrow("Failed to query table records for search group 'grp1'. Status: unknown");
+        });
+
+        it('should include search_group filter in query', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue(createMockGroupsResponse([]));
+
+            await codeSearch.getTableRecordsForSearchGroup('abc123');
+
+            const callArgs = mockRequestHandler.get.mock.calls[0][0] as any;
+            expect(callArgs.query.sysparm_query).toBe('search_group=abc123');
+        });
+
+        it('should apply default limit of 100', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue(createMockGroupsResponse([]));
+
+            await codeSearch.getTableRecordsForSearchGroup('abc123');
+
+            const callArgs = mockRequestHandler.get.mock.calls[0][0] as any;
+            expect(callArgs.query.sysparm_limit).toBe(100);
+        });
+
+        it('should apply custom limit when provided', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+            mockRequestHandler.get.mockResolvedValue(createMockGroupsResponse([]));
+
+            await codeSearch.getTableRecordsForSearchGroup('abc123', { limit: 10 });
+
+            const callArgs = mockRequestHandler.get.mock.calls[0][0] as any;
+            expect(callArgs.query.sysparm_limit).toBe(10);
         });
     });
 });
