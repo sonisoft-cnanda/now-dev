@@ -48,7 +48,7 @@
     "prepare": "git config core.hooksPath .githooks"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
     "dist"
