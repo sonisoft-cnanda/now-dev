@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://git.sonisoft.io/sonisoft/now-sdk-ext-core.git"
   },
   "type": "module",
   "author": "",
