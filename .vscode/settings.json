@@ -3,6 +3,7 @@
   "editor.snippetSuggestions": "top",
   "jest.runMode": "on-demand",
   "jest.monitorLongRun": 600000,
+  "jest.jestCommandLine": "node --experimental-vm-modules node_modules/.bin/jest",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
