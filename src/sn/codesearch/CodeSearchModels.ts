@@ -244,3 +244,66 @@ export interface CodeSearchGroup {
 export interface CodeSearchGroupResponse {
     result: CodeSearchGroup[];
 }
+
+// ============================================================
+// Code Search Table (sn_codesearch_table) Types
+// ============================================================
+
+/**
+ * Options for adding a table to a code search group.
+ * Maps to fields on the sn_codesearch_table table.
+ */
+export interface AddCodeSearchTableOptions {
+    /** Table name to add (e.g., "sys_script_include") */
+    table: string;
+
+    /** Comma-separated fields to search (e.g., "script,name") */
+    search_fields: string;
+
+    /** sys_id of the target code search group */
+    search_group: string;
+}
+
+/**
+ * A record from the sn_codesearch_table Table API.
+ * This is the full record shape including sys_id, unlike CodeSearchTable
+ * which only has name/label from the REST endpoint.
+ */
+export interface CodeSearchTableRecord {
+    /** System ID of this table record */
+    sys_id: string;
+
+    /** The table name (e.g., "sys_script_include") */
+    table: string;
+
+    /** Comma-separated search fields (e.g., "script,name") */
+    search_fields: string;
+
+    /** Reference (sys_id) to the search group */
+    search_group: string | { link: string; value: string };
+
+    /** Created timestamp */
+    sys_created_on?: string;
+
+    /** Updated timestamp */
+    sys_updated_on?: string;
+
+    /** Additional fields */
+    [key: string]: unknown;
+}
+
+/**
+ * Response from inserting into sn_codesearch_table (Table API POST).
+ * POST returns a single record under result.
+ */
+export interface CodeSearchTableRecordResponse {
+    result: CodeSearchTableRecord;
+}
+
+/**
+ * Response from querying sn_codesearch_table (Table API GET).
+ * GET returns an array of records under result.
+ */
+export interface CodeSearchTableRecordsResponse {
+    result: CodeSearchTableRecord[];
+}

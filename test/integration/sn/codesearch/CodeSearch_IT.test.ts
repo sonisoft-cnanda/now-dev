@@ -3,7 +3,7 @@ import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
 import { SN_INSTANCE_ALIAS } from '../../../test_utils/test_config';
 
 import { CodeSearch } from '../../../../src/sn/codesearch/CodeSearch';
-import { CodeSearchResult, CodeSearchRecordTypeResult, CodeSearchGroup, CodeSearchTable } from '../../../../src/sn/codesearch/CodeSearchModels';
+import { CodeSearchResult, CodeSearchRecordTypeResult, CodeSearchGroup, CodeSearchTable, CodeSearchTableRecord } from '../../../../src/sn/codesearch/CodeSearchModels';
 
 describe('CodeSearch - Integration Tests', () => {
     let instance: ServiceNowInstance;
@@ -228,6 +228,95 @@ describe('CodeSearch - Integration Tests', () => {
             expect(formatted.length).toBeGreaterThan(0);
             expect(formatted).toContain('Found');
         }, 60 * SECONDS);
+    });
+
+    describe('addTableToSearchGroup', () => {
+        it('should add a table to a search group and return the created record', async () => {
+            // First, get a valid search group
+            const groups: CodeSearchGroup[] = await codeSearch.getSearchGroups({ limit: 1 });
+            if (groups.length === 0) {
+                console.log('\nSkipping: No search groups found on instance');
+                return;
+            }
+
+            const groupSysId = groups[0].sys_id;
+            const groupName = groups[0].name;
+            console.log(`\nUsing search group: ${groupName} (sys_id: ${groupSysId})`);
+
+            // Add a test table entry
+            const result: CodeSearchTableRecord = await codeSearch.addTableToSearchGroup({
+                table: 'sys_ui_script',
+                search_fields: 'script',
+                search_group: groupSysId
+            });
+
+            console.log(`\nCreated table record: sys_id=${result.sys_id}, table=${result.table}`);
+
+            expect(result).toBeDefined();
+            expect(result.sys_id).toBeDefined();
+            expect(result.sys_id.length).toBeGreaterThan(0);
+            expect(result.table).toBe('sys_ui_script');
+            expect(result.search_fields).toBe('script');
+        }, 60 * SECONDS);
+
+        it('should throw when table name is empty', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: '',
+                search_fields: 'script',
+                search_group: 'any-sys-id'
+            })).rejects.toThrow('Table name is required');
+        }, 30 * SECONDS);
+
+        it('should throw when search_fields is empty', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: '',
+                search_group: 'any-sys-id'
+            })).rejects.toThrow('Search fields are required');
+        }, 30 * SECONDS);
+
+        it('should throw when search_group is empty', async () => {
+            await expect(codeSearch.addTableToSearchGroup({
+                table: 'sys_script',
+                search_fields: 'script',
+                search_group: ''
+            })).rejects.toThrow('Search group sys_id is required');
+        }, 30 * SECONDS);
+    });
+
+    describe('getTableRecordsForSearchGroup', () => {
+        it('should list table records for a search group with sys_id fields', async () => {
+            const groups: CodeSearchGroup[] = await codeSearch.getSearchGroups({ limit: 1 });
+            if (groups.length === 0) {
+                console.log('\nSkipping: No search groups found on instance');
+                return;
+            }
+
+            const groupSysId = groups[0].sys_id;
+            console.log(`\nQuerying table records for group: ${groups[0].name} (sys_id: ${groupSysId})`);
+
+            const records: CodeSearchTableRecord[] = await codeSearch.getTableRecordsForSearchGroup(groupSysId);
+
+            console.log(`\nFound ${records.length} table records:`);
+            records.forEach(rec => {
+                console.log(`  - ${rec.table} (sys_id: ${rec.sys_id}, fields: ${rec.search_fields})`);
+            });
+
+            expect(records).toBeDefined();
+            expect(Array.isArray(records)).toBe(true);
+            expect(records.length).toBeGreaterThan(0);
+
+            if (records.length > 0) {
+                expect(records[0].sys_id).toBeDefined();
+                expect(records[0].table).toBeDefined();
+                expect(records[0].search_fields).toBeDefined();
+            }
+        }, 60 * SECONDS);
+
+        it('should throw when searchGroupSysId is empty', async () => {
+            await expect(codeSearch.getTableRecordsForSearchGroup(''))
+                .rejects.toThrow('Search group sys_id is required');
+        }, 30 * SECONDS);
     });
 
     describe('validation', () => {

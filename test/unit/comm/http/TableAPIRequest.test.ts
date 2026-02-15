@@ -125,7 +125,7 @@ describe('TableAPIRequest', () => {
 
             const callArgs = mockRequestHandler.post.mock.calls[0][0] as any;
             expect(callArgs.path).toBe('/api/now/table/incident');
-            expect(callArgs.body).toEqual(body);
+            expect(callArgs.json).toEqual(body);
             expect(callArgs.method).toBe('post');
         });
 
@@ -138,7 +138,7 @@ describe('TableAPIRequest', () => {
             await tableAPI.post('incident', query, body);
 
             const callArgs = mockRequestHandler.post.mock.calls[0][0] as any;
-            expect(callArgs.body).toEqual(body);
+            expect(callArgs.json).toEqual(body);
             expect(callArgs.query).toEqual(query);
         });
 
@@ -160,7 +160,7 @@ describe('TableAPIRequest', () => {
 
             const callArgs = mockRequestHandler.put.mock.calls[0][0] as any;
             expect(callArgs.path).toBe('/api/now/table/incident/abc123');
-            expect(callArgs.body).toEqual({ state: '6' });
+            expect(callArgs.json).toEqual({ state: '6' });
             expect(callArgs.method).toBe('put');
             expect(callArgs.query).toBeNull();
         });
