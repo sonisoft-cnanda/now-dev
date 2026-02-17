@@ -45,6 +45,13 @@ export class BackgroundScriptExecutor {
         try {
 
            const gck:string =  await this.getBackgroundScriptCSRFToken();
+           if (isNil(gck)) {
+               throw new Error(
+                   "Failed to obtain CSRF token from the ServiceNow instance. " +
+                   "This may indicate an authentication failure or that the user " +
+                   "does not have permission to access Scripts - Background."
+               );
+           }
            const fd:FormData = new FormData();
            fd.append("script", script);
            fd.append("sysparm_ck", gck);
@@ -79,26 +86,27 @@ export class BackgroundScriptExecutor {
             }
         } catch (error) {
             const err:Error = error as Error;
-            throw new Error(`Error executing script: ${err.message}`);
+            throw new Error(`Error executing script: ${err.message}`, { cause: error });
         }
     }
 
     public parseScriptResult(responseXML: string) : BackgroundScriptExecutionResult {
         const options: X2jOptions = {
             ignoreAttributes: false,
-            unpairedTags: ["hr", "br", "link", "meta"],
-            stopNodes: ["*.pre", "*.script"],
+            unpairedTags: ["hr", "br", "link", "meta", "img", "input", "HR", "BR", "LINK", "META", "IMG", "INPUT"],
+            stopNodes: ["*.pre", "*.script", "*.PRE", "*.SCRIPT"],
             processEntities: true,
             htmlEntities: true,
             tagValueProcessor: (tagName: string, tagValue: any) => {
-                if (tagName === "PRE") {
+                if (tagName === "PRE" || tagName === "pre") {
                     return tagValue + "\n";
                 }
                 return tagValue;
             }
         };
         const parser: XMLParser = new XMLParser(options);
-        const strippedResponseXML:string = responseXML.replace(/^\[[0-9:.]+\]/g, "");
+        let strippedResponseXML:string = responseXML.replace(/^\[[0-9:.]+\]/g, "");
+        strippedResponseXML = this.fixMalformedHTML(strippedResponseXML);
         const jObj:ScriptExecutionXMLResult = parser.parse(strippedResponseXML) as ScriptExecutionXMLResult;
         
         const compositeResult:CompositeScriptExecutionResult =  this._parseBGScriptResult(jObj);
@@ -146,23 +154,46 @@ export class BackgroundScriptExecutor {
         return csrfToken;
       }
 
+    /**
+     * Strips closing tags for HTML void elements that fast-xml-parser cannot handle.
+     * ServiceNow's /sys.scripts.do returns malformed HTML with closing tags for
+     * void elements like </meta>, </link>, </br>, </hr>, </img>, etc.
+     */
+    private fixMalformedHTML(html: string): string {
+        const voidElements = [
+            "area", "base", "br", "col", "embed", "hr", "img", "input",
+            "link", "meta", "param", "source", "track", "wbr"
+        ];
+        const pattern = new RegExp(`</(${voidElements.join("|")})\\s*>`, "gi");
+        return html.replace(pattern, "");
+    }
+
     private _parseBGScriptResult(parsedXMLObj: ScriptExecutionXMLResult) : CompositeScriptExecutionResult {
         this._logger.debug("_parseBGScriptResult enter", parsedXMLObj);
-    
-       const scriptResults:ScriptExecutionOutputLine[] = [];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const result:string = parsedXMLObj.HTML.BODY.PRE["#text"] as string;
+
+        const scriptResults:ScriptExecutionOutputLine[] = [];
+
+        // Null-safe navigation — PRE or #text may be absent when script produces no output.
+        // fast-xml-parser stores text in #text when the element has attributes (e.g. <PRE class="outputtext">),
+        // but stores it directly as a string when the element has no attributes (e.g. <PRE>).
+        const pre = parsedXMLObj?.HTML?.BODY?.PRE;
+        const result:string | undefined = (typeof pre === "string" ? pre : pre?.["#text"]) as string | undefined;
+
+        if (isNil(result) || result.trim().length === 0) {
+            return { rawResult: "", consoleResult: [], scriptResults: [] } as CompositeScriptExecutionResult;
+        }
+
         const spl:string[] = result.split("\n");
-        spl.forEach((line: string, index:number   ) => {
+        spl.forEach((line: string, index:number) => {
             if(isNil(line) )
                 spl[index] = null;
             else{
                 line = line.trim();
                 //If the output does not have a "*** Script: " before it, then it is system output
                 if(line.indexOf("*** Script: ") == -1){
-                  
+
                     scriptResults.push(new ScriptExecutionOutputLine(line).asSystemLine());
-                //If the output does have a  "*** Script: " prefixing it, it is output from this script or a script being called   
+                //If the output does have a  "*** Script: " prefixing it, it is output from this script or a script being called
                 }else if(line.indexOf("*** Script: ") !== -1){
                     line = line.replace("*** Script: ", "");
                     if(line.indexOf("[DEBUG]") !== -1){
@@ -174,11 +205,11 @@ export class BackgroundScriptExecutor {
                 //Keep the original array intact in order to preserve the order with system outputs.
                 spl[index] = line;
             }
-                
+
         });
 
         const filteredSpl = spl.filter(line => line !== null);
-        
+
         return {rawResult: result, consoleResult: filteredSpl, scriptResults:scriptResults} as CompositeScriptExecutionResult;
     }
     private _parseAffectedRecords(parsedXMLObj: ScriptExecutionXMLResult) {
@@ -187,14 +218,14 @@ export class BackgroundScriptExecutor {
 }
 
 interface ScriptExecutionXMLResult{
-    HTML:{
-        BODY: {
-            PRE: {
-                "#text";
-            },
-            div:string;
-        }
-    }
+    HTML?: {
+        BODY?: {
+            PRE?: string | {
+                "#text"?: string;
+            };
+            div?: string;
+        };
+    };
 }
 
 export type CompositeScriptExecutionResult = {

@@ -159,6 +159,131 @@ describe('BackgroundScriptExecutor', () => {
 
     })
 
+    describe('executeScript - bug fix validations', () => {
+
+        // NEX-2: Script that produces no gs.print/gs.info output should not crash
+        it('should handle script with no output (NEX-2)', async () => {
+            const script = `var x = 1 + 1;`;
+            const result = await executor?.executeScript(script, TEST_SCOPE, instance);
+
+            console.log('\n=== NEX-2: No output script ===');
+            console.log('Full result:', JSON.stringify(result, null, 2));
+
+            expect(result).toBeDefined();
+            expect(result).not.toBeNull();
+            expect(result?.scriptResults).toBeDefined();
+            expect(Array.isArray(result?.scriptResults)).toBe(true);
+            // No crash — the key assertion for NEX-2
+        }, 100000);
+
+        // NEX-2 variant: Script that only queries records without printing
+        it('should handle GlideRecord query with no output (NEX-2)', async () => {
+            const script = `
+                var gr = new GlideRecord("sys_properties");
+                gr.setLimit(1);
+                gr.query();
+                gr.next();
+            `;
+            const result = await executor?.executeScript(script, TEST_SCOPE, instance);
+
+            console.log('\n=== NEX-2: GlideRecord no output ===');
+            console.log('Full result:', JSON.stringify(result, null, 2));
+
+            expect(result).toBeDefined();
+            expect(result).not.toBeNull();
+            // Should return empty arrays, not crash
+            expect(Array.isArray(result?.scriptResults)).toBe(true);
+            expect(Array.isArray(result?.consoleResult)).toBe(true);
+        }, 100000);
+
+        // NEX-13: Validates that real ServiceNow HTML with void elements parses correctly
+        // The raw response contains <HR/>, <BR/>, and potentially </meta>, </link> in HEAD
+        it('should parse real response HTML without void element errors (NEX-13)', async () => {
+            const script = `gs.info("void_element_test")`;
+            const result = await executor?.executeScript(script, TEST_SCOPE, instance);
+
+            console.log('\n=== NEX-13: Void element handling ===');
+            console.log('Raw HTML (first 500 chars):', result?.raw?.substring(0, 500));
+
+            expect(result).toBeDefined();
+            expect(result?.result).toContain("void_element_test");
+            // Verify the raw response contains void elements that would have crashed before
+            expect(result?.raw).toContain('<HR/>');
+            expect(result?.raw).toContain('<BR/>');
+        }, 100000);
+
+        // NEX-14: Validates stopNodes case handling — real SN returns uppercase <PRE>
+        it('should correctly extract content from uppercase PRE tags (NEX-14)', async () => {
+            const uniqueVal = "STOPNODE_TEST_" + Date.now();
+            const script = `gs.info("${uniqueVal}")`;
+            const result = await executor?.executeScript(script, TEST_SCOPE, instance);
+
+            console.log('\n=== NEX-14: stopNodes case test ===');
+            console.log('Raw result:', result?.rawResult);
+            console.log('Script results:', JSON.stringify(result?.scriptResults, null, 2));
+
+            expect(result).toBeDefined();
+            // Verify that the uppercase <PRE> content was extracted (not empty)
+            expect(result?.rawResult).toContain(uniqueVal);
+            // Verify script line was classified correctly
+            const scriptLines = result?.scriptResults?.filter(
+                (l: any) => (l as any)._isScript === true
+            );
+            expect(scriptLines?.length).toBeGreaterThan(0);
+        }, 100000);
+
+        // NEX-15: Validates error cause is preserved when script execution fails
+        it('should preserve error cause on invalid instance (NEX-15)', async () => {
+            const badInstance = new ServiceNowInstance({
+                alias: 'nonexistent-instance-12345',
+                credential: { instanceUrl: 'https://nonexistent.service-now.com', token: 'bad' } as any
+            });
+            const badExecutor = new BackgroundScriptExecutor(badInstance, TEST_SCOPE);
+
+            try {
+                await badExecutor.executeScript('gs.info("test")', TEST_SCOPE, badInstance);
+                expect(true).toBe(false); // should not reach here
+            } catch (error) {
+                console.log('\n=== NEX-15: Error cause preservation ===');
+                console.log('Error message:', (error as Error).message);
+                console.log('Has cause:', !!(error as Error).cause);
+
+                expect((error as Error).message).toContain('Error executing script');
+                expect((error as Error).cause).toBeDefined();
+            }
+        }, 100000);
+
+        // NEX-2 + NEX-13 combined: Insert a record (the original reported scenario)
+        it('should execute insert script and return result without parsing errors', async () => {
+            // Insert and immediately delete to avoid test data pollution
+            const script = `
+                var gr = new GlideRecord("incident");
+                gr.initialize();
+                gr.setValue("short_description", "NEX_INTEGRATION_TEST_" + new Date().getTime());
+                gr.setValue("category", "inquiry");
+                var sys_id = gr.insert();
+                gs.info("Inserted: " + sys_id);
+                // Clean up
+                if (sys_id) {
+                    var del = new GlideRecord("incident");
+                    if (del.get(sys_id)) {
+                        del.deleteRecord();
+                        gs.info("Cleaned up: " + sys_id);
+                    }
+                }
+            `;
+            const result = await executor?.executeScript(script, TEST_SCOPE, instance);
+
+            console.log('\n=== NEX-2+13: Insert script result ===');
+            console.log('Full result:', JSON.stringify(result, null, 2));
+
+            expect(result).toBeDefined();
+            expect(result).not.toBeNull();
+            expect(result?.rawResult).toContain("Inserted:");
+            expect(result?.scriptResults?.length).toBeGreaterThan(0);
+        }, 100000);
+    });
+
     describe('parseScriptResult', () => {
         it('should parse script result with known XML', async () => {
             const xmlBody = `[0:00:00.066]
