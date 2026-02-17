@@ -467,5 +467,202 @@ System: end
             expect(result).toBeDefined();
             expect(result.raw).toBe(scriptResultXml);
         });
+
+        it('should throw descriptive error when CSRF token is null', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            // Return response that will cause null CSRF token (not logged in)
+            mockRequestHandler.get.mockResolvedValue({
+                data: '<html></html>',
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'false' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            await expect(
+                executor.executeScript('gs.info("test")', 'global', instance)
+            ).rejects.toThrow('Failed to obtain CSRF token');
+        });
+
+        it('should preserve original error cause on failure', async () => {
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            const originalError = new Error('Network timeout');
+            mockRequestHandler.get.mockRejectedValue(originalError);
+
+            try {
+                await executor.executeScript('gs.info("test")', 'global', instance);
+                expect(true).toBe(false); // should not reach here
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toContain('Error executing script');
+                expect((error as Error).cause).toBe(originalError);
+            }
+        });
+    });
+
+    describe('parseScriptResult - malformed HTML handling', () => {
+        it('should parse HTML with closing </meta> and </link> tags', () => {
+            const xml = `<HTML><HEAD><meta charset="utf-8"></meta><link rel="stylesheet"></link></HEAD><BODY><PRE class="outputtext">*** Script: Hello
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("Hello");
+        });
+
+        it('should parse HTML with uppercase closing </META> and </LINK> tags', () => {
+            const xml = `<HTML><HEAD><META charset="utf-8"></META><LINK rel="stylesheet"></LINK></HEAD><BODY><PRE class="outputtext">*** Script: Test
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("Test");
+        });
+
+        it('should parse HTML with </br> and </hr> closing tags', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">*** Script: line1
+</PRE><HR></HR><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("line1");
+        });
+
+        it('should parse HTML with mixed case void element closing tags without crashing', () => {
+            const xml = `<HTML><HEAD><Meta charset="utf-8"></Meta></HEAD><BODY><PRE class="outputtext">*** Script: mixed
+</PRE><div></div></BODY></HTML>`;
+
+            // The key assertion is that parsing does not throw
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+        });
+
+        it('should parse HTML with </img> and </input> closing tags', () => {
+            const xml = `<HTML><BODY><img src="x"></img><input type="text"></input><PRE class="outputtext">*** Script: imgtest
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("imgtest");
+        });
+
+        it('should handle a realistic ServiceNow response with multiple void closing tags', () => {
+            const xml = `[0:00:00.066]<HTML><HEAD><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></meta><link rel="shortcut icon" href="/images/favicon_ng.png" type="image/png"></link></HEAD><BODY><PRE class="outputtext">*** Script: Hello World
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("Hello World");
+            expect(result.scriptResults.length).toBeGreaterThan(0);
+            const scriptLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isScript === true
+            );
+            expect(scriptLines.length).toBe(1);
+            expect(scriptLines[0].line).toBe("Hello World");
+        });
+    });
+
+    describe('parseScriptResult - empty output handling', () => {
+        it('should handle empty PRE tag with attributes', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext"></PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBe("");
+            expect(result.consoleResult).toEqual([]);
+            expect(result.scriptResults).toEqual([]);
+        });
+
+        it('should handle PRE tag with no text content and no attributes', () => {
+            const xml = `<HTML><BODY><PRE></PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBe("");
+            expect(result.consoleResult).toEqual([]);
+            expect(result.scriptResults).toEqual([]);
+        });
+
+        it('should handle missing PRE tag entirely', () => {
+            const xml = `<HTML><BODY><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBe("");
+            expect(result.consoleResult).toEqual([]);
+            expect(result.scriptResults).toEqual([]);
+        });
+
+        it('should handle missing BODY tag', () => {
+            const xml = `<HTML></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBe("");
+            expect(result.consoleResult).toEqual([]);
+            expect(result.scriptResults).toEqual([]);
+        });
+
+        it('should handle completely empty HTML', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext">
+</PRE><div></div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            // Even whitespace-only output should not crash
+        });
+
+        it('should still extract affected records when PRE is empty', () => {
+            const xml = `<HTML><BODY><PRE class="outputtext"></PRE><div>1 record updated</div></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toBe("");
+            expect(result.scriptResults).toEqual([]);
+            expect(result.affectedRecords).toBeDefined();
+        });
+
+        it('should parse PRE without attributes (text stored as plain string)', () => {
+            // When PRE has no attributes, fast-xml-parser stores text directly as string value
+            // rather than in a #text property. This matches real ServiceNow responses.
+            const xml = `<HTML><BODY>Script completed<HR/><PRE>*** Script: Hello World</PRE><HR/></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("Hello World");
+            expect(result.scriptResults.length).toBeGreaterThan(0);
+            const scriptLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isScript === true
+            );
+            expect(scriptLines.length).toBe(1);
+            expect(scriptLines[0].line).toBe("Hello World");
+        });
+
+        it('should parse realistic SN response with no PRE attributes', () => {
+            // Real ServiceNow response format from integration testing
+            const xml = `[0:00:00.019] <HTML><BODY>Script completed in scope global: script<HR/>Script execution history <A target='blank' HREF='sys_script_execution_history.do?sys_id=abc123'>available here</A><HR/><PRE>*** Script: TESTING_VALUE_123<BR/></PRE><HR/></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.rawResult).toContain("TESTING_VALUE_123");
+            expect(result.scriptResults.length).toBeGreaterThan(0);
+        });
+
+        it('should parse PRE without attributes containing multiple output lines', () => {
+            const xml = `<HTML><BODY><HR/><PRE>*** Script: INFO_LINE_1
+*** Script: [DEBUG] DEBUG_LINE_1
+*** Script: INFO_LINE_2
+</PRE><HR/></BODY></HTML>`;
+
+            const result = executor.parseScriptResult(xml);
+            expect(result).toBeDefined();
+            expect(result.scriptResults.length).toBeGreaterThanOrEqual(3);
+            const debugLines = result.scriptResults.filter(
+                (l: any) => (l as any)._isDebug === true
+            );
+            expect(debugLines.length).toBe(1);
+        });
     });
 });
