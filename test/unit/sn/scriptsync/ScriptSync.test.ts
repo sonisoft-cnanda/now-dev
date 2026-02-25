@@ -1,6 +1,9 @@
 /**
  * Unit tests for ScriptSync
  * Uses mocks instead of real credentials
+ *
+ * NOTE: Node built-in modules (like 'fs') cannot be mocked with jest.mock()
+ * in ESM mode. We use jest.unstable_mockModule() + dynamic imports instead.
  */
 
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
@@ -10,14 +13,14 @@ import { IHttpResponse } from '../../../../src/comm/http/IHttpResponse';
 import { AuthenticationHandlerFactory } from '../../../../src/auth/AuthenticationHandlerFactory';
 import { RequestHandlerFactory } from '../../../../src/comm/http/RequestHandlerFactory';
 
-// Define mock fs functions before jest.mock (hoisted)
+// Define mock fs functions
 const mockWriteFileSync = jest.fn();
 const mockReadFileSync = jest.fn<(...args: any[]) => any>().mockReturnValue('mock file content');
 const mockReaddirSync = jest.fn<(...args: any[]) => any>().mockReturnValue([]);
 
-// Mock fs with explicit factory — spreads real module (so winston/Logger still work)
-// and overrides only the functions ScriptSync uses directly.
-jest.mock('fs', () => {
+// Use jest.unstable_mockModule for ESM compatibility with Node built-in 'fs'.
+// Must use jest.requireActual (sync/CJS) to avoid circular import OOM.
+jest.unstable_mockModule('fs', () => {
     const actual = jest.requireActual<typeof import('fs')>('fs');
     return {
         ...actual,
@@ -37,8 +40,10 @@ jest.mock('@servicenow/sdk-cli/dist/auth/index.js', () => ({
 jest.mock('../../../../src/auth/AuthenticationHandlerFactory');
 jest.mock('../../../../src/comm/http/RequestHandlerFactory');
 
-import { ScriptSync } from '../../../../src/sn/scriptsync/ScriptSync';
-import { SCRIPT_TYPES } from '../../../../src/sn/scriptsync/ScriptSyncModels';
+// Dynamic imports — must come after jest.unstable_mockModule so ScriptSync
+// receives the mocked 'fs' module instead of the real one.
+const { ScriptSync } = await import('../../../../src/sn/scriptsync/ScriptSync');
+const { SCRIPT_TYPES } = await import('../../../../src/sn/scriptsync/ScriptSyncModels');
 
 // Mock request handler
 class MockRequestHandler {
@@ -72,7 +77,7 @@ function createErrorResponse(status: number = 500) {
 
 describe('ScriptSync - Unit Tests', () => {
     let instance: ServiceNowInstance;
-    let scriptSync: ScriptSync;
+    let scriptSync: InstanceType<typeof ScriptSync>;
     let mockAuthHandler: MockAuthenticationHandler;
     let mockRequestHandler: MockRequestHandler;
 
