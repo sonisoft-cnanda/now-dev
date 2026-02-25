@@ -8,17 +8,38 @@ import { ProgressWorker } from "../ProgressWorker";
 import { ApplicationDetailModel, ApplicationDetailModelResponse } from "./ApplicationDetailModel";
 import { BatchInstallation } from "./BatchInstallation";
 import { BatchDefinition } from "./BatchDefinition";
+import {
+    StoreAppSearchOptions,
+    StoreAppSearchResponse,
+    StoreAppInstallOptions,
+    StoreAppUpdateOptions,
+    StoreAppOperationResponse,
+    StoreAppOperationResult,
+    StoreAppFinalResult
+} from "./StoreApplicationModels";
+
+export enum APP_TAB_CONTEXT {
+    AVAILABLE_FOR_YOU = "available_for_you",
+    INSTALLED = "installed",
+    UPDATES = "updates"
+}
 
 export class ApplicationManager {
     BATCH_API_URL = "/api/sn_cicd/app/batch/install";
     APP_DETAILS_API_URL = "/api/sn_appclient/appmanager/app/{appID}";
-    APP_UPDATES_LIST_API_URL = "/api/sn_appclient/appmanager/apps?search_key={searchKey}&sysparm_limit={limit}&tab_context=updates";
+    APP_SEARCH_API_URL = "/api/sn_appclient/appmanager/apps?search_key={searchKey}&sysparm_limit={limit}&tab_context={tabContext}";
 
+    APP_INSTALL_API_URL = "/api/sn_appclient/appmanager/app/install";
+    APP_SEARCH_POST_API_URL = "/api/sn_appclient/appmanager/apps";
+    APP_UPDATE_API_URL = "/api/sn_appclient/appmanager/app/update";
+    DEFAULT_INSTALL_TIMEOUT = 1000 * 60 * 30;
+    DEFAULT_POLL_INTERVAL = 5000;
     BATCH_INSTALL_TIMEOUT = 1000 * 60 * 30 ;
     _logger:Logger = new Logger("ApplicationManager");
 
     _req:ServiceNowRequest;
 
+  
 
 
     public constructor(instance:ServiceNowInstance){
@@ -31,17 +52,14 @@ export class ApplicationManager {
    public async installBatch(batchDefinitionPath:string) : Promise<boolean> {
 
     const batchDefinitionRequest = fs.readFileSync(batchDefinitionPath, 'utf8');
-    console.log(batchDefinitionRequest);
+    this._logger.info(`Batch definition loaded from: ${batchDefinitionPath}`);
     const batchInstall = JSON.parse(batchDefinitionRequest) as BatchInstallation;
 
-    //let installablePackages = await this.getInstallableApplicationPackages(batchInstall);
-   // console.log(installablePackages);
-    //batchInstall.packages = installablePackages;
     const batchDefinitionJson = JSON.stringify(batchInstall);
-    console.log(batchDefinitionJson);
+    this._logger.info(`Batch definition: ${batchDefinitionJson}`);
     const result = await this.executeBatchInstallRequest(batchInstall);
-    console.log(result);
-    console.log(result.result.links);
+    this._logger.info(`Batch install result: ${JSON.stringify(result)}`);
+    this._logger.info(`Batch install links: ${JSON.stringify(result.result.links)}`);
 
     if(result.result.links && result.result.links.progress){
         await this.waitForBatchInstallCompletion(result.result);
@@ -54,7 +72,7 @@ export class ApplicationManager {
    private async getInstallableApplicationPackages(batchInstall:BatchInstallation):Promise<BatchDefinition[]>{
     for (const appPackage of batchInstall.packages) {
         const appDetails = await this.getApplicationDetails(appPackage.id);
-        console.log(appDetails);
+        this._logger.info(`App details for ${appPackage.id}: ${JSON.stringify(appDetails)}`);
         if(appDetails && appDetails.version == appPackage.requested_version){
             batchInstall.packages.splice(batchInstall.packages.indexOf(appPackage), 1);
         }
@@ -76,12 +94,12 @@ export class ApplicationManager {
    private async waitForBatchInstallCompletion(batchInstallResult:BatchInstallResult){
     const startTime = Date.now();
     let progressResult = await this.getBatchProgress(batchInstallResult);
-    console.log(progressResult);
-    
+    this._logger.info(`Batch install progress: ${JSON.stringify(progressResult)}`);
+
     while(progressResult.percent_complete < 100 && (Date.now() - startTime) < this.BATCH_INSTALL_TIMEOUT){
         await new Promise(resolve => setTimeout(resolve, 5000));
         progressResult = await this.getBatchProgress(batchInstallResult);
-        console.log(progressResult);
+        this._logger.info(`Batch install progress: ${progressResult.percent_complete}%`);
     }
 
     if(progressResult.percent_complete < 100){
@@ -259,6 +277,227 @@ export class ApplicationManager {
    public async getApplicationsNeedingAction(batchDefinitionPath: string): Promise<ApplicationValidationResult[]> {
        const validationResult = await this.validateBatchDefinition(batchDefinitionPath);
        return validationResult.applications.filter(app => app.needsAction);
+   }
+
+   // ============================================================
+   // Store Application Management
+   // ============================================================
+
+   /**
+    * Search/list store applications by tab context with optional search key and pagination.
+    * Uses POST /api/sn_appclient/appmanager/apps
+    * @param options Search options including tabContext, searchKey, limit, offset, requestBody
+    * @returns Array of ApplicationDetailModel matching the search criteria
+    */
+   public async searchApplications(options: StoreAppSearchOptions): Promise<ApplicationDetailModel[]> {
+       const queryParams: Record<string, string> = {
+           tab_context: options.tabContext
+       };
+       if (options.searchKey) {
+           queryParams.search_key = options.searchKey;
+       }
+       if (options.limit !== undefined) {
+           queryParams.sysparm_limit = String(options.limit);
+       }
+       if (options.offset !== undefined) {
+           queryParams.sysparm_offset = String(options.offset);
+       }
+
+       const request: HTTPRequest = {
+           method: 'POST',
+           path: this.APP_SEARCH_POST_API_URL,
+           headers: { 'Content-Type': 'application/json' },
+           query: queryParams,
+           json: options.requestBody || {},
+           body: null
+       };
+
+       const resp: IHttpResponse<StoreAppSearchResponse> = await this._req.post<StoreAppSearchResponse>(request);
+       if (resp.status === 200 && resp.bodyObject?.result?.apps) {
+           return resp.bodyObject.result.apps;
+       }
+       return [];
+   }
+
+   /**
+    * Initiate installation of a store application.
+    * Uses GET /api/sn_appclient/appmanager/app/install
+    * @param options Install options including appId and version
+    * @returns StoreAppOperationResult with tracker info for monitoring progress
+    */
+   public async installStoreApplication(options: StoreAppInstallOptions): Promise<StoreAppOperationResult> {
+       const queryParams: Record<string, string> = {
+           app_id: options.appId,
+           version: options.version
+       };
+       if (options.customizationVersion) {
+           queryParams.customization_version = options.customizationVersion;
+       }
+       if (options.loadDemoData !== undefined) {
+           queryParams.load_demo_data = String(options.loadDemoData);
+       }
+
+       const request: HTTPRequest = {
+           method: 'GET',
+           path: this.APP_INSTALL_API_URL,
+           headers: null,
+           query: queryParams,
+           body: null
+       };
+
+       const resp: IHttpResponse<StoreAppOperationResponse> = await this._req.get<StoreAppOperationResponse>(request);
+       if (resp.status === 200 && resp.bodyObject?.result) {
+           return resp.bodyObject.result;
+       }
+       throw new Error(`Failed to initiate store app install: HTTP ${resp.status}`);
+   }
+
+   /**
+    * Install a store application and wait for completion by polling the tracker.
+    * @param options Install options including appId and version
+    * @param pollIntervalMs Polling interval in ms (default: 5000)
+    * @param timeoutMs Timeout in ms (default: 30 min)
+    * @returns StoreAppFinalResult with success status and details
+    */
+   public async installStoreApplicationAndWait(
+       options: StoreAppInstallOptions,
+       pollIntervalMs?: number,
+       timeoutMs?: number
+   ): Promise<StoreAppFinalResult> {
+       const operationResult = await this.installStoreApplication(options);
+       const trackerId = operationResult.tracker_id || operationResult.trackerId || operationResult.links?.progress?.id;
+       if (!trackerId) {
+           throw new Error('No tracker ID returned from install operation');
+       }
+       return await this.waitForInstallationCompletion(
+           trackerId,
+           pollIntervalMs || this.DEFAULT_POLL_INTERVAL,
+           timeoutMs || this.DEFAULT_INSTALL_TIMEOUT
+       );
+   }
+
+   /**
+    * Initiate update of a store application.
+    * Uses GET /api/sn_appclient/appmanager/app/update
+    * @param options Update options including appId and version
+    * @returns StoreAppOperationResult with tracker info for monitoring progress
+    */
+   public async updateStoreApplication(options: StoreAppUpdateOptions): Promise<StoreAppOperationResult> {
+       const queryParams: Record<string, string> = {
+           app_id: options.appId,
+           version: options.version
+       };
+       if (options.customizationVersion) {
+           queryParams.customization_version = options.customizationVersion;
+       }
+       if (options.loadDemoData !== undefined) {
+           queryParams.load_demo_data = String(options.loadDemoData);
+       }
+
+       const request: HTTPRequest = {
+           method: 'GET',
+           path: this.APP_UPDATE_API_URL,
+           headers: null,
+           query: queryParams,
+           body: null
+       };
+
+       const resp: IHttpResponse<StoreAppOperationResponse> = await this._req.get<StoreAppOperationResponse>(request);
+       if (resp.status === 200 && resp.bodyObject?.result) {
+           return resp.bodyObject.result;
+       }
+       throw new Error(`Failed to initiate store app update: HTTP ${resp.status}`);
+   }
+
+   /**
+    * Update a store application and wait for completion by polling the tracker.
+    * @param options Update options including appId and version
+    * @param pollIntervalMs Polling interval in ms (default: 5000)
+    * @param timeoutMs Timeout in ms (default: 30 min)
+    * @returns StoreAppFinalResult with success status and details
+    */
+   public async updateStoreApplicationAndWait(
+       options: StoreAppUpdateOptions,
+       pollIntervalMs?: number,
+       timeoutMs?: number
+   ): Promise<StoreAppFinalResult> {
+       const operationResult = await this.updateStoreApplication(options);
+       const trackerId = operationResult.tracker_id || operationResult.trackerId || operationResult.links?.progress?.id;
+       if (!trackerId) {
+           throw new Error('No tracker ID returned from update operation');
+       }
+       return await this.waitForInstallationCompletion(
+           trackerId,
+           pollIntervalMs || this.DEFAULT_POLL_INTERVAL,
+           timeoutMs || this.DEFAULT_INSTALL_TIMEOUT
+       );
+   }
+
+   /**
+    * Poll installation progress via ProgressWorker until complete, timed out, or failed.
+    * Uses GET /api/sn_cicd/progress/{progressId}
+    * @param progressId Progress ID from an install/update operation
+    * @param pollIntervalMs Polling interval in ms
+    * @param timeoutMs Timeout in ms
+    * @returns StoreAppFinalResult with success status
+    */
+   private async waitForInstallationCompletion(
+       progressId: string,
+       pollIntervalMs: number,
+       timeoutMs: number
+   ): Promise<StoreAppFinalResult> {
+       const progressWorker = new ProgressWorker(this._instance);
+       const startTime = Date.now();
+       let progress = await progressWorker.getProgress(progressId);
+       this._logger.info(`Installation progress: ${JSON.stringify(progress)}`);
+
+       while (progress.percent_complete < 100 && (Date.now() - startTime) < timeoutMs) {
+           await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+           progress = await progressWorker.getProgress(progressId);
+           this._logger.info(`Installation progress: ${progress.percent_complete}%`);
+       }
+
+       if (progress.percent_complete < 100) {
+           return {
+               success: false,
+               status: progress.status,
+               status_label: progress.status_label,
+               status_message: progress.status_message,
+               error: 'Installation timed out',
+               percent_complete: progress.percent_complete
+           };
+       }
+
+       if (progress.error) {
+           return {
+               success: false,
+               status: progress.status,
+               status_label: progress.status_label,
+               status_message: progress.status_message,
+               error: progress.error,
+               percent_complete: progress.percent_complete
+           };
+       }
+
+       // Status "3" typically indicates failure in ServiceNow
+       if (progress.status === '3') {
+           return {
+               success: false,
+               status: progress.status,
+               status_label: progress.status_label,
+               status_message: progress.status_message,
+               error: `${progress.status_label}: ${progress.status_message}`,
+               percent_complete: progress.percent_complete
+           };
+       }
+
+       return {
+           success: true,
+           status: progress.status,
+           status_label: progress.status_label,
+           status_message: progress.status_message,
+           percent_complete: progress.percent_complete
+       };
    }
 
    /**

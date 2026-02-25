@@ -182,13 +182,10 @@ export class RequestHandler implements IRequestHandler{
         
         return response;
        }catch(ex){
-       
+
         this._logger.error("Error during POST request.", {error:ex, response: response, request: request});
         throw new Error(ex);
        }
-        
-
-        return null;
     }
 
     public async put<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
@@ -208,13 +205,9 @@ export class RequestHandler implements IRequestHandler{
             
             return response;
        }catch(ex){
-        //log error
-        //console.log(ex);
+        this._logger.error("Error during PUT request.", {error:ex, response: response, request: request});
         throw new Error(ex);
        }
-        
-
-        return null;
     }
 
     public async get<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
@@ -222,7 +215,7 @@ export class RequestHandler implements IRequestHandler{
         const response:IHttpResponse<T> = null;
         try{
          const response = await this.doRequest<T>(request);
-          this._logger.debug("Http SN POST Response Received", response);
+          this._logger.debug("Http SN GET Response Received", response);
 
         try{
             if(!((response.data) instanceof String) ){
@@ -235,10 +228,9 @@ export class RequestHandler implements IRequestHandler{
 
         return response;
        }catch(ex){
-            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
+            this._logger.error("Error during GET request.", {error:ex, response: response, request: request});
+            throw new Error(ex);
        }
-        
-        return null;
     }
 
     public async delete<T>(request: HTTPRequest) : Promise<IHttpResponse<T>> {
@@ -252,17 +244,14 @@ export class RequestHandler implements IRequestHandler{
                 const rpObj: T | null = response.data;
                 response.bodyObject = response.data;            }
         }catch(ex){
-            console.log(ex);
+            this._logger.error("Error setting response.bodyObject.", {error:ex, response: response, request: request});
         }
 
         return response;
        }catch(ex){
-        //log error
-        console.log(ex);
+            this._logger.error("Error during DELETE request.", {error:ex, response: response, request: request});
+            throw new Error(ex);
        }
-        
-
-        return null;
     }
 
     private async getRequestConfig(request: HTTPRequest):Promise<{ config: any }>{
