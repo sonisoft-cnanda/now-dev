@@ -106,12 +106,11 @@ describe('TableAPIRequest', () => {
             expect(response).toBe(mockSuccessResponse);
         });
 
-        it('should return null when request throws', async () => {
+        it('should throw when request throws', async () => {
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
             mockRequestHandler.get.mockRejectedValue(new Error('Network error'));
 
-            const response = await tableAPI.get('incident', {});
-            expect(response).toBeNull();
+            await expect(tableAPI.get('incident', {})).rejects.toThrow();
         });
     });
 
@@ -142,12 +141,11 @@ describe('TableAPIRequest', () => {
             expect(callArgs.query).toEqual(query);
         });
 
-        it('should return null when request throws', async () => {
+        it('should throw when request throws', async () => {
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
             mockRequestHandler.post.mockRejectedValue(new Error('Bad request'));
 
-            const response = await tableAPI.post('incident', {}, {});
-            expect(response).toBeNull();
+            await expect(tableAPI.post('incident', {}, {})).rejects.toThrow();
         });
     });
 
@@ -165,12 +163,11 @@ describe('TableAPIRequest', () => {
             expect(callArgs.query).toBeNull();
         });
 
-        it('should return null when request throws', async () => {
+        it('should throw when request throws', async () => {
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
             mockRequestHandler.put.mockRejectedValue(new Error('Forbidden'));
 
-            const response = await tableAPI.put('incident', 'abc', {});
-            expect(response).toBeNull();
+            await expect(tableAPI.put('incident', 'abc', {})).rejects.toThrow();
         });
     });
 

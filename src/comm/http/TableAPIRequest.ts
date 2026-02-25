@@ -56,18 +56,9 @@ export class TableAPIRequest{
     }
 
     private async _doRequest<T>(uri:string, httpMethod:string, query: object | null, bodyData:object | null) : Promise<IHttpResponse<T>>{
-        let resp:IHttpResponse<T> = null;
-
-        try{
-            const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance as ServiceNowInstance);
-
-            const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body: null, json: bodyData};
-            resp = await req.executeRequest<T>(request);
-        }catch(err){
-            console.log(err);
-        }
-       
-        return resp;
+        const req:ServiceNowRequest = new ServiceNowRequest(this.snInstance as ServiceNowInstance);
+        const request:HTTPRequest = { path: uri, method: httpMethod, headers: this._headers, query: query, body: null, json: bodyData};
+        return await req.executeRequest<T>(request);
     }
 
 
