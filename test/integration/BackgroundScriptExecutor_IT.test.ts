@@ -334,4 +334,42 @@ System output here<BR/>
         });
     })
 
+    describe('executeScriptViaTrigger', () => {
+        it('should create a sys_trigger record to execute a script', async () => {
+            const script = `gs.info('NEX_IT_TRIGGER_TEST_${Date.now()}');`;
+            const result = await executor?.executeScriptViaTrigger(script, 'IT Test Trigger', true);
+
+            console.log('\n=== executeScriptViaTrigger Result ===');
+            console.log('Result:', JSON.stringify(result, null, 2));
+
+            expect(result).toBeDefined();
+            expect(result!.success).toBe(true);
+            expect(result!.triggerSysId).toBeDefined();
+            expect(result!.triggerSysId.length).toBeGreaterThan(0);
+            expect(result!.triggerName).toBe('IT Test Trigger');
+            expect(result!.autoDelete).toBe(true);
+            expect(result!.message).toContain('created successfully');
+        }, 100000);
+    });
+
+    describe('executeScriptAuto', () => {
+        it('should execute a script using the best available method', async () => {
+            const script = `gs.info('NEX_IT_AUTO_TEST_${Date.now()}');`;
+            const result = await executor?.executeScriptAuto(script, TEST_SCOPE);
+
+            console.log('\n=== executeScriptAuto Result ===');
+            console.log('Result:', JSON.stringify(result, null, 2));
+
+            expect(result).toBeDefined();
+            // Result could be either BackgroundScriptExecutionResult or TriggerExecutionResult
+            // Just verify we got something back
+            if ('triggerSysId' in result!) {
+                expect(result!.success).toBe(true);
+                expect(result!.triggerSysId).toBeDefined();
+            } else {
+                expect(result!.raw).toBeDefined();
+            }
+        }, 100000);
+    });
+
 });

@@ -14,12 +14,14 @@ import { HTTPRequest } from "../comm/http/HTTPRequest";
 import { BG_SCRIPT_ENDPOINT } from "../constants/ServiceNow";
 import { IHttpResponse } from "../comm/http/IHttpResponse";
 import { isNil } from "../util/utils";
+import { TableAPIRequest } from "../comm/http/TableAPIRequest";
 
 
 export class BackgroundScriptExecutor {
     snRequest: ServiceNowRequest;
     instance: ServiceNowInstance;
     scope: string;
+    private _tableAPI: TableAPIRequest;
 
     _logger:Logger = new Logger("BackgroundScriptExecutor");
 
@@ -28,6 +30,7 @@ export class BackgroundScriptExecutor {
             this.instance = instance;
             this.scope = scope;
             this.snRequest = new ServiceNowRequest(this.instance);
+            this._tableAPI = new TableAPIRequest(this.instance);
     }
 
     public async executeScript(script: string, scope: string = this.scope, instance:ServiceNowInstance = this.instance): Promise<BackgroundScriptExecutionResult> {
@@ -153,6 +156,117 @@ export class BackgroundScriptExecutor {
 
         return csrfToken;
       }
+
+    /**
+     * Execute a script by creating a sys_trigger record.
+     * This is an alternative to the background script page approach.
+     * Creates a scheduled job that runs the script once and optionally deletes itself.
+     *
+     * @param script The script to execute
+     * @param description Optional description for the trigger
+     * @param autoDelete If true, wraps the script in try/finally to delete the trigger after execution
+     * @returns TriggerExecutionResult with details about the created trigger
+     */
+    public async executeScriptViaTrigger(script: string, description?: string, autoDelete: boolean = true): Promise<TriggerExecutionResult> {
+        if (!script || typeof script !== 'string') {
+            throw new Error("script must be a non-empty string");
+        }
+
+        const triggerName = description || `ExtCore_Trigger_${Date.now()}`;
+
+        // Calculate next_action as 1 second from now
+        const now = new Date();
+        now.setSeconds(now.getSeconds() + 1);
+        const nextAction = this._formatDateForServiceNow(now);
+
+        let finalScript = script;
+
+        // If autoDelete, wrap the script in try/finally that deletes the trigger record
+        if (autoDelete) {
+            finalScript =
+                `(function() {\n` +
+                `    try {\n` +
+                `        ${script}\n` +
+                `    } finally {\n` +
+                `        var gr = new GlideRecord('sys_trigger');\n` +
+                `        gr.addQuery('name', '${triggerName.replace(/'/g, "\\'")}');\n` +
+                `        gr.query();\n` +
+                `        if (gr.next()) {\n` +
+                `            gr.deleteRecord();\n` +
+                `        }\n` +
+                `    }\n` +
+                `})();`;
+        }
+
+        this._logger.info(`Creating sys_trigger '${triggerName}' with next_action: ${nextAction}`);
+
+        const body = {
+            name: triggerName,
+            trigger_type: '0',
+            state: '0',
+            script: finalScript,
+            next_action: nextAction
+        };
+
+        const response: IHttpResponse<TriggerRecordResponse> = await this._tableAPI.post<TriggerRecordResponse>(
+            'sys_trigger',
+            {},
+            body
+        );
+
+        if (response && (response.status === 200 || response.status === 201) && response.bodyObject?.result) {
+            const record = response.bodyObject.result;
+            this._logger.info(`Successfully created sys_trigger with sys_id: ${record.sys_id}`);
+
+            return {
+                success: true,
+                triggerSysId: record.sys_id,
+                triggerName: triggerName,
+                nextAction: nextAction,
+                autoDelete: autoDelete,
+                message: `Trigger '${triggerName}' created successfully. Script will execute at ${nextAction}.`
+            };
+        }
+
+        throw new Error(
+            `Failed to create sys_trigger '${triggerName}'. Status: ${response?.status ?? 'unknown'}`
+        );
+    }
+
+    /**
+     * Execute a script using the best available method.
+     * First tries the standard executeScript() (background script page),
+     * and on failure falls back to executeScriptViaTrigger().
+     *
+     * @param script The script to execute
+     * @param scope Optional scope for the background script execution
+     * @returns Either a BackgroundScriptExecutionResult or TriggerExecutionResult
+     */
+    public async executeScriptAuto(script: string, scope?: string): Promise<BackgroundScriptExecutionResult | TriggerExecutionResult> {
+        try {
+            this._logger.info("Attempting script execution via background script page...");
+            const result = await this.executeScript(script, scope || this.scope);
+            return result;
+        } catch (error) {
+            const err: Error = error as Error;
+            this._logger.warn(`Background script execution failed: ${err.message}. Falling back to sys_trigger.`);
+            const triggerResult = await this.executeScriptViaTrigger(script);
+            return triggerResult;
+        }
+    }
+
+    /**
+     * Format a Date object into ServiceNow datetime format: YYYY-MM-DD HH:MM:SS
+     */
+    private _formatDateForServiceNow(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
 
     /**
      * Strips closing tags for HTML void elements that fast-xml-parser cannot handle.
@@ -290,4 +404,27 @@ export class ScriptExecutionOutputLine{
 export interface BackgroundScriptExecutorOptions {
     instance?: ServiceNowInstance;
     scope?: string;
+}
+
+export interface TriggerExecutionResult {
+    success: boolean;
+    triggerSysId: string;
+    triggerName: string;
+    nextAction: string;
+    autoDelete: boolean;
+    message: string;
+}
+
+interface TriggerRecord {
+    sys_id: string;
+    name: string;
+    trigger_type: string;
+    state: string;
+    script: string;
+    next_action: string;
+    [key: string]: unknown;
+}
+
+interface TriggerRecordResponse {
+    result: TriggerRecord;
 }

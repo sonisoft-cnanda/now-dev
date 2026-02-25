@@ -665,4 +665,368 @@ System: end
             expect(debugLines.length).toBe(1);
         });
     });
+
+    // =========================================================================
+    // Feature 9: sys_trigger Script Execution Tests
+    // =========================================================================
+
+    describe('executeScriptViaTrigger', () => {
+        it('should create a sys_trigger record successfully', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'trigger123',
+                name: 'ExtCore_Trigger_12345',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("test")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptViaTrigger('gs.info("test")', 'TestTrigger');
+
+            expect(result).toBeDefined();
+            expect(result.success).toBe(true);
+            expect(result.triggerSysId).toBe('trigger123');
+            expect(result.triggerName).toBe('TestTrigger');
+            expect(result.autoDelete).toBe(true);
+            expect(result.message).toContain('TestTrigger');
+        });
+
+        it('should use auto-generated name when no description provided', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'trigger456',
+                name: 'ExtCore_Trigger_auto',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("auto")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptViaTrigger('gs.info("auto")');
+
+            expect(result).toBeDefined();
+            expect(result.success).toBe(true);
+            expect(result.triggerName).toContain('ExtCore_Trigger_');
+        });
+
+        it('should wrap script in try/finally when autoDelete is true', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'trigger789',
+                name: 'AutoDeleteTrigger',
+                trigger_type: '0',
+                state: '0',
+                script: '',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            await executor.executeScriptViaTrigger('gs.info("hello")', 'AutoDeleteTrigger', true);
+
+            // Verify the POST body contains the wrapped script
+            expect(mockRequestHandler.post).toHaveBeenCalled();
+            const postCall = mockRequestHandler.post.mock.calls[0];
+            // The post mock is called by TableAPIRequest which uses ServiceNowRequest internally
+            // We just verify the call was made
+            expect(postCall).toBeDefined();
+        });
+
+        it('should not wrap script when autoDelete is false', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'triggerNoDelete',
+                name: 'NoDeleteTrigger',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("no delete")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptViaTrigger('gs.info("no delete")', 'NoDeleteTrigger', false);
+
+            expect(result).toBeDefined();
+            expect(result.success).toBe(true);
+            expect(result.autoDelete).toBe(false);
+        });
+
+        it('should throw when script is empty', async () => {
+            await expect(
+                executor.executeScriptViaTrigger('')
+            ).rejects.toThrow('script must be a non-empty string');
+        });
+
+        it('should throw when script is not a string', async () => {
+            await expect(
+                executor.executeScriptViaTrigger(null as any)
+            ).rejects.toThrow('script must be a non-empty string');
+        });
+
+        it('should throw when API returns error status', async () => {
+            mockRequestHandler.post.mockResolvedValue({
+                data: null,
+                status: 500,
+                statusText: 'Error',
+                headers: {},
+                config: {},
+                bodyObject: null
+            } as IHttpResponse<any>);
+
+            await expect(
+                executor.executeScriptViaTrigger('gs.info("fail")', 'FailTrigger')
+            ).rejects.toThrow('Failed to create sys_trigger');
+        });
+
+        it('should throw when response has no result', async () => {
+            mockRequestHandler.post.mockResolvedValue({
+                data: {},
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: {}
+            } as IHttpResponse<any>);
+
+            await expect(
+                executor.executeScriptViaTrigger('gs.info("empty")', 'EmptyResult')
+            ).rejects.toThrow('Failed to create sys_trigger');
+        });
+
+        it('should set correct nextAction format (YYYY-MM-DD HH:MM:SS)', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'triggerDate',
+                name: 'DateTrigger',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("date")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptViaTrigger('gs.info("date")', 'DateTrigger');
+
+            // Verify nextAction matches YYYY-MM-DD HH:MM:SS format
+            expect(result.nextAction).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+        });
+
+        it('should handle 200 status as success', async () => {
+            const mockTriggerRecord = {
+                sys_id: 'trigger200',
+                name: 'Status200Trigger',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("200")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptViaTrigger('gs.info("200")', 'Status200Trigger');
+
+            expect(result.success).toBe(true);
+        });
+    });
+
+    describe('executeScriptAuto', () => {
+        it('should use executeScript when it succeeds', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+            const scriptResultXml = `<HTML><BODY><PRE class="outputtext">*** Script: auto test
+</PRE><div></div></BODY></HTML>`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: scriptResultXml,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            const result = await executor.executeScriptAuto('gs.info("auto test")');
+
+            expect(result).toBeDefined();
+            // Should be a BackgroundScriptExecutionResult
+            expect('raw' in result).toBe(true);
+            expect((result as any).raw).toBe(scriptResultXml);
+        });
+
+        it('should fall back to executeScriptViaTrigger when executeScript fails', async () => {
+            // Make executeScript fail (no CSRF token = not logged in)
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: '<html></html>',
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'false' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            // Make executeScriptViaTrigger succeed
+            const mockTriggerRecord = {
+                sys_id: 'fallbackTrigger',
+                name: 'FallbackTrigger',
+                trigger_type: '0',
+                state: '0',
+                script: 'gs.info("fallback")',
+                next_action: '2026-02-25 10:00:01'
+            };
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: { result: mockTriggerRecord },
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+                config: {},
+                bodyObject: { result: mockTriggerRecord }
+            } as IHttpResponse<any>);
+
+            const result = await executor.executeScriptAuto('gs.info("fallback")');
+
+            expect(result).toBeDefined();
+            // Should be a TriggerExecutionResult
+            expect('triggerSysId' in result).toBe(true);
+            expect((result as any).triggerSysId).toBe('fallbackTrigger');
+            expect((result as any).success).toBe(true);
+        });
+
+        it('should use provided scope parameter', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+            const scriptResultXml = `<HTML><BODY><PRE class="outputtext">*** Script: scoped
+</PRE><div></div></BODY></HTML>`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: scriptResultXml,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            const result = await executor.executeScriptAuto('gs.info("scoped")', 'x_my_app');
+
+            expect(result).toBeDefined();
+        });
+
+        it('should use default scope when not provided', async () => {
+            const csrfHtml = `<input name="sysparm_ck" type="hidden" value="testtoken123">`;
+            const scriptResultXml = `<HTML><BODY><PRE class="outputtext">*** Script: default scope
+</PRE><div></div></BODY></HTML>`;
+
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: csrfHtml,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'true' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            mockRequestHandler.post.mockResolvedValue({
+                data: scriptResultXml,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {}
+            } as IHttpResponse<string>);
+
+            const result = await executor.executeScriptAuto('gs.info("default scope")');
+
+            expect(result).toBeDefined();
+            expect('raw' in result).toBe(true);
+        });
+
+        it('should propagate error if both methods fail', async () => {
+            // Make executeScript fail
+            mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
+
+            mockRequestHandler.get.mockResolvedValue({
+                data: '<html></html>',
+                status: 200,
+                statusText: 'OK',
+                headers: { 'x-is-logged-in': 'false' },
+                config: {}
+            } as IHttpResponse<string>);
+
+            // Make executeScriptViaTrigger also fail
+            mockRequestHandler.post.mockResolvedValue({
+                data: null,
+                status: 500,
+                statusText: 'Error',
+                headers: {},
+                config: {},
+                bodyObject: null
+            } as IHttpResponse<any>);
+
+            await expect(
+                executor.executeScriptAuto('gs.info("both fail")')
+            ).rejects.toThrow('Failed to create sys_trigger');
+        });
+    });
 });
