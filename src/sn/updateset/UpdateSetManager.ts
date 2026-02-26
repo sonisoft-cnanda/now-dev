@@ -17,7 +17,8 @@ import {
     UpdateSetSingleResponse,
     UpdateXmlRecord,
     UpdateXmlResponse,
-    UpdateXmlSingleResponse
+    UpdateXmlSingleResponse,
+    CurrentUpdateSetResponse
 } from './UpdateSetModels';
 
 /**
@@ -27,7 +28,7 @@ import {
  */
 export class UpdateSetManager {
     private static readonly UI_UPDATESET_PATH = '/api/now/ui/concoursepicker/updateset';
-    private static readonly UI_PREF_UPDATESET_PATH = '/api/now/ui/preferences/sys_update_set';
+    private static readonly UI_CONCOURSEPICKER_CURRENT_PATH = '/api/now/ui/concoursepicker/current';
     private static readonly UPDATE_SET_TABLE = 'sys_update_set';
     private static readonly UPDATE_XML_TABLE = 'sys_update_xml';
 
@@ -78,8 +79,8 @@ export class UpdateSetManager {
     }
 
     /**
-     * Get the current update set from the session preferences.
-     * Uses GET /api/now/ui/preferences/sys_update_set
+     * Get the current update set.
+     * Uses GET /api/now/ui/concoursepicker/current
      *
      * @returns The current update set record or null if not set
      */
@@ -88,17 +89,22 @@ export class UpdateSetManager {
 
         const request: HTTPRequest = {
             method: 'GET',
-            path: UpdateSetManager.UI_PREF_UPDATESET_PATH,
+            path: UpdateSetManager.UI_CONCOURSEPICKER_CURRENT_PATH,
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             query: null,
             body: null
         };
 
-        const resp: IHttpResponse<UpdateSetSingleResponse> = await this._req.get<UpdateSetSingleResponse>(request);
+        const resp: IHttpResponse<CurrentUpdateSetResponse> = await this._req.get<CurrentUpdateSetResponse>(request);
 
-        if (resp.status === 200 && resp.bodyObject?.result) {
-            this._logger.info(`Current update set: ${resp.bodyObject.result.name}`);
-            return resp.bodyObject.result;
+        if (resp.status === 200 && resp.bodyObject?.result?.currentUpdateSet) {
+            const current = resp.bodyObject.result.currentUpdateSet;
+            this._logger.info(`Current update set: ${current.name}`);
+            return {
+                sys_id: current.sysId,
+                name: current.name,
+                state: 'in progress'
+            };
         }
 
         throw new Error(`Failed to get current update set. Status: ${resp.status}`);

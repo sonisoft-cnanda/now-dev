@@ -92,8 +92,14 @@ export interface ApplicationSingleResponse {
 }
 
 /**
- * Response from the UI preferences API for the current application.
+ * Response from GET /api/now/ui/concoursepicker/current for the current application.
  */
 export interface CurrentApplicationResponse {
-    result: ApplicationRecord;
+    result: {
+        currentApplication: {
+            name: string;
+            scopeName: string;
+            sysId: string;
+        };
+    };
 }

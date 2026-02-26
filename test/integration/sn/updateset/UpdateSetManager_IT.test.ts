@@ -104,26 +104,16 @@ describe('UpdateSetManager - Integration Tests', () => {
 
     describe('getCurrentUpdateSet', () => {
         it('should return the current update set with sys_id and name', async () => {
-            // The UI preferences endpoint (/api/now/ui/preferences/sys_update_set) may not
-            // be accessible via REST API basic auth on all instances. Handle gracefully.
-            try {
-                const currentUpdateSet: UpdateSetRecord | null = await updateSetManager.getCurrentUpdateSet();
+            const currentUpdateSet: UpdateSetRecord | null = await updateSetManager.getCurrentUpdateSet();
 
-                console.log('\nCurrent update set:', JSON.stringify(currentUpdateSet, null, 2));
+            console.log('\nCurrent update set:', JSON.stringify(currentUpdateSet, null, 2));
 
-                expect(currentUpdateSet).toBeDefined();
-                expect(currentUpdateSet).not.toBeNull();
-                expect(currentUpdateSet!.sys_id).toBeDefined();
-                expect(currentUpdateSet!.sys_id.length).toBeGreaterThan(0);
-                expect(currentUpdateSet!.name).toBeDefined();
-                expect(currentUpdateSet!.name.length).toBeGreaterThan(0);
-            } catch (e: any) {
-                if (e.message?.includes('Cannot read properties of null') || e.message?.includes('Failed to get current update set')) {
-                    console.log('getCurrentUpdateSet not available via REST API on this instance (UI preferences endpoint). Skipping.');
-                    return;
-                }
-                throw e;
-            }
+            expect(currentUpdateSet).toBeDefined();
+            expect(currentUpdateSet).not.toBeNull();
+            expect(currentUpdateSet!.sys_id).toBeDefined();
+            expect(currentUpdateSet!.sys_id.length).toBeGreaterThan(0);
+            expect(currentUpdateSet!.name).toBeDefined();
+            expect(currentUpdateSet!.name.length).toBeGreaterThan(0);
         }, 60 * SECONDS);
     });
 
@@ -151,17 +141,7 @@ describe('UpdateSetManager - Integration Tests', () => {
 
     describe('setCurrentUpdateSet', () => {
         it('should set the current update set, verify it, then restore the original', async () => {
-            // The UI preferences endpoint may not be accessible via REST API basic auth.
-            let originalUpdateSet: UpdateSetRecord | null;
-            try {
-                originalUpdateSet = await updateSetManager.getCurrentUpdateSet();
-            } catch (e: any) {
-                if (e.message?.includes('Cannot read properties of null') || e.message?.includes('Failed to get current update set')) {
-                    console.log('getCurrentUpdateSet not available via REST API on this instance. Skipping setCurrentUpdateSet test.');
-                    return;
-                }
-                throw e;
-            }
+            const originalUpdateSet: UpdateSetRecord | null = await updateSetManager.getCurrentUpdateSet();
 
             expect(originalUpdateSet).toBeDefined();
             expect(originalUpdateSet).not.toBeNull();

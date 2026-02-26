@@ -142,16 +142,18 @@ describe('UpdateSetManager - Unit Tests', () => {
     // getCurrentUpdateSet
     // ================================================================
     describe('getCurrentUpdateSet', () => {
-        it('should return the current update set', async () => {
-            const mockSet = { sys_id: 'set123', name: 'Default', state: 'in progress' };
-            mockRequestHandler.get.mockResolvedValue(createMockResponse(mockSet, 200));
+        it('should return the current update set mapped from concoursepicker', async () => {
+            const concoursepickerData = {
+                currentUpdateSet: { name: 'Default', sysId: 'set123' }
+            };
+            mockRequestHandler.get.mockResolvedValue(createMockResponse(concoursepickerData, 200));
 
             const result = await manager.getCurrentUpdateSet();
 
-            expect(result).toEqual(mockSet);
+            expect(result).toEqual({ sys_id: 'set123', name: 'Default', state: 'in progress' });
             expect(mockRequestHandler.get).toHaveBeenCalledTimes(1);
             const callArgs = mockRequestHandler.get.mock.calls[0][0] as any;
-            expect(callArgs.path).toBe('/api/now/ui/preferences/sys_update_set');
+            expect(callArgs.path).toBe('/api/now/ui/concoursepicker/current');
         });
 
         it('should throw an error when API returns non-200', async () => {
