@@ -113,16 +113,19 @@ describe('ScopeManager - Unit Tests', () => {
 
         it('should set the current application successfully', async () => {
             const targetApp = { sys_id: validSysId, name: 'My App', scope: 'x_myapp' };
-            const currentApp = { sys_id: 'old_id_00000000000000000000000', name: 'Old App', scope: 'global' };
 
             // GET target app details (Table API -> RequestHandler.get)
             mockRequestHandler.get.mockResolvedValueOnce(createMockArrayResponse([targetApp]));
-            // GET current app (preferences API -> RequestHandler.get)
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse(currentApp));
+            // GET current app (concoursepicker/current -> RequestHandler.get)
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Old App', scopeName: 'global', sysId: 'old_id_00000000000000000000000' }
+            }));
             // PUT to concoursepicker
             mockRequestHandler.put.mockResolvedValueOnce(createMockResponse({}, 200));
-            // GET verify (preferences API -> RequestHandler.get)
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({ sys_id: validSysId, name: 'My App', scope: 'x_myapp' }));
+            // GET verify (concoursepicker/current -> RequestHandler.get)
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'My App', scopeName: 'x_myapp', sysId: validSysId }
+            }));
 
             const result = await manager.setCurrentApplication(validSysId);
 
@@ -161,7 +164,9 @@ describe('ScopeManager - Unit Tests', () => {
             const targetApp = { sys_id: validSysId, name: 'My App', scope: 'x_myapp' };
 
             mockRequestHandler.get.mockResolvedValueOnce(createMockArrayResponse([targetApp]));
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({ sys_id: 'old', name: 'Old' }));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Old', scopeName: 'global', sysId: 'old' }
+            }));
             mockRequestHandler.put.mockResolvedValueOnce(createErrorResponse(403));
 
             await expect(manager.setCurrentApplication(validSysId))
@@ -177,7 +182,9 @@ describe('ScopeManager - Unit Tests', () => {
             // PUT succeeds
             mockRequestHandler.put.mockResolvedValueOnce(createMockResponse({}, 200));
             // Verification succeeds
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({ sys_id: validSysId, name: 'My App' }));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'My App', scopeName: 'x_myapp', sysId: validSysId }
+            }));
 
             const result = await manager.setCurrentApplication(validSysId);
 
@@ -190,10 +197,14 @@ describe('ScopeManager - Unit Tests', () => {
             const targetApp = { sys_id: validSysId, name: 'My App', scope: 'x_myapp' };
 
             mockRequestHandler.get.mockResolvedValueOnce(createMockArrayResponse([targetApp]));
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({ sys_id: 'old_id', name: 'Old' }));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Old', scopeName: 'global', sysId: 'old_id' }
+            }));
             mockRequestHandler.put.mockResolvedValueOnce(createMockResponse({}, 200));
             // Verification returns a different app
-            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({ sys_id: 'different_id', name: 'Other' }));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Other', scopeName: 'other', sysId: 'different_id' }
+            }));
 
             const result = await manager.setCurrentApplication(validSysId);
 
@@ -207,16 +218,18 @@ describe('ScopeManager - Unit Tests', () => {
     // getCurrentApplication
     // ================================================================
     describe('getCurrentApplication', () => {
-        it('should return the current application', async () => {
-            const mockApp = { sys_id: 'app123', name: 'Global', scope: 'global' };
-            mockRequestHandler.get.mockResolvedValue(createMockResponse(mockApp));
+        it('should return the current application mapped from concoursepicker', async () => {
+            const concoursepickerData = {
+                currentApplication: { name: 'Global', scopeName: 'global', sysId: 'app123' }
+            };
+            mockRequestHandler.get.mockResolvedValue(createMockResponse(concoursepickerData));
 
             const result = await manager.getCurrentApplication();
 
-            expect(result).toEqual(mockApp);
+            expect(result).toEqual({ sys_id: 'app123', name: 'Global', scope: 'global' });
             expect(mockRequestHandler.get).toHaveBeenCalledTimes(1);
             const callArgs = mockRequestHandler.get.mock.calls[0][0] as any;
-            expect(callArgs.path).toBe('/api/now/ui/preferences/apps.current');
+            expect(callArgs.path).toBe('/api/now/ui/concoursepicker/current');
         });
 
         it('should throw an error when API returns non-200', async () => {

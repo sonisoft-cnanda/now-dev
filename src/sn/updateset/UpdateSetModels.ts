@@ -238,3 +238,15 @@ export interface UpdateXmlResponse {
 export interface UpdateXmlSingleResponse {
     result: UpdateXmlRecord;
 }
+
+/**
+ * Response from GET /api/now/ui/concoursepicker/current for the current update set.
+ */
+export interface CurrentUpdateSetResponse {
+    result: {
+        currentUpdateSet: {
+            name: string;
+            sysId: string;
+        };
+    };
+}
