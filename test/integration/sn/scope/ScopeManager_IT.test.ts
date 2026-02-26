@@ -9,7 +9,7 @@ describe('ScopeManager', () => {
     let instance: ServiceNowInstance;
     let scopeManager: ScopeManager;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const credential = await getCredentials(SN_INSTANCE_ALIAS);
 
         if (credential) {
@@ -24,7 +24,7 @@ describe('ScopeManager', () => {
         if (!scopeManager) {
             throw new Error('Could not get credentials.');
         }
-    });
+    }, 300 * SECONDS);
 
     describe('listApplications', () => {
 
@@ -57,24 +57,16 @@ describe('ScopeManager', () => {
     describe('getCurrentApplication', () => {
 
         it('should return the current application with a sys_id', async () => {
-            // The UI preferences endpoint (/api/now/ui/preferences/apps.current) may not
-            // be accessible via REST API basic auth on all instances. Handle gracefully.
-            try {
-                const currentApp = await scopeManager.getCurrentApplication();
+            const currentApp = await scopeManager.getCurrentApplication();
 
-                expect(currentApp).not.toBeNull();
-                expect(currentApp).toBeDefined();
-                expect(currentApp!.sys_id).toBeDefined();
-                expect(typeof currentApp!.sys_id).toBe('string');
-                expect(currentApp!.sys_id.length).toBeGreaterThan(0);
-            } catch (e: any) {
-                if (e.message?.includes('Cannot read properties of null') || e.message?.includes('Failed to get current application')) {
-                    console.log('getCurrentApplication not available via REST API on this instance (UI preferences endpoint). Skipping.');
-                    return;
-                }
-                throw e;
-            }
-        }, 30 * SECONDS);
+            console.log(`\nCurrent application: ${currentApp?.name} (${currentApp?.sys_id})`);
+
+            expect(currentApp).not.toBeNull();
+            expect(currentApp).toBeDefined();
+            expect(currentApp!.sys_id).toBeDefined();
+            expect(typeof currentApp!.sys_id).toBe('string');
+            expect(currentApp!.sys_id.length).toBeGreaterThan(0);
+        }, 60 * SECONDS);
 
     });
 
@@ -98,20 +90,12 @@ describe('ScopeManager', () => {
     describe('setCurrentApplication', () => {
 
         it('should switch to a different application and then restore the original', async () => {
-            // The UI preferences endpoint may not be accessible via REST API basic auth.
-            let originalApp: any;
-            try {
-                originalApp = await scopeManager.getCurrentApplication();
-            } catch (e: any) {
-                if (e.message?.includes('Cannot read properties of null') || e.message?.includes('Failed to get current application')) {
-                    console.log('getCurrentApplication not available via REST API on this instance. Skipping setCurrentApplication test.');
-                    return;
-                }
-                throw e;
-            }
+            const originalApp = await scopeManager.getCurrentApplication();
 
             expect(originalApp).not.toBeNull();
             expect(originalApp).toBeDefined();
+
+            console.log(`\nOriginal application: ${originalApp!.name} (${originalApp!.sys_id})`);
 
             const originalSysId = originalApp!.sys_id;
 

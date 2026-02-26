@@ -3,7 +3,7 @@
 // ============================================================
 
 /**
- * A record from the sys_app table.
+ * A record from the sys_scope table.
  */
 export interface ApplicationRecord {
     /** System ID */
@@ -92,8 +92,14 @@ export interface ApplicationSingleResponse {
 }
 
 /**
- * Response from the UI preferences API for the current application.
+ * Response from GET /api/now/ui/concoursepicker/current for the current application.
  */
 export interface CurrentApplicationResponse {
-    result: ApplicationRecord;
+    result: {
+        currentApplication: {
+            name: string;
+            scopeName: string;
+            sysId: string;
+        };
+    };
 }
