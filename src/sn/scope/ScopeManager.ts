@@ -21,7 +21,7 @@ import {
 export class ScopeManager {
     private static readonly UI_APP_PATH = '/api/now/ui/concoursepicker/application';
     private static readonly UI_CONCOURSEPICKER_CURRENT_PATH = '/api/now/ui/concoursepicker/current';
-    private static readonly SYS_APP_TABLE = 'sys_app';
+    private static readonly SYS_SCOPE_TABLE = 'sys_scope';
 
     private _logger: Logger = new Logger("ScopeManager");
     private _req: ServiceNowRequest;
@@ -65,7 +65,7 @@ export class ScopeManager {
         };
 
         const appResp: IHttpResponse<ApplicationResponse> = await this._tableAPI.get<ApplicationResponse>(
-            ScopeManager.SYS_APP_TABLE,
+            ScopeManager.SYS_SCOPE_TABLE,
             appQuery
         );
 
@@ -164,8 +164,8 @@ export class ScopeManager {
     }
 
     /**
-     * List applications from the sys_app table.
-     * Uses Table API GET on sys_app.
+     * List applications from the sys_scope table.
+     * Uses Table API GET on sys_scope.
      *
      * @param options Optional query and limit options
      * @returns Array of ApplicationRecord
@@ -184,7 +184,7 @@ export class ScopeManager {
         }
 
         const response: IHttpResponse<ApplicationResponse> = await this._tableAPI.get<ApplicationResponse>(
-            ScopeManager.SYS_APP_TABLE,
+            ScopeManager.SYS_SCOPE_TABLE,
             query
         );
 
@@ -198,7 +198,7 @@ export class ScopeManager {
 
     /**
      * Get a specific application by sys_id.
-     * Uses Table API GET on sys_app with sys_id filter.
+     * Uses Table API GET on sys_scope with sys_id filter.
      *
      * @param sysId The sys_id of the application to retrieve
      * @returns The ApplicationRecord or null if not found
@@ -217,7 +217,7 @@ export class ScopeManager {
         };
 
         const response: IHttpResponse<ApplicationResponse> = await this._tableAPI.get<ApplicationResponse>(
-            ScopeManager.SYS_APP_TABLE,
+            ScopeManager.SYS_SCOPE_TABLE,
             query
         );
 

@@ -3,7 +3,7 @@
 // ============================================================
 
 /**
- * A record from the sys_app table.
+ * A record from the sys_scope table.
  */
 export interface ApplicationRecord {
     /** System ID */
