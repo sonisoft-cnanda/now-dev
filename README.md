@@ -53,6 +53,32 @@ npm install -g @servicenow/sdk
 snc configure profile set
 ```
 
+## ⚠️ Breaking Change — v3.0.0 (ServiceNow SDK 4.3.0)
+
+> **If you are upgrading from v2.x, read this first.**
+>
+> This version upgrades the underlying ServiceNow SDK dependencies from **4.2.x to 4.3.0**. ServiceNow 4.3.0 **changed how credential aliases are stored**, replacing the previous `keytar`-based credential store with a new implementation.
+>
+> **What this means for you:**
+> - Credential aliases created with ServiceNow SDK 4.2.x **cannot be read** by SDK 4.3.x
+> - You **must re-create all instance aliases** after upgrading
+>
+> **Migration steps:**
+> ```bash
+> # 1. Update the global CLI
+> npm install -g @servicenow/sdk@4.3.0
+>
+> # 2. Re-add each instance alias
+> snc configure profile set
+> # — or —
+> npx @servicenow/sdk auth --add <your-alias>
+>
+> # 3. Verify your aliases work
+> npx @servicenow/sdk auth --list
+> ```
+>
+> All API surfaces in this library remain unchanged — only the underlying authentication storage has changed.
+
 ## 🚀 Quick Start
 
 ### Basic Connection
@@ -631,7 +657,7 @@ try {
 
 ## 📦 Dependencies
 
-- `@servicenow/sdk` / `@servicenow/sdk-cli` / `@servicenow/sdk-core` - ServiceNow SDK and CLI tools
+- `@servicenow/sdk` 4.3.0 / `@servicenow/sdk-cli` 4.3.0 / `@servicenow/sdk-core` 4.3.0 - ServiceNow SDK and CLI tools
 - `axios` - HTTP client
 - `cometd` / `cometd-nodejs-client` - WebSocket support for AMB
 - `winston` - Logging
