@@ -7,6 +7,12 @@ Complete API reference for `@sonisoft/now-sdk-ext-core`.
 - [Core Classes](#core-classes)
 - [Application Management](#application-management)
 - [ATF Testing](#atf-testing)
+- [Scope & Configuration](#scope--configuration)
+- [Code & Schema](#code--schema)
+- [Data Operations](#data-operations)
+- [Workflow & Task](#workflow--task)
+- [Scripting](#scripting)
+- [Monitoring & Discovery](#monitoring--discovery)
 - [Type Definitions](#type-definitions)
 - [Utility Classes](#utility-classes)
 
@@ -151,6 +157,231 @@ constructor(instance: ServiceNowInstance)
 
 **getTestSuiteResults(resultsId: string): Promise<TestSuiteExecutionResult>**
 - Get test suite execution results
+
+## Scope & Configuration
+
+### ScopeManager
+
+Manage application scopes. See [ScopeManager Guide](./ScopeManager.md) for full documentation.
+
+```typescript
+class ScopeManager {
+    constructor(instance: ServiceNowInstance)
+
+    setCurrentApplication(appSysId: string): Promise<SetCurrentApplicationResult>
+    getCurrentApplication(): Promise<ApplicationRecord | null>
+    listApplications(options?: ListApplicationsOptions): Promise<ApplicationRecord[]>
+    getApplication(sysId: string): Promise<ApplicationRecord | null>
+}
+```
+
+### UpdateSetManager
+
+Manage update sets. See [UpdateSetManager Guide](./UpdateSetManager.md) for full documentation.
+
+```typescript
+class UpdateSetManager {
+    constructor(instance: ServiceNowInstance)
+
+    setCurrentUpdateSet(options: SetUpdateSetOptions): Promise<void>
+    getCurrentUpdateSet(): Promise<UpdateSetRecord | null>
+    listUpdateSets(options?: ListUpdateSetsOptions): Promise<UpdateSetRecord[]>
+    createUpdateSet(options: CreateUpdateSetOptions): Promise<UpdateSetRecord>
+    moveRecordsToUpdateSet(targetUpdateSetId: string, options?: MoveRecordsOptions): Promise<MoveRecordsResult>
+    cloneUpdateSet(sourceUpdateSetId: string, newName: string, onProgress?: (msg: string) => void): Promise<CloneUpdateSetResult>
+    inspectUpdateSet(updateSetSysId: string): Promise<InspectUpdateSetResult>
+}
+```
+
+## Code & Schema
+
+### CodeSearch
+
+Search across platform code. See [CodeSearch Guide](./CodeSearch.md) for full documentation.
+
+```typescript
+class CodeSearch {
+    constructor(instance: ServiceNowInstance)
+
+    search(options: CodeSearchOptions): Promise<CodeSearchResult[]>
+    searchRaw(options: CodeSearchOptions): Promise<CodeSearchRecordTypeResult[]>
+    searchInApp(term: string, appScope: string, additionalOptions?: Partial<CodeSearchOptions>): Promise<CodeSearchResult[]>
+    searchInTable(term: string, tableName: string, searchGroup: string, additionalOptions?: Partial<CodeSearchOptions>): Promise<CodeSearchResult[]>
+    getTablesForSearchGroup(searchGroup: string): Promise<CodeSearchTable[]>
+    getSearchGroups(options?: CodeSearchGroupQueryOptions): Promise<CodeSearchGroup[]>
+    addTableToSearchGroup(options: AddCodeSearchTableOptions): Promise<CodeSearchTableRecord>
+    getTableRecordsForSearchGroup(searchGroupSysId: string, options?: CodeSearchGroupQueryOptions): Promise<CodeSearchTableRecord[]>
+    static flattenResults(rawResults: CodeSearchRecordTypeResult[]): CodeSearchResult[]
+    static formatResultsAsText(results: CodeSearchResult[]): string
+}
+```
+
+### SchemaDiscovery
+
+Discover table schemas and field metadata. See [SchemaDiscovery Guide](./SchemaDiscovery.md) for full documentation.
+
+```typescript
+class SchemaDiscovery {
+    constructor(instance: ServiceNowInstance)
+
+    discoverTableSchema(tableName: string, options?: TableSchemaOptions): Promise<TableSchema>
+    explainField(tableName: string, fieldName: string): Promise<FieldExplanation>
+    validateCatalogConfiguration(catalogItemSysId: string): Promise<CatalogValidationResult>
+}
+```
+
+## Data Operations
+
+### AttachmentManager
+
+Upload, list, and retrieve file attachments. See [AttachmentManager Guide](./AttachmentManager.md) for full documentation.
+
+```typescript
+class AttachmentManager {
+    constructor(instance: ServiceNowInstance)
+
+    uploadAttachment(options: UploadAttachmentOptions): Promise<AttachmentRecord>
+    listAttachments(options: ListAttachmentsOptions): Promise<AttachmentRecord[]>
+    getAttachment(sysId: string): Promise<AttachmentRecord>
+}
+```
+
+### BatchOperations
+
+Sequential bulk create/update with variable substitution. See [BatchOperations Guide](./BatchOperations.md) for full documentation.
+
+```typescript
+class BatchOperations {
+    constructor(instance: ServiceNowInstance)
+
+    batchCreate(options: BatchCreateOptions): Promise<BatchCreateResult>
+    batchUpdate(options: BatchUpdateOptions): Promise<BatchUpdateResult>
+}
+```
+
+### QueryBatchOperations
+
+Query-based bulk update/delete with dry-run safety. See [QueryBatchOperations Guide](./QueryBatchOperations.md) for full documentation.
+
+```typescript
+class QueryBatchOperations {
+    constructor(instance: ServiceNowInstance)
+
+    queryUpdate(options: QueryUpdateOptions): Promise<QueryUpdateResult>
+    queryDelete(options: QueryDeleteOptions): Promise<QueryDeleteResult>
+}
+```
+
+## Workflow & Task
+
+### WorkflowManager
+
+Create complete workflows programmatically. See [WorkflowManager Guide](./WorkflowManager.md) for full documentation.
+
+```typescript
+class WorkflowManager {
+    constructor(instance: ServiceNowInstance)
+
+    createWorkflow(options: CreateWorkflowOptions): Promise<CreateWorkflowResult>
+    createWorkflowVersion(options: CreateWorkflowVersionOptions): Promise<CreateWorkflowVersionResult>
+    createActivity(options: CreateActivityOptions): Promise<CreateActivityResult>
+    createTransition(options: CreateTransitionOptions): Promise<CreateTransitionResult>
+    createCondition(options: CreateConditionOptions): Promise<CreateConditionResult>
+    publishWorkflow(options: PublishWorkflowOptions): Promise<void>
+    createCompleteWorkflow(spec: CompleteWorkflowSpec, onProgress?: (msg: string) => void): Promise<CompleteWorkflowResult>
+}
+```
+
+### TaskOperations
+
+Convenience methods for ITSM task management. See [TaskOperations Guide](./TaskOperations.md) for full documentation.
+
+```typescript
+class TaskOperations {
+    constructor(instance: ServiceNowInstance)
+
+    addComment(options: AddCommentOptions): Promise<TaskRecord>
+    assignTask(options: AssignTaskOptions): Promise<TaskRecord>
+    resolveIncident(options: ResolveIncidentOptions): Promise<TaskRecord>
+    closeIncident(options: CloseIncidentOptions): Promise<TaskRecord>
+    approveChange(options: ApproveChangeOptions): Promise<TaskRecord>
+    findByNumber(table: string, number: string): Promise<TaskRecord | null>
+}
+```
+
+## Scripting
+
+### ScriptSync
+
+Bidirectional sync of scripts between local files and ServiceNow. See [ScriptSync Guide](./ScriptSync.md) for full documentation.
+
+```typescript
+class ScriptSync {
+    constructor(instance: ServiceNowInstance)
+
+    pullScript(options: SyncScriptOptions): Promise<SyncResult>
+    pushScript(options: SyncScriptOptions): Promise<SyncResult>
+    syncAllScripts(options: SyncAllOptions): Promise<SyncAllResult>
+    static parseFileName(fileName: string): ParsedFileName
+    static generateFileName(scriptName: string, scriptType: string): string
+}
+```
+
+## Monitoring & Discovery
+
+### AggregateQuery
+
+Aggregate operations via Stats API. See [AggregateQuery Guide](./AggregateQuery.md) for full documentation.
+
+```typescript
+class AggregateQuery {
+    constructor(instance: ServiceNowInstance)
+
+    count(options: CountQueryOptions): Promise<number>
+    aggregate(options: AggregateQueryOptions): Promise<AggregateResult>
+    groupBy(options: AggregateQueryOptions): Promise<GroupedAggregateResult>
+}
+```
+
+### InstanceHealth
+
+Consolidated health monitoring. See [InstanceHealth Guide](./InstanceHealth.md) for full documentation.
+
+```typescript
+class InstanceHealth {
+    constructor(instance: ServiceNowInstance, aggregateQuery?: AggregateQuery)
+
+    checkHealth(options?: HealthCheckOptions): Promise<HealthCheckResult>
+}
+```
+
+### CMDBRelationships
+
+CMDB CI relationship querying and graph traversal. See [CMDBRelationships Guide](./CMDBRelationships.md) for full documentation.
+
+```typescript
+class CMDBRelationships {
+    constructor(instance: ServiceNowInstance)
+
+    getRelationships(options: GetRelationshipsOptions): Promise<RelationshipsResult>
+    traverseGraph(options: TraverseGraphOptions): Promise<GraphTraversalResult>
+}
+```
+
+### InstanceDiscovery
+
+Discover what exists on an instance. See [InstanceDiscovery Guide](./InstanceDiscovery.md) for full documentation.
+
+```typescript
+class InstanceDiscovery {
+    constructor(instance: ServiceNowInstance)
+
+    listTables(options?: ListTablesOptions): Promise<TableDefinition[]>
+    listScopedApps(options?: ListScopedAppsOptions): Promise<ScopedAppRecord[]>
+    listStoreApps(options?: ListStoreAppsOptions): Promise<StoreAppRecord[]>
+    listPlugins(options?: ListPluginsOptions): Promise<PluginRecord[]>
+}
+```
 
 ## Type Definitions
 
@@ -413,7 +644,23 @@ enum ProgressStatus {
 
 - [Getting Started](./GettingStarted.md)
 - [Application Manager](./ApplicationManager.md)
+- [Store Applications](./CompanyApplications.md)
 - [App Repository](./AppRepoApplication.md)
 - [ATF Test Executor](./ATFTestExecutor.md)
+- [Scope Manager](./ScopeManager.md)
+- [Update Set Manager](./UpdateSetManager.md)
+- [Code Search](./CodeSearch.md)
+- [Schema Discovery](./SchemaDiscovery.md)
+- [Attachment Manager](./AttachmentManager.md)
+- [Batch Operations](./BatchOperations.md)
+- [Query Batch Operations](./QueryBatchOperations.md)
+- [Workflow Manager](./WorkflowManager.md)
+- [Task Operations](./TaskOperations.md)
+- [Script Sync](./ScriptSync.md)
+- [Aggregate Query](./AggregateQuery.md)
+- [Instance Health](./InstanceHealth.md)
+- [CMDB Relationships](./CMDBRelationships.md)
+- [Instance Discovery](./InstanceDiscovery.md)
+- [Syslog Reader](./SyslogReader.md)
 - [Examples](./Examples.md)
 

@@ -356,11 +356,37 @@ npm install
 
 Now that you have the basics, explore more advanced features:
 
-1. [Application Manager Documentation](./ApplicationManager.md) - Learn about batch validation and installation
-2. [App Repository Documentation](./AppRepoApplication.md) - Master repository operations
-3. [ATF Test Executor Documentation](./ATFTestExecutor.md) - Automate your testing workflow
-4. [Examples & Recipes](./Examples.md) - See real-world use cases
-5. [API Reference](./APIReference.md) - Explore the complete API
+**Application & Scope Management:**
+1. [Application Manager](./ApplicationManager.md) - Batch validation and installation
+2. [Store Applications](./CompanyApplications.md) - Store app search, install, and update
+3. [Scope Manager](./ScopeManager.md) - Application scope management
+4. [Update Set Manager](./UpdateSetManager.md) - Update set lifecycle management
+
+**Code, Schema & Data:**
+5. [Code Search](./CodeSearch.md) - Platform code search
+6. [Schema Discovery](./SchemaDiscovery.md) - Table schema and field discovery
+7. [Attachment Manager](./AttachmentManager.md) - File attachment operations
+8. [Batch Operations](./BatchOperations.md) - Bulk create/update with variable substitution
+9. [Query Batch Operations](./QueryBatchOperations.md) - Query-based bulk update/delete
+
+**Workflow, Task & Scripting:**
+10. [Workflow Manager](./WorkflowManager.md) - Programmatic workflow creation
+11. [Task Operations](./TaskOperations.md) - ITSM task management
+12. [Script Sync](./ScriptSync.md) - Bidirectional script synchronization
+
+**Monitoring & Discovery:**
+13. [Aggregate Query](./AggregateQuery.md) - Stats API aggregations
+14. [Instance Health](./InstanceHealth.md) - Health monitoring
+15. [CMDB Relationships](./CMDBRelationships.md) - CI relationship graph traversal
+16. [Instance Discovery](./InstanceDiscovery.md) - Table, app, and plugin discovery
+
+**Testing & Logging:**
+17. [ATF Test Executor](./ATFTestExecutor.md) - Automate your testing workflow
+18. [Syslog Reader](./SyslogReader.md) - Log monitoring and tailing
+
+**Reference:**
+19. [API Reference](./APIReference.md) - Complete API documentation
+20. [Examples & Recipes](./Examples.md) - Real-world use cases
 
 ## Additional Resources
 
