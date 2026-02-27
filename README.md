@@ -2,17 +2,31 @@
 
 [![npm version](https://img.shields.io/npm/v/@sonisoft/now-sdk-ext-core.svg)](https://www.npmjs.com/package/@sonisoft/now-sdk-ext-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
 
 A comprehensive TypeScript library that extends the ServiceNow SDK with powerful features for application management, automated testing, log monitoring, and more. Perfect for CI/CD pipelines, development automation, and DevOps workflows.
 
 ## ✨ Features
 
 - 🚀 **Application Management** - Install, upgrade, and manage ServiceNow applications programmatically
+- 🏪 **Store Application Management** - Search, install, and update apps from the ServiceNow Store
 - 🧪 **ATF Test Execution** - Run automated tests and get detailed results
 - 📊 **Real-time Log Monitoring** - Tail ServiceNow logs with two efficient methods
 - 🔄 **AMB (Asynchronous Message Bus)** - WebSocket-based real-time event monitoring
 - 📝 **Background Script Execution** - Execute server-side scripts programmatically
+- 📋 **Scope Management** - Set/get current application scope programmatically
+- 📦 **Update Set Management** - Create, clone, inspect, and manage update sets
+- 🔍 **Code Search** - Search across platform code, apps, and tables
+- 🗄️ **Schema Discovery** - Discover table schemas, explain fields, validate catalogs
+- 📎 **Attachment Management** - Upload, list, and retrieve file attachments
+- ⚡ **Batch Operations** - Bulk create/update with variable substitution and query-based bulk operations
+- 🔧 **Workflow Management** - Create complete workflows programmatically
+- 📌 **Task Operations** - Add comments, assign tasks, resolve/close incidents
+- 🔗 **Script Sync** - Bidirectional sync of scripts between local files and instance
+- 📈 **Aggregate Queries** - COUNT, AVG, MIN, MAX, SUM with GROUP BY via Stats API
+- 🏥 **Instance Health** - Version, cluster, stuck jobs, semaphore monitoring
+- 🗺️ **CMDB Relationships** - Query and traverse CI relationship graphs
+- 🔎 **Instance Discovery** - List tables, scoped apps, store apps, and plugins
 - 🔐 **Authentication** - Seamless integration with ServiceNow CLI authentication
 - 📡 **Table API** - Full CRUD operations on ServiceNow tables
 - 🛠️ **Type-Safe** - Complete TypeScript definitions for all APIs
@@ -25,9 +39,9 @@ npm install @sonisoft/now-sdk-ext-core
 
 ### Prerequisites
 
-- Node.js 14.x or higher
+- Node.js 18.x or higher
 - ServiceNow CLI configured with instance credentials
-- TypeScript 4.x or higher (optional, for TypeScript projects)
+- TypeScript 5.x or higher (optional, for TypeScript projects)
 
 ### ServiceNow CLI Setup
 
@@ -359,29 +373,60 @@ console.log('Return value:', result.result);
 
 - **`ServiceNowInstance`** - Instance connection and configuration
 - **`ServiceNowRequest`** - HTTP request handling with authentication
-- **`TableAPIRequest`** - ServiceNow Table API wrapper
+- **`TableAPIRequest`** - ServiceNow Table API wrapper (CRUD)
 
 ### Application Management
 
-- **`ApplicationManager`** - High-level application management
+- **`ApplicationManager`** - Install, upgrade, and validate applications via batch definitions
 - **`AppRepoApplication`** - App repository operations
-- **`BatchDefinition`** - Batch installation definitions
-- **`CompanyApplications`** - Company application queries
+- **`CompanyApplications`** - Store application search, install, update, and progress tracking
+
+### Scope & Configuration
+
+- **`ScopeManager`** - Set/get current application scope, list and retrieve applications
+- **`UpdateSetManager`** - Create, clone, inspect, move records, and manage update sets
 
 ### Testing & Automation
 
-- **`ATFTestExecutor`** - ATF test execution and monitoring
-- **`BackgroundScriptExecutor`** - Server-side script execution
+- **`ATFTestExecutor`** - ATF test execution and monitoring with progress tracking
+- **`BackgroundScriptExecutor`** - Server-side GlideScript execution
 
-### Logging & Monitoring
+### Code & Schema
 
-- **`SyslogReader`** - Log querying and real-time monitoring
-- **`AMBClient`** - Real-time event subscriptions
+- **`CodeSearch`** - Search across platform code by term, app, or table
+- **`SchemaDiscovery`** - Discover table schemas, explain fields, validate catalog items
+
+### Data Operations
+
+- **`AttachmentManager`** - Upload, list, and retrieve file attachments
+- **`BatchOperations`** - Sequential bulk create/update with variable substitution
+- **`QueryBatchOperations`** - Query-based bulk update/delete with dry-run safety
+
+### Workflow & Task
+
+- **`WorkflowManager`** - Create complete workflows with activities, transitions, and conditions
+- **`TaskOperations`** - Add comments, assign tasks, resolve/close incidents, approve changes
+
+### Scripting
+
+- **`ScriptSync`** - Bidirectional sync of Script Includes, Business Rules, and more
+
+### Monitoring & Discovery
+
+- **`AggregateQuery`** - COUNT, AVG, MIN, MAX, SUM with GROUP BY via Stats API
+- **`InstanceHealth`** - Version, cluster nodes, stuck jobs, semaphores, operational counts
+- **`CMDBRelationships`** - Query direct relationships and traverse CI graphs (BFS)
+- **`InstanceDiscovery`** - List tables, scoped apps, store apps, and plugins
+
+### Logging & Real-time Events
+
+- **`SyslogReader`** - Log querying, formatting, export, and real-time tailing
+- **`AMBClient`** - WebSocket-based real-time event subscriptions
 - **`MessageClientBuilder`** - AMB client configuration
 
 ### Utilities
 
-- **`Logger`** - Winston-based logging
+- **`Logger`** - Winston-based logging with file output
 - **`NowStringUtil`** - String manipulation utilities
 - **`AppUtil`** - Application utility functions
 
@@ -460,14 +505,41 @@ node docs/examples/syslog-tail.mjs your-instance error ./logs/errors.log
 
 Comprehensive documentation is available in the `/docs` directory:
 
+**Getting Started:**
 - **[Getting Started](./docs/GettingStarted.md)** - Setup and basic usage
 - **[API Reference](./docs/APIReference.md)** - Complete API documentation
+- **[Examples](./docs/examples/)** - Working code examples
+
+**Application & Scope Management:**
 - **[Application Manager](./docs/ApplicationManager.md)** - Application management guide
+- **[Store Applications](./docs/CompanyApplications.md)** - Store app search, install, and update
+- **[Scope Manager](./docs/ScopeManager.md)** - Application scope management
+- **[Update Set Manager](./docs/UpdateSetManager.md)** - Update set lifecycle management
+
+**Code, Schema & Search:**
+- **[Code Search](./docs/CodeSearch.md)** - Platform code search
+- **[Schema Discovery](./docs/SchemaDiscovery.md)** - Table schema and field discovery
+
+**Data Operations:**
+- **[Attachment Manager](./docs/AttachmentManager.md)** - File attachment operations
+- **[Batch Operations](./docs/BatchOperations.md)** - Bulk create/update with variable substitution
+- **[Query Batch Operations](./docs/QueryBatchOperations.md)** - Query-based bulk update/delete
+
+**Workflow, Task & Scripting:**
+- **[Workflow Manager](./docs/WorkflowManager.md)** - Programmatic workflow creation
+- **[Task Operations](./docs/TaskOperations.md)** - ITSM task management
+- **[Script Sync](./docs/ScriptSync.md)** - Bidirectional script synchronization
+
+**Monitoring & Discovery:**
+- **[Aggregate Query](./docs/AggregateQuery.md)** - Stats API aggregations
+- **[Instance Health](./docs/InstanceHealth.md)** - Health monitoring
+- **[CMDB Relationships](./docs/CMDBRelationships.md)** - CI relationship graph traversal
+- **[Instance Discovery](./docs/InstanceDiscovery.md)** - Table, app, and plugin discovery
+
+**Testing & Logging:**
 - **[ATF Test Executor](./docs/ATFTestExecutor.md)** - Testing automation
 - **[Syslog Reader](./docs/SyslogReader.md)** - Log monitoring guide
 - **[ChannelAjax Tailing](./docs/SyslogReaderChannelAjax.md)** - Advanced log tailing
-- **[AMB Guide](./docs/AMB_FIX_SUMMARY.md)** - Real-time event monitoring
-- **[Examples](./docs/examples/)** - Working code examples
 
 ## 🔧 Advanced Configuration
 
@@ -559,12 +631,14 @@ try {
 
 ## 📦 Dependencies
 
-- `@servicenow/sdk` - ServiceNow SDK
-- `@servicenow/sdk-cli` - ServiceNow CLI tools
-- `cometd` - WebSocket support for AMB
-- `xml2js` - XML parsing
-- `winston` - Logging
+- `@servicenow/sdk` / `@servicenow/sdk-cli` / `@servicenow/sdk-core` - ServiceNow SDK and CLI tools
 - `axios` - HTTP client
+- `cometd` / `cometd-nodejs-client` - WebSocket support for AMB
+- `winston` - Logging
+- `xml2js` / `fast-xml-parser` - XML parsing
+- `ws` - WebSocket client
+- `zod` - Runtime schema validation
+- `lodash` - Utility functions
 
 ## 🧪 Testing
 
@@ -623,14 +697,9 @@ For issues, questions, or contributions:
 
 - [ ] GraphQL API support
 - [ ] Webhook integration
-- [ ] Enhanced batch operations
-- [ ] Performance metrics
-- [ ] CLI tool package
+- [ ] Performance metrics dashboard
+- [ ] Standalone CLI tool package
 - [ ] Plugin development tools
-
-## 📈 Version History
-
-See [CHANGELOG](./CHANGELOG.md) for version history and release notes.
 
 ---
 
