@@ -145,12 +145,64 @@ describe('ScopeManager - Unit Tests', () => {
 
         it('should throw when appSysId is not a 32-char hex string', async () => {
             await expect(manager.setCurrentApplication('not-a-valid-sysid'))
-                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string');
+                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string or "global"');
         });
 
         it('should throw when appSysId has wrong length', async () => {
             await expect(manager.setCurrentApplication('abc123'))
-                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string');
+                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string or "global"');
+        });
+
+        it('should accept "global" as a valid sys_id for Global scope', async () => {
+            const globalApp = { sys_id: 'global', name: 'Global', scope: 'global' };
+
+            // GET target app details
+            mockRequestHandler.get.mockResolvedValueOnce(createMockArrayResponse([globalApp]));
+            // GET current app (before change)
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'My App', scopeName: 'x_myapp', sysId: validSysId }
+            }));
+            // PUT to concoursepicker
+            mockRequestHandler.put.mockResolvedValueOnce(createMockResponse({}, 200));
+            // GET verify (after change)
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Global', scopeName: 'global', sysId: 'global' }
+            }));
+
+            const result = await manager.setCurrentApplication('global');
+
+            expect(result.success).toBe(true);
+            expect(result.application).toBe('Global');
+            expect(result.scope).toBe('global');
+            expect(result.sysId).toBe('global');
+            expect(result.verified).toBe(true);
+        });
+
+        it('should accept "global" with whitespace padding', async () => {
+            const globalApp = { sys_id: 'global', name: 'Global', scope: 'global' };
+
+            mockRequestHandler.get.mockResolvedValueOnce(createMockArrayResponse([globalApp]));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'My App', scopeName: 'x_myapp', sysId: validSysId }
+            }));
+            mockRequestHandler.put.mockResolvedValueOnce(createMockResponse({}, 200));
+            mockRequestHandler.get.mockResolvedValueOnce(createMockResponse({
+                currentApplication: { name: 'Global', scopeName: 'global', sysId: 'global' }
+            }));
+
+            const result = await manager.setCurrentApplication('  global  ');
+
+            expect(result.success).toBe(true);
+            expect(result.application).toBe('Global');
+        });
+
+        it('should still reject non-hex strings that are not "global"', async () => {
+            await expect(manager.setCurrentApplication('notglobal'))
+                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string or "global"');
+            await expect(manager.setCurrentApplication('GLOBAL'))
+                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string or "global"');
+            await expect(manager.setCurrentApplication('glob'))
+                .rejects.toThrow('Application sys_id must be a 32-character hexadecimal string or "global"');
         });
 
         it('should throw when target application is not found', async () => {

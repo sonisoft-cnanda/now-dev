@@ -39,7 +39,7 @@ export class ScopeManager {
      * Validates the sys_id, retrieves the previous scope, performs the PUT,
      * and verifies the change.
      *
-     * @param appSysId The sys_id of the application to set as current (32-char hex)
+     * @param appSysId The sys_id of the application to set as current (32-char hex or "global")
      * @returns Result of the operation including previous scope and verification
      * @throws Error if appSysId is invalid or the application is not found
      */
@@ -48,10 +48,12 @@ export class ScopeManager {
             throw new Error('Application sys_id is required');
         }
 
-        // Validate 32-character hexadecimal sys_id
+        // Validate sys_id: must be a 32-character hex string OR the special
+        // value "global" (ServiceNow's Global scope uses sys_id = "global")
+        const trimmedId = appSysId.trim();
         const hexPattern = /^[0-9a-fA-F]{32}$/;
-        if (!hexPattern.test(appSysId.trim())) {
-            throw new Error('Application sys_id must be a 32-character hexadecimal string');
+        if (trimmedId !== 'global' && !hexPattern.test(trimmedId)) {
+            throw new Error('Application sys_id must be a 32-character hexadecimal string or "global"');
         }
 
         this._logger.info(`Setting current application to: ${appSysId}`);
