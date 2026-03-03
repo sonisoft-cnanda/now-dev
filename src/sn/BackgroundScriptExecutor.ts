@@ -22,6 +22,7 @@ export class BackgroundScriptExecutor {
     instance: ServiceNowInstance;
     scope: string;
     private _tableAPI: TableAPIRequest;
+    private _scopeCache: Map<string, string> = new Map();
 
     _logger:Logger = new Logger("BackgroundScriptExecutor");
 
@@ -55,11 +56,14 @@ export class BackgroundScriptExecutor {
                    "does not have permission to access Scripts - Background."
                );
            }
+           // Resolve scope name to sys_id if needed (sys.scripts.do expects a sys_id)
+           const resolvedScopeId = await this._resolveScopeToSysId(scope);
+
            const fd:FormData = new FormData();
            fd.append("script", script);
            fd.append("sysparm_ck", gck);
            fd.append("runscript",  "Run script");
-           fd.append("sys_scope", scope);
+           fd.append("sys_scope", resolvedScopeId);
            fd.append("record_for_rollback", "off");
            fd.append("quota_managed_transaction", "off");
         
@@ -269,6 +273,49 @@ export class BackgroundScriptExecutor {
     }
 
     /**
+     * Resolve a scope value to a sys_id for use with /sys.scripts.do.
+     * ServiceNow's background script form expects a sys_id in the sys_scope field,
+     * not a scope name. This method handles:
+     * - 32-char hex strings: passed through as-is (already a sys_id)
+     * - Scope names (e.g., "global", "x_myapp_custom"): looked up in sys_scope table
+     * Results are cached per executor instance to avoid repeated lookups.
+     */
+    private async _resolveScopeToSysId(scope: string): Promise<string> {
+        const hexPattern = /^[0-9a-fA-F]{32}$/;
+        if (hexPattern.test(scope)) {
+            return scope;
+        }
+
+        if (this._scopeCache.has(scope)) {
+            return this._scopeCache.get(scope)!;
+        }
+
+        this._logger.info(`Resolving scope name '${scope}' to sys_id...`);
+        const query: Record<string, string | number> = {
+            sysparm_query: `scope=${scope}`,
+            sysparm_limit: 1,
+            sysparm_fields: 'sys_id,scope,name'
+        };
+
+        const response = await this._tableAPI.get<ScopeTableResult>('sys_scope', query);
+
+        if (response.status === 200 && response.bodyObject?.result) {
+            const results = response.bodyObject.result;
+            if (results.length > 0) {
+                const sysId = results[0].sys_id;
+                this._logger.info(`Resolved scope '${scope}' → sys_id '${sysId}' (${results[0].name})`);
+                this._scopeCache.set(scope, sysId);
+                return sysId;
+            }
+        }
+
+        throw new Error(
+            `Scope '${scope}' not found in sys_scope table. ` +
+            `Use a valid scope name (e.g., "global", "x_myapp_custom") or a 32-character sys_id.`
+        );
+    }
+
+    /**
      * Strips closing tags for HTML void elements that fast-xml-parser cannot handle.
      * ServiceNow's /sys.scripts.do returns malformed HTML with closing tags for
      * void elements like </meta>, </link>, </br>, </hr>, </img>, etc.
@@ -427,4 +474,8 @@ interface TriggerRecord {
 
 interface TriggerRecordResponse {
     result: TriggerRecord;
+}
+
+interface ScopeTableResult {
+    result: Array<{ sys_id: string; scope: string; name: string }>;
 }
