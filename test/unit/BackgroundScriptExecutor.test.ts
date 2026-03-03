@@ -30,6 +30,17 @@ class MockRequestHandler {
     delete = jest.fn<() => Promise<IHttpResponse<unknown>>>();
 }
 
+// Mock response for scope name → sys_id resolution via sys_scope table
+const GLOBAL_SCOPE_SYS_ID = 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6';
+const mockScopeResponse = (scopeName: string, sysId: string = GLOBAL_SCOPE_SYS_ID) => ({
+    data: JSON.stringify({ result: [{ sys_id: sysId, scope: scopeName, name: scopeName === 'global' ? 'Global' : scopeName }] }),
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+    config: {},
+    bodyObject: { result: [{ sys_id: sysId, scope: scopeName, name: scopeName === 'global' ? 'Global' : scopeName }] }
+} as IHttpResponse<unknown>);
+
 describe('BackgroundScriptExecutor - Unit Tests', () => {
     let instance: ServiceNowInstance;
     let executor: BackgroundScriptExecutor;
@@ -362,16 +373,18 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            // First call: GET for CSRF token
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            // First GET: CSRF token, Second GET: scope resolution
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
-            // Second call: POST to execute script
+            // POST to execute script
             mockRequestHandler.post.mockResolvedValue({
                 data: scriptResultXml,
                 status: 200,
@@ -392,13 +405,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: null,
@@ -418,13 +433,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: null,
@@ -446,13 +463,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: scriptResultXml,
@@ -881,13 +900,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: scriptResultXml,
@@ -952,13 +973,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('x_my_app', 'f1e2d3c4b5a6978801234567abcdef90'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: scriptResultXml,
@@ -980,13 +1003,15 @@ System: end
 
             mockAuthHandler.isLoggedIn = jest.fn().mockReturnValue(true);
 
-            mockRequestHandler.get.mockResolvedValue({
-                data: csrfHtml,
-                status: 200,
-                statusText: 'OK',
-                headers: { 'x-is-logged-in': 'true' },
-                config: {}
-            } as IHttpResponse<string>);
+            mockRequestHandler.get
+                .mockResolvedValueOnce({
+                    data: csrfHtml,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: { 'x-is-logged-in': 'true' },
+                    config: {}
+                } as IHttpResponse<string>)
+                .mockResolvedValueOnce(mockScopeResponse('global'));
 
             mockRequestHandler.post.mockResolvedValue({
                 data: scriptResultXml,
