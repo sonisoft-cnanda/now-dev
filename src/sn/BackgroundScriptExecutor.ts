@@ -14,6 +14,7 @@ import { HTTPRequest } from "../comm/http/HTTPRequest";
 import { BG_SCRIPT_ENDPOINT } from "../constants/ServiceNow";
 import { IHttpResponse } from "../comm/http/IHttpResponse";
 import { isNil } from "../util/utils";
+import { CSRFTokenHelper } from "../util/CSRFTokenHelper";
 import { TableAPIRequest } from "../comm/http/TableAPIRequest";
 
 
@@ -146,12 +147,7 @@ export class BackgroundScriptExecutor {
         const response: IHttpResponse<string> = await this.snRequest.get<string>(request);
         const isLoggedIn:boolean = response.headers["x-is-logged-in"] === "true" ? true : false
         if(response.status == 200 && isLoggedIn && !isNil(response.data)){
-            
-            const e =  response.data;
-            const t = "<input name=\"sysparm_ck\" type=\"hidden\" value=\"";
-           
-            const n = e.substring(e.indexOf(t));
-            csrfToken =  n.substring(0, n.indexOf("\">")).replace(t, "");
+            csrfToken = CSRFTokenHelper.extractCSRFToken(response.data);
             this._logger.debug("CSRF Token Received: " + csrfToken, {csrfToken:csrfToken});
         }else{
             this._logger.error("getBackgroundScriptCSRFToken: Invalid response. Status not 200, not logged in, or response data is empty.", {response:response});
