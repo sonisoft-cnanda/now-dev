@@ -3,7 +3,7 @@ import { getCredentials } from "@servicenow/sdk-cli/dist/auth/index.js";
 import { SN_INSTANCE_ALIAS } from '../../../test_utils/test_config';
 
 import { FlowManager } from '../../../../src/sn/flow/FlowManager';
-import { FlowExecutionResult } from '../../../../src/sn/flow/FlowModels';
+import { FlowExecutionResult, FlowContextStatusResult } from '../../../../src/sn/flow/FlowModels';
 
 const SECONDS = 1000;
 
@@ -241,6 +241,138 @@ describe('FlowManager - Integration Tests', () => {
             expect(result.success).toBe(false);
             // Error should be about the flow not existing, not scope resolution failure
             expect(result.errorMessage).toContain('does not exist');
+        }, 120 * SECONDS);
+    });
+
+    // ============================================================
+    // Flow Context Lifecycle
+    // ============================================================
+
+    describe('flow context lifecycle', () => {
+        it('should get context status for a background flow execution', async () => {
+            // Execute a flow in background to get a real context ID
+            const execResult: FlowExecutionResult = await flowMgr.executeFlow({
+                scopedName: 'global.change__unauthorized__review',
+                mode: 'background'
+            });
+
+            console.log('\n=== lifecycle: executeFlow (background) ===');
+            console.log('Success:', execResult.success);
+            console.log('Context ID:', execResult.contextId);
+
+            expect(execResult.success).toBe(true);
+            expect(execResult.contextId).toBeDefined();
+            expect(execResult.contextId).toMatch(/^[0-9a-f]{32}$/);
+
+            // Now query the context status
+            const statusResult: FlowContextStatusResult = await flowMgr.getFlowContextStatus(execResult.contextId!);
+
+            console.log('\n=== lifecycle: getFlowContextStatus ===');
+            console.log('Success:', statusResult.success);
+            console.log('Found:', statusResult.found);
+            console.log('State:', statusResult.state);
+            console.log('Name:', statusResult.name);
+            console.log('Started:', statusResult.started);
+
+            expect(statusResult.success).toBe(true);
+            expect(statusResult.found).toBe(true);
+            expect(statusResult.state).toBeDefined();
+            expect(['QUEUED', 'IN_PROGRESS', 'WAITING', 'COMPLETE', 'CANCELLED', 'ERROR']).toContain(statusResult.state);
+            expect(statusResult.name).toBeDefined();
+        }, 120 * SECONDS);
+
+        it('should return found=false for non-existent context ID', async () => {
+            const statusResult = await flowMgr.getFlowContextStatus('00000000000000000000000000000000');
+
+            console.log('\n=== lifecycle: getFlowContextStatus (non-existent) ===');
+            console.log('Success:', statusResult.success);
+            console.log('Found:', statusResult.found);
+
+            expect(statusResult.success).toBe(true);
+            expect(statusResult.found).toBe(false);
+            expect(statusResult.state).toBeUndefined();
+        }, 120 * SECONDS);
+
+        it('should get outputs for a completed action', async () => {
+            // Execute an action in foreground (completes immediately)
+            const execResult: FlowExecutionResult = await flowMgr.executeAction({
+                scopedName: 'global.should_send_notification',
+                mode: 'foreground'
+            });
+
+            console.log('\n=== lifecycle: executeAction (foreground) ===');
+            console.log('Success:', execResult.success);
+            console.log('Context ID:', execResult.contextId);
+
+            expect(execResult.success).toBe(true);
+            expect(execResult.contextId).toBeDefined();
+
+            // Now get outputs via lifecycle API
+            const outputsResult = await flowMgr.getFlowOutputs(execResult.contextId!);
+
+            console.log('\n=== lifecycle: getFlowOutputs ===');
+            console.log('Success:', outputsResult.success);
+            console.log('Outputs:', JSON.stringify(outputsResult.outputs));
+
+            expect(outputsResult.success).toBe(true);
+            // Outputs may be empty object if the flow already returned them inline
+            expect(outputsResult.outputs).toBeDefined();
+        }, 120 * SECONDS);
+
+        it('should get error message for a completed context', async () => {
+            // Execute an action with wrong inputs to produce an error
+            const execResult: FlowExecutionResult = await flowMgr.executeAction({
+                scopedName: 'global.should_send_notification',
+                inputs: {
+                    table_name: 'incident',
+                    sys_id: '0000000000000000000000000000dead'
+                }
+            });
+
+            console.log('\n=== lifecycle: executeAction (wrong inputs) ===');
+            console.log('Success:', execResult.success);
+
+            // The action may fail or succeed depending on how it handles bad input.
+            // Either way, we can query the error message.
+            if (execResult.contextId) {
+                const errorResult = await flowMgr.getFlowError(execResult.contextId);
+
+                console.log('\n=== lifecycle: getFlowError ===');
+                console.log('Success:', errorResult.success);
+                console.log('Flow Error:', errorResult.flowErrorMessage);
+
+                expect(errorResult.success).toBe(true);
+                // flowErrorMessage may or may not be present depending on the error
+            }
+        }, 120 * SECONDS);
+
+        it('should cancel a background flow', async () => {
+            // Execute a flow in background
+            const execResult: FlowExecutionResult = await flowMgr.executeFlow({
+                scopedName: 'global.change__unauthorized__review',
+                mode: 'background'
+            });
+
+            console.log('\n=== lifecycle: executeFlow for cancel ===');
+            console.log('Success:', execResult.success);
+            console.log('Context ID:', execResult.contextId);
+
+            expect(execResult.success).toBe(true);
+            expect(execResult.contextId).toBeDefined();
+
+            // Cancel the flow
+            const cancelResult = await flowMgr.cancelFlow(
+                execResult.contextId!,
+                'Cancelled by integration test'
+            );
+
+            console.log('\n=== lifecycle: cancelFlow ===');
+            console.log('Success:', cancelResult.success);
+            console.log('Error:', cancelResult.errorMessage);
+
+            // Cancel should succeed (or fail gracefully if already completed)
+            expect(cancelResult.contextId).toBe(execResult.contextId);
+            expect(cancelResult.rawScriptResult).toBeDefined();
         }, 120 * SECONDS);
     });
 });

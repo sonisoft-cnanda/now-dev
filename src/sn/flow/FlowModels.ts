@@ -119,3 +119,79 @@ export interface FlowScriptResultEnvelope {
     debugOutput: string;
     errorMessage: string | null;
 }
+
+// ============================================================
+// Flow Context Lifecycle Types
+// ============================================================
+
+/** Known states of a flow context record in sys_flow_context. */
+export type FlowContextState = 'QUEUED' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETE' | 'CANCELLED' | 'ERROR' | string;
+
+/** Result from querying a flow context's status. */
+export interface FlowContextStatusResult {
+    success: boolean;
+    contextId: string;
+    found: boolean;
+    state?: FlowContextState;
+    name?: string;
+    started?: string;
+    ended?: string;
+    errorMessage?: string;
+    rawScriptResult?: unknown;
+}
+
+/** Result from retrieving outputs of a completed flow context. */
+export interface FlowOutputsResult {
+    success: boolean;
+    contextId: string;
+    outputs?: Record<string, unknown>;
+    errorMessage?: string;
+    rawScriptResult?: unknown;
+}
+
+/** Result from retrieving error messages of a flow context. */
+export interface FlowErrorResult {
+    success: boolean;
+    contextId: string;
+    flowErrorMessage?: string;
+    errorMessage?: string;
+    rawScriptResult?: unknown;
+}
+
+/** Result from cancelling a flow context. */
+export interface FlowCancelResult {
+    success: boolean;
+    contextId: string;
+    errorMessage?: string;
+    rawScriptResult?: unknown;
+}
+
+/** Result from sending a message to a paused flow. */
+export interface FlowSendMessageResult {
+    success: boolean;
+    contextId: string;
+    errorMessage?: string;
+    rawScriptResult?: unknown;
+}
+
+// ============================================================
+// Internal Script Protocol - Lifecycle Operations
+// ============================================================
+
+/**
+ * JSON envelope for lifecycle operations (status, outputs, errors, cancel, message).
+ * @internal
+ */
+export interface FlowLifecycleEnvelope {
+    __flowResult: true;
+    success: boolean;
+    contextId: string;
+    errorMessage: string | null;
+    found?: boolean;
+    state?: string | null;
+    name?: string | null;
+    started?: string | null;
+    ended?: string | null;
+    outputs?: Record<string, unknown> | null;
+    flowErrorMessage?: string | null;
+}

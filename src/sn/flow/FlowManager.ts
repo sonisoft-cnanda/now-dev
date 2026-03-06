@@ -8,7 +8,13 @@ import {
     ExecuteActionOptions,
     FlowExecutionResult,
     FlowObjectType,
-    FlowScriptResultEnvelope
+    FlowScriptResultEnvelope,
+    FlowContextStatusResult,
+    FlowOutputsResult,
+    FlowErrorResult,
+    FlowCancelResult,
+    FlowSendMessageResult,
+    FlowLifecycleEnvelope
 } from './FlowModels';
 
 const RESULT_MARKER = '___FLOW_EXEC_RESULT___';
@@ -90,6 +96,190 @@ export class FlowManager {
     /** Execute an action by scoped name. */
     public async executeAction(options: ExecuteActionOptions): Promise<FlowExecutionResult> {
         return this.execute({ ...options, type: 'action' });
+    }
+
+    // ================================================================
+    // Flow Context Lifecycle API
+    // ================================================================
+
+    /** Query the status of a flow context by its sys_id. */
+    public async getFlowContextStatus(contextId: string): Promise<FlowContextStatusResult> {
+        this._validateContextId(contextId);
+        this._logger.info(`Getting context status: ${contextId}`);
+
+        const script = this._buildContextStatusScript(contextId);
+        try {
+            const bgResult = await this._bgExecutor.executeScript(script, this._defaultScope, this._instance);
+            const envelope = this._extractResultEnvelope(bgResult) as unknown as FlowLifecycleEnvelope | null;
+
+            if (envelope) {
+                return {
+                    success: envelope.success,
+                    contextId,
+                    found: envelope.found ?? false,
+                    state: envelope.state ?? undefined,
+                    name: envelope.name ?? undefined,
+                    started: envelope.started ?? undefined,
+                    ended: envelope.ended ?? undefined,
+                    errorMessage: envelope.errorMessage ?? undefined,
+                    rawScriptResult: bgResult
+                };
+            }
+
+            return {
+                success: false, contextId, found: false,
+                errorMessage: 'Could not parse context status result from script output.',
+                rawScriptResult: bgResult
+            };
+        } catch (error) {
+            const err = error as Error;
+            return {
+                success: false, contextId, found: false,
+                errorMessage: `Script execution error: ${err.message}`,
+                rawScriptResult: null
+            };
+        }
+    }
+
+    /** Retrieve outputs from a completed flow/subflow/action by context ID. */
+    public async getFlowOutputs(contextId: string): Promise<FlowOutputsResult> {
+        this._validateContextId(contextId);
+        this._logger.info(`Getting outputs for context: ${contextId}`);
+
+        const script = this._buildGetOutputsScript(contextId);
+        try {
+            const bgResult = await this._bgExecutor.executeScript(script, this._defaultScope, this._instance);
+            const envelope = this._extractResultEnvelope(bgResult) as unknown as FlowLifecycleEnvelope | null;
+
+            if (envelope) {
+                return {
+                    success: envelope.success,
+                    contextId,
+                    outputs: envelope.outputs ?? undefined,
+                    errorMessage: envelope.errorMessage ?? undefined,
+                    rawScriptResult: bgResult
+                };
+            }
+
+            return {
+                success: false, contextId,
+                errorMessage: 'Could not parse outputs result from script output.',
+                rawScriptResult: bgResult
+            };
+        } catch (error) {
+            const err = error as Error;
+            return {
+                success: false, contextId,
+                errorMessage: `Script execution error: ${err.message}`,
+                rawScriptResult: null
+            };
+        }
+    }
+
+    /** Retrieve error messages from a flow/subflow/action by context ID. */
+    public async getFlowError(contextId: string): Promise<FlowErrorResult> {
+        this._validateContextId(contextId);
+        this._logger.info(`Getting error for context: ${contextId}`);
+
+        const script = this._buildGetErrorScript(contextId);
+        try {
+            const bgResult = await this._bgExecutor.executeScript(script, this._defaultScope, this._instance);
+            const envelope = this._extractResultEnvelope(bgResult) as unknown as FlowLifecycleEnvelope | null;
+
+            if (envelope) {
+                return {
+                    success: envelope.success,
+                    contextId,
+                    flowErrorMessage: envelope.flowErrorMessage ?? undefined,
+                    errorMessage: envelope.errorMessage ?? undefined,
+                    rawScriptResult: bgResult
+                };
+            }
+
+            return {
+                success: false, contextId,
+                errorMessage: 'Could not parse error result from script output.',
+                rawScriptResult: bgResult
+            };
+        } catch (error) {
+            const err = error as Error;
+            return {
+                success: false, contextId,
+                errorMessage: `Script execution error: ${err.message}`,
+                rawScriptResult: null
+            };
+        }
+    }
+
+    /** Cancel a running or paused flow/subflow/action. */
+    public async cancelFlow(contextId: string, reason?: string): Promise<FlowCancelResult> {
+        this._validateContextId(contextId);
+        this._logger.info(`Cancelling context: ${contextId}`);
+
+        const script = this._buildCancelScript(contextId, reason || 'Cancelled via FlowManager');
+        try {
+            const bgResult = await this._bgExecutor.executeScript(script, this._defaultScope, this._instance);
+            const envelope = this._extractResultEnvelope(bgResult) as unknown as FlowLifecycleEnvelope | null;
+
+            if (envelope) {
+                return {
+                    success: envelope.success,
+                    contextId,
+                    errorMessage: envelope.errorMessage ?? undefined,
+                    rawScriptResult: bgResult
+                };
+            }
+
+            return {
+                success: false, contextId,
+                errorMessage: 'Could not parse cancel result from script output.',
+                rawScriptResult: bgResult
+            };
+        } catch (error) {
+            const err = error as Error;
+            return {
+                success: false, contextId,
+                errorMessage: `Script execution error: ${err.message}`,
+                rawScriptResult: null
+            };
+        }
+    }
+
+    /** Send a message to a paused flow to resume it (for Wait for Message actions). */
+    public async sendFlowMessage(contextId: string, message: string, payload?: string): Promise<FlowSendMessageResult> {
+        this._validateContextId(contextId);
+        if (!message || message.trim().length === 0) {
+            throw new Error('Message is required');
+        }
+        this._logger.info(`Sending message to context: ${contextId}`);
+
+        const script = this._buildSendMessageScript(contextId, message, payload || '');
+        try {
+            const bgResult = await this._bgExecutor.executeScript(script, this._defaultScope, this._instance);
+            const envelope = this._extractResultEnvelope(bgResult) as unknown as FlowLifecycleEnvelope | null;
+
+            if (envelope) {
+                return {
+                    success: envelope.success,
+                    contextId,
+                    errorMessage: envelope.errorMessage ?? undefined,
+                    rawScriptResult: bgResult
+                };
+            }
+
+            return {
+                success: false, contextId,
+                errorMessage: 'Could not parse send message result from script output.',
+                rawScriptResult: bgResult
+            };
+        } catch (error) {
+            const err = error as Error;
+            return {
+                success: false, contextId,
+                errorMessage: `Script execution error: ${err.message}`,
+                rawScriptResult: null
+            };
+        }
     }
 
     // ================================================================
@@ -267,5 +457,176 @@ export class FlowManager {
                           'The script may have failed before producing output.',
             rawScriptResult: bgResult
         };
+    }
+
+    // ================================================================
+    // Lifecycle Script Builders
+    // ================================================================
+
+    /** Validate that a context ID is non-empty. */
+    private _validateContextId(contextId: string): void {
+        if (!contextId || contextId.trim().length === 0) {
+            throw new Error('Context ID is required');
+        }
+    }
+
+    /** Escape a string for embedding in a generated SN script single-quoted string. */
+    private _escapeForScript(str: string): string {
+        return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    /** Build script to query sys_flow_context status. */
+    _buildContextStatusScript(contextId: string): string {
+        const escapedId = this._escapeForScript(contextId);
+        return `(function() {
+    var __RESULT_MARKER = '${RESULT_MARKER}';
+    try {
+        var gr = new GlideRecord('sys_flow_context');
+        if (gr.get('${escapedId}')) {
+            gs.info(__RESULT_MARKER + JSON.stringify({
+                __flowResult: true,
+                success: true,
+                contextId: '${escapedId}',
+                found: true,
+                state: '' + gr.getValue('state'),
+                name: '' + gr.getValue('name'),
+                started: gr.getValue('started') ? '' + gr.getValue('started') : null,
+                ended: gr.getValue('ended') ? '' + gr.getValue('ended') : null,
+                errorMessage: null
+            }));
+        } else {
+            gs.info(__RESULT_MARKER + JSON.stringify({
+                __flowResult: true,
+                success: true,
+                contextId: '${escapedId}',
+                found: false,
+                state: null,
+                name: null,
+                started: null,
+                ended: null,
+                errorMessage: null
+            }));
+        }
+    } catch (ex) {
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: false,
+            contextId: '${escapedId}',
+            found: false,
+            errorMessage: '' + (ex.getMessage ? ex.getMessage() : ex)
+        }));
+    }
+})();`;
+    }
+
+    /** Build script to retrieve flow outputs via FlowAPI.getOutputs(). */
+    _buildGetOutputsScript(contextId: string): string {
+        const escapedId = this._escapeForScript(contextId);
+        return `(function() {
+    var __RESULT_MARKER = '${RESULT_MARKER}';
+    try {
+        var outputs = sn_fd.FlowAPI.getOutputs('${escapedId}');
+        var outputObj = {};
+        if (outputs) {
+            for (var key in outputs) {
+                if (outputs.hasOwnProperty(key)) {
+                    outputObj[key] = '' + outputs[key];
+                }
+            }
+        }
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: true,
+            contextId: '${escapedId}',
+            outputs: outputObj,
+            errorMessage: null
+        }));
+    } catch (ex) {
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: false,
+            contextId: '${escapedId}',
+            outputs: null,
+            errorMessage: '' + (ex.getMessage ? ex.getMessage() : ex)
+        }));
+    }
+})();`;
+    }
+
+    /** Build script to retrieve flow error via FlowAPI.getErrorMessage(). */
+    _buildGetErrorScript(contextId: string): string {
+        const escapedId = this._escapeForScript(contextId);
+        return `(function() {
+    var __RESULT_MARKER = '${RESULT_MARKER}';
+    try {
+        var errorMsg = sn_fd.FlowAPI.getErrorMessage('${escapedId}');
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: true,
+            contextId: '${escapedId}',
+            flowErrorMessage: errorMsg ? '' + errorMsg : null,
+            errorMessage: null
+        }));
+    } catch (ex) {
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: false,
+            contextId: '${escapedId}',
+            flowErrorMessage: null,
+            errorMessage: '' + (ex.getMessage ? ex.getMessage() : ex)
+        }));
+    }
+})();`;
+    }
+
+    /** Build script to cancel a flow via FlowAPI.cancel(). */
+    _buildCancelScript(contextId: string, reason: string): string {
+        const escapedId = this._escapeForScript(contextId);
+        const escapedReason = this._escapeForScript(reason);
+        return `(function() {
+    var __RESULT_MARKER = '${RESULT_MARKER}';
+    try {
+        sn_fd.FlowAPI.cancel('${escapedId}', '${escapedReason}');
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: true,
+            contextId: '${escapedId}',
+            errorMessage: null
+        }));
+    } catch (ex) {
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: false,
+            contextId: '${escapedId}',
+            errorMessage: '' + (ex.getMessage ? ex.getMessage() : ex)
+        }));
+    }
+})();`;
+    }
+
+    /** Build script to send a message to a paused flow via FlowAPI.sendMessage(). */
+    _buildSendMessageScript(contextId: string, message: string, payload: string): string {
+        const escapedId = this._escapeForScript(contextId);
+        const escapedMessage = this._escapeForScript(message);
+        const escapedPayload = this._escapeForScript(payload);
+        return `(function() {
+    var __RESULT_MARKER = '${RESULT_MARKER}';
+    try {
+        sn_fd.FlowAPI.sendMessage('${escapedId}', '${escapedMessage}', '${escapedPayload}');
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: true,
+            contextId: '${escapedId}',
+            errorMessage: null
+        }));
+    } catch (ex) {
+        gs.info(__RESULT_MARKER + JSON.stringify({
+            __flowResult: true,
+            success: false,
+            contextId: '${escapedId}',
+            errorMessage: '' + (ex.getMessage ? ex.getMessage() : ex)
+        }));
+    }
+})();`;
     }
 }

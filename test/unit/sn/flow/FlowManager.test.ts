@@ -10,7 +10,7 @@ import { FlowManager } from '../../../../src/sn/flow/FlowManager';
 import { BackgroundScriptExecutionResult, ScriptExecutionOutputLine } from '../../../../src/sn/BackgroundScriptExecutor';
 import { AuthenticationHandlerFactory } from '../../../../src/auth/AuthenticationHandlerFactory';
 import { RequestHandlerFactory } from '../../../../src/comm/http/RequestHandlerFactory';
-import { ExecuteFlowOptions, FlowScriptResultEnvelope } from '../../../../src/sn/flow/FlowModels';
+import { ExecuteFlowOptions, FlowScriptResultEnvelope, FlowLifecycleEnvelope } from '../../../../src/sn/flow/FlowModels';
 
 // Mock getCredentials
 const mockGetCredentials = createGetCredentialsMock();
@@ -800,6 +800,360 @@ describe('FlowManager - Unit Tests', () => {
             const scriptArg = bgExecutor.executeScript.mock.calls[0][0] as string;
             expect(scriptArg).toContain(".action('global.test_action')");
             expect(result.flowObjectType).toBe('action');
+        });
+    });
+
+    // ================================================================
+    // Lifecycle - Validation
+    // ================================================================
+
+    describe('_validateContextId', () => {
+        it('should throw for empty contextId', () => {
+            expect(() => (flowMgr as any)._validateContextId('')).toThrow('Context ID is required');
+        });
+
+        it('should throw for whitespace-only contextId', () => {
+            expect(() => (flowMgr as any)._validateContextId('   ')).toThrow('Context ID is required');
+        });
+
+        it('should not throw for valid contextId', () => {
+            expect(() => (flowMgr as any)._validateContextId('abc123def456789012345678901234ab')).not.toThrow();
+        });
+    });
+
+    describe('_escapeForScript', () => {
+        it('should escape single quotes', () => {
+            const result = (flowMgr as any)._escapeForScript("it's a test");
+            expect(result).toBe("it\\'s a test");
+        });
+
+        it('should escape backslashes', () => {
+            const result = (flowMgr as any)._escapeForScript('path\\to\\file');
+            expect(result).toBe('path\\\\to\\\\file');
+        });
+
+        it('should handle strings without special characters', () => {
+            const result = (flowMgr as any)._escapeForScript('abc123');
+            expect(result).toBe('abc123');
+        });
+    });
+
+    // ================================================================
+    // Lifecycle - Script Generation
+    // ================================================================
+
+    describe('_buildContextStatusScript', () => {
+        it('should generate script querying sys_flow_context', () => {
+            const script = (flowMgr as any)._buildContextStatusScript('abc123def456789012345678901234ab');
+            expect(script).toContain("GlideRecord('sys_flow_context')");
+            expect(script).toContain("gr.get('abc123def456789012345678901234ab')");
+            expect(script).toContain("gr.getValue('state')");
+            expect(script).toContain("gr.getValue('name')");
+            expect(script).toContain("gr.getValue('started')");
+            expect(script).toContain("gr.getValue('ended')");
+            expect(script).toContain('found: true');
+            expect(script).toContain('found: false');
+            expect(script).toContain(RESULT_MARKER);
+        });
+    });
+
+    describe('_buildGetOutputsScript', () => {
+        it('should generate script calling FlowAPI.getOutputs', () => {
+            const script = (flowMgr as any)._buildGetOutputsScript('abc123def456789012345678901234ab');
+            expect(script).toContain("sn_fd.FlowAPI.getOutputs('abc123def456789012345678901234ab')");
+            expect(script).toContain('outputs.hasOwnProperty(key)');
+            expect(script).toContain(RESULT_MARKER);
+        });
+    });
+
+    describe('_buildGetErrorScript', () => {
+        it('should generate script calling FlowAPI.getErrorMessage', () => {
+            const script = (flowMgr as any)._buildGetErrorScript('abc123def456789012345678901234ab');
+            expect(script).toContain("sn_fd.FlowAPI.getErrorMessage('abc123def456789012345678901234ab')");
+            expect(script).toContain('flowErrorMessage');
+            expect(script).toContain(RESULT_MARKER);
+        });
+    });
+
+    describe('_buildCancelScript', () => {
+        it('should generate script calling FlowAPI.cancel', () => {
+            const script = (flowMgr as any)._buildCancelScript('abc123def456789012345678901234ab', 'Test reason');
+            expect(script).toContain("sn_fd.FlowAPI.cancel('abc123def456789012345678901234ab', 'Test reason')");
+            expect(script).toContain(RESULT_MARKER);
+        });
+
+        it('should escape single quotes in reason', () => {
+            const script = (flowMgr as any)._buildCancelScript('abc123def456789012345678901234ab', "it's done");
+            expect(script).toContain("it\\'s done");
+        });
+    });
+
+    describe('_buildSendMessageScript', () => {
+        it('should generate script calling FlowAPI.sendMessage', () => {
+            const script = (flowMgr as any)._buildSendMessageScript('abc123def456789012345678901234ab', 'Resume Flow', 'payload data');
+            expect(script).toContain("sn_fd.FlowAPI.sendMessage('abc123def456789012345678901234ab', 'Resume Flow', 'payload data')");
+            expect(script).toContain(RESULT_MARKER);
+        });
+
+        it('should escape single quotes in message and payload', () => {
+            const script = (flowMgr as any)._buildSendMessageScript('abc123', "it's time", "it's data");
+            expect(script).toContain("it\\'s time");
+            expect(script).toContain("it\\'s data");
+        });
+    });
+
+    // ================================================================
+    // Lifecycle - Public Methods
+    // ================================================================
+
+    describe('getFlowContextStatus', () => {
+        const contextId = 'abc123def456789012345678901234ab';
+
+        it('should throw for empty contextId', async () => {
+            await expect(flowMgr.getFlowContextStatus('')).rejects.toThrow('Context ID is required');
+        });
+
+        it('should return found context with state', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                found: true, state: 'COMPLETE', name: 'Test Flow',
+                started: '2024-06-12 17:54:58', ended: '2024-06-12 17:55:00',
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowContextStatus(contextId);
+
+            expect(result.success).toBe(true);
+            expect(result.found).toBe(true);
+            expect(result.state).toBe('COMPLETE');
+            expect(result.name).toBe('Test Flow');
+            expect(result.started).toBe('2024-06-12 17:54:58');
+            expect(result.ended).toBe('2024-06-12 17:55:00');
+        });
+
+        it('should return not found for unknown contextId', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                found: false, state: null, name: null,
+                started: null, ended: null, errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowContextStatus(contextId);
+
+            expect(result.success).toBe(true);
+            expect(result.found).toBe(false);
+            expect(result.state).toBeUndefined();
+        });
+
+        it('should return failure when BGS throws', async () => {
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockRejectedValueOnce(new Error('Network error'));
+
+            const result = await flowMgr.getFlowContextStatus(contextId);
+
+            expect(result.success).toBe(false);
+            expect(result.found).toBe(false);
+            expect(result.errorMessage).toContain('Network error');
+        });
+    });
+
+    describe('getFlowOutputs', () => {
+        const contextId = 'abc123def456789012345678901234ab';
+
+        it('should throw for empty contextId', async () => {
+            await expect(flowMgr.getFlowOutputs('')).rejects.toThrow('Context ID is required');
+        });
+
+        it('should return outputs on success', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                outputs: { key1: 'val1', key2: 'val2' },
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowOutputs(contextId);
+
+            expect(result.success).toBe(true);
+            expect(result.outputs).toEqual({ key1: 'val1', key2: 'val2' });
+        });
+
+        it('should return failure with error message', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: false, contextId,
+                outputs: null,
+                errorMessage: 'Context not found'
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowOutputs(contextId);
+
+            expect(result.success).toBe(false);
+            expect(result.errorMessage).toBe('Context not found');
+        });
+    });
+
+    describe('getFlowError', () => {
+        const contextId = 'abc123def456789012345678901234ab';
+
+        it('should throw for empty contextId', async () => {
+            await expect(flowMgr.getFlowError('')).rejects.toThrow('Context ID is required');
+        });
+
+        it('should return flow error message', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                flowErrorMessage: 'Operation failed: invalid record',
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowError(contextId);
+
+            expect(result.success).toBe(true);
+            expect(result.flowErrorMessage).toBe('Operation failed: invalid record');
+        });
+
+        it('should return null flowErrorMessage when no errors', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                flowErrorMessage: null,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.getFlowError(contextId);
+
+            expect(result.success).toBe(true);
+            expect(result.flowErrorMessage).toBeUndefined();
+        });
+    });
+
+    describe('cancelFlow', () => {
+        const contextId = 'abc123def456789012345678901234ab';
+
+        it('should throw for empty contextId', async () => {
+            await expect(flowMgr.cancelFlow('')).rejects.toThrow('Context ID is required');
+        });
+
+        it('should return success on cancel', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.cancelFlow(contextId, 'Test cancellation');
+
+            expect(result.success).toBe(true);
+            expect(result.contextId).toBe(contextId);
+        });
+
+        it('should use default reason when none provided', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            await flowMgr.cancelFlow(contextId);
+
+            const scriptArg = bgExecutor.executeScript.mock.calls[0][0] as string;
+            expect(scriptArg).toContain('Cancelled via FlowManager');
+        });
+
+        it('should return failure when cancel fails', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: false, contextId,
+                errorMessage: 'Cannot cancel: context is already complete'
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.cancelFlow(contextId);
+
+            expect(result.success).toBe(false);
+            expect(result.errorMessage).toContain('already complete');
+        });
+    });
+
+    describe('sendFlowMessage', () => {
+        const contextId = 'abc123def456789012345678901234ab';
+
+        it('should throw for empty contextId', async () => {
+            await expect(flowMgr.sendFlowMessage('', 'Resume')).rejects.toThrow('Context ID is required');
+        });
+
+        it('should throw for empty message', async () => {
+            await expect(flowMgr.sendFlowMessage(contextId, '')).rejects.toThrow('Message is required');
+        });
+
+        it('should throw for whitespace-only message', async () => {
+            await expect(flowMgr.sendFlowMessage(contextId, '   ')).rejects.toThrow('Message is required');
+        });
+
+        it('should return success when message sent', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            const result = await flowMgr.sendFlowMessage(contextId, 'Resume Flow', 'payload data');
+
+            expect(result.success).toBe(true);
+            expect(result.contextId).toBe(contextId);
+        });
+
+        it('should pass correct script with message and payload', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            await flowMgr.sendFlowMessage(contextId, 'Resume Flow', 'my payload');
+
+            const scriptArg = bgExecutor.executeScript.mock.calls[0][0] as string;
+            expect(scriptArg).toContain("sendMessage('abc123def456789012345678901234ab', 'Resume Flow', 'my payload')");
+        });
+
+        it('should use empty payload when not provided', async () => {
+            const envelope: FlowLifecycleEnvelope = {
+                __flowResult: true, success: true, contextId,
+                errorMessage: null
+            };
+            const bgResult = createBGResult(envelope as any);
+            const bgExecutor = (flowMgr as any)._bgExecutor;
+            jest.spyOn(bgExecutor, 'executeScript').mockResolvedValueOnce(bgResult);
+
+            await flowMgr.sendFlowMessage(contextId, 'Resume');
+
+            const scriptArg = bgExecutor.executeScript.mock.calls[0][0] as string;
+            expect(scriptArg).toContain("'Resume', ''");
         });
     });
 });
