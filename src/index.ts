@@ -57,6 +57,8 @@ export * from './sn/codesearch/CodeSearch.js';
 export * from './sn/codesearch/CodeSearchModels.js';
 export * from './sn/discovery/DiscoveryModels.js';
 export * from './sn/discovery/InstanceDiscovery.js';
+export * from './sn/flow/FlowManager.js';
+export * from './sn/flow/FlowModels.js';
 export * from './sn/health/HealthModels.js';
 export * from './sn/health/InstanceHealth.js';
 export * from './sn/knowledge/KnowledgeManager.js';
