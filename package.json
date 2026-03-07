@@ -80,7 +80,7 @@
     "fast-xml-parser": "^4.4.1",
     "fs-extra": "*",
     "get-installed-path": "^4.0.8",
-    "jsdom": "^24.1.1",
+    "jsdom": "^28.1.0",
     "json5": "^2.2.3",
     "lodash": "^4.17.21",
     "lusca": "1.7.0",
